@@ -1,7 +1,3 @@
-This repo hold source code of all API in blink system.
-
----
-
 ### Setup this repo to start development
 
 -   Run `make bootstrap` (for the first time setup)
