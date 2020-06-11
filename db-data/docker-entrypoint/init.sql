@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS "altas-dev";
+CREATE DATABASE "altas-dev";

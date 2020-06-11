@@ -1,8 +1,7 @@
 {
-    "name": "awesome-nest-boilerplate",
+    "name": "atlat-backend",
     "version": "7.0.0",
-    "description": "Awesome NestJS Boilerplate, Typescript, Postgres, TypeORM",
-    "author": "Narek Hakobyan <narek.hakobyan.07@gmail.com>",
+    "description": "Atlat Backend",
     "license": "MIT",
     "scripts": {
         "build": "tsc -p tsconfig.build.json",
@@ -11,6 +10,7 @@
         "start:dev": "ts-node src/main.ts",
         "migration:generate": "ts-node node_modules/typeorm/cli.js migration:generate -f ormconfig -d src/migrations -n",
         "migration:revert": "ts-node node_modules/typeorm/cli.js migration:revert -f ormconfig",
+        "migration:run": "ts-node node_modules/typeorm/cli.js migration:run -f ormconfig",
         "watch:dev": "nodemon --config nodemon.json",
         "debug:dev": "nodemon --config nodemon-debug.json",
         "webpack": "webpack --config webpack.config.js --progress",
