@@ -1,7 +1,7 @@
 {
-    "name": "atlat-backend",
+    "name": "harmonia-backend",
     "version": "7.0.0",
-    "description": "Atlat Backend",
+    "description": "Harmonia Backend",
     "license": "MIT",
     "scripts": {
         "build": "tsc -p tsconfig.build.json",

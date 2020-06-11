@@ -1,2 +1,2 @@
-DROP DATABASE IF EXISTS "altas-dev";
-CREATE DATABASE "altas-dev";
+DROP DATABASE IF EXISTS "harmonia-dev";
+CREATE DATABASE "harmonia-dev";

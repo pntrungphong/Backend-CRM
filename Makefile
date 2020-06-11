@@ -1,4 +1,4 @@
-alias = atlas
+alias = harmonia
 
 default: up
 

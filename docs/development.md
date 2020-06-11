@@ -41,7 +41,7 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_USERNAME=postgres
 POSTGRES_PASSWORD=postgres
-POSTGRES_DATABASE=atlas-dev
+POSTGRES_DATABASE=harmonia-dev
 ```
 
 Some helper script to work with database
@@ -126,4 +126,4 @@ user: postgres
 pass: postgres
 ```
 
-create database `atlas-dev` and your application fully is ready to use.
+create database `harmonia-dev` and your application fully is ready to use.
