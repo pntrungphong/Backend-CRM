@@ -6,32 +6,32 @@ export class CreateDatabase1592463310729 implements MigrationInterface {
           CREATE TABLE "contact" (
             "id" SERIAL PRIMARY KEY,
             "name" varchar(200) NOT NULL,
-            "phone" varchar(15) NOT NULL,
-            "email" varchar(250) NOT NULL,
-            "address" varchar(250) NOT NULL,
-            "website" varchar(250) NOT NULL,
+            "phone" varchar(15) ,
+            "email" varchar(250) ,
+            "address" varchar(250) ,
+            "website" varchar(250) ,
             "create_by" varchar(200) NOT NULL,
             "update_by" varchar(200) NOT NULL,
-            "delete_by" varchar(200) NOT NULL,
-            "create_at" timestampz NOT NULL now(),
-            "update_at" timestampz NOT NULL now(),
-            "delete_at" timestampz NOT NULL now()
+            "delete_by" varchar(200) ,
+            "create_at" timestampz NOT NULL DEFAULT now(),
+            "update_at" timestampz NOT NULL DEFAULT now(),
+            "delete_at" timestampz  
           );
           
           CREATE TABLE "company" (
             "id" SERIAL PRIMARY KEY,
             "name" varchar(200) NOT NULL,
-            "address" varchar(250) NOT NULL,
-            "email" varchar(250) NOT NULL,
-            "phone" varchar(15) NOT NULL,
-            "website" varchar(250) NOT NULL,
-            "url" varchar(250) NOT NULL,
+            "address" varchar(250) ,
+            "email" varchar(250) ,
+            "phone" varchar(15) ,
+            "website" varchar(250) ,
+            "url" varchar(250) ,
             "create_by" varchar(200) NOT NULL,
             "update_by" varchar(200) NOT NULL,
-            "delete_by" varchar(200) NOT NULL,
-            "create_at" timestampz NOT NULL now(),
-            "update_at" timestampz NOT NULL now(),
-            "delete_at" timestampz NOT NULL now()
+            "delete_by" varchar(200) ,
+            "create_at" timestampz NOT NULL DEFAULT now(),
+            "update_at" timestampz NOT NULL DEFAULT now(),
+            "delete_at" timestampz
           );
           
           CREATE TABLE "company_contact" (
@@ -60,5 +60,8 @@ export class CreateDatabase1592463310729 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query('DROP TABLE "company"');
+        await queryRunner.query('DROP TABLE "contact"');
+        await queryRunner.query('DROP TABLE "company_contact"');
+        await queryRunner.query('DROP TABLE "contact_referral"');
     }
 }
