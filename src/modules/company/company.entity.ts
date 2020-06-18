@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company_contact/company_contact.entity';
-import { CompanyDto } from './dto/CompanyDto';
 
 @Entity({ name: 'company' })
 export class CompanyEntity {
@@ -22,7 +19,7 @@ export class CompanyEntity {
     @Column({ nullable: true, type: 'varchar', length: 250 })
     url: string;
 
-    @OneToMany((type) => CompanyContactEntity, (cpct) => cpct.cp, {
+    @OneToMany(() => CompanyContactEntity, (cpct) => cpct.cp, {
         cascade: true,
     })
     cpct: CompanyContactEntity[];
