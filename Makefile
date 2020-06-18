@@ -30,3 +30,6 @@ db-revert:
 
 fork-kill-dev:
 	lsof -t -i tcp:3000 | xargs kill
+
+testing-up:
+	docker-compose -f docker-compose-testing.yml up -d
