@@ -1,5 +1,5 @@
 'use strict';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CompanyEntity } from './company.entity';
@@ -14,5 +14,12 @@ export class CompanyController {
     @Post()
     async createCompany(@Body() data: CompanyDto): Promise<CompanyEntity> {
         return this._companyService.createCompany(data);
+    }
+    @Put(':id/update')
+    async update(
+        @Param('id') id: string,
+        @Body() data: CompanyDto,
+    ): Promise<any> {
+        return this._companyService.updateCompany(id, data);
     }
 }
