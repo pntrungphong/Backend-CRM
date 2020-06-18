@@ -6,6 +6,6 @@
 
 ### To write new migrate
 
--   Run `yarn migration:generate NewMigrationName` to create new migration file.
+-   Run `yarn migration:create NewMigrationName` to create new migration file.
 -   Run `make db-migrate` to run all migration.
 -   Run `make db-revert` to revert 1 version right before.
