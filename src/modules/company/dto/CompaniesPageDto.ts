@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { CompanyDto } from './CompanyDto';
 
-export class CompanysPageDto {
+export class CompaniesPageDto {
     @ApiProperty({
         type: CompanyDto,
         isArray: true,
