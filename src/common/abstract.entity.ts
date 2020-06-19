@@ -1,6 +1,8 @@
 'use strict';
 
 import {
+    AfterUpdate,
+    BeforeInsert,
     CreateDateColumn,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
@@ -23,6 +25,15 @@ export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
         name: 'updated_at',
     })
     updatedAt: Date;
+    @BeforeInsert()
+    updateDates(): void {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+    @AfterUpdate()
+    resetDates(): void {
+        this.updatedAt = new Date();
+    }
 
     abstract dtoClass: new (entity: AbstractEntity, options?: any) => T;
 

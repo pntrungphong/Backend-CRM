@@ -1,39 +1,35 @@
 'use strict';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
-export class CompanyDto {
-    @ApiPropertyOptional()
-    id: string;
-    @IsString()
+
+import { AbstractDto } from '../../../common/dto/AbstractDto';
+import { CompanyEntity } from '../company.entity';
+
+export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
 
-    @IsString()
-    @ApiPropertyOptional()
-    address: string;
-
-    @IsString()
     @ApiPropertyOptional()
     email: string;
 
-    @IsString()
     @ApiPropertyOptional()
     phone: string;
 
-    @IsString()
+    @ApiPropertyOptional()
+    address: string;
+
     @ApiPropertyOptional()
     website: string;
-
-    @IsString()
     @ApiPropertyOptional()
     url: string;
 
-    @IsString()
-    @ApiPropertyOptional()
-    createBy: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    updateBy: string;
+    constructor(company: CompanyEntity) {
+        super(company);
+        this.name = company.name;
+        this.email = company.email;
+        this.phone = company.phone;
+        this.address = company.address;
+        this.website = company.website;
+        this.url = company.url;
+    }
 }

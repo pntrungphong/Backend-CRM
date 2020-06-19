@@ -1,13 +1,10 @@
-import {
-    AfterUpdate,
-    BeforeInsert,
-    Column,
-    Entity,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+import { AbstractEntity } from '../../common/abstract.entity';
+import { CompanyDto } from './dto/CompanyDto';
 
 @Entity({ name: 'company' })
-export class CompanyEntity {
+export class CompanyEntity extends AbstractEntity<CompanyDto> {
     @PrimaryGeneratedColumn()
     id: string;
     @Column({ nullable: false, type: 'varchar', length: 200 })
@@ -22,21 +19,9 @@ export class CompanyEntity {
     website: string;
     @Column({ nullable: true, type: 'varchar', length: 250 })
     url: string;
-    @Column({ nullable: false, type: 'timestamptz' })
-    createAt: Date;
-    @Column({ nullable: false, type: 'timestamptz' })
-    updateAt: Date;
-    @Column({ nullable: false, type: 'varchar' })
-    createBy: string;
-    @Column({ nullable: false, type: 'varchar' })
-    updateBy: string;
-    @BeforeInsert()
-    updateDates(): void {
-        this.createAt = new Date();
-        this.updateAt = new Date();
-    }
-    @AfterUpdate()
-    resetDates(): void {
-        this.updateAt = new Date();
-    }
+    @Column({ nullable: false, type: 'varchar', length: 250 })
+    created_by: string;
+    @Column({ nullable: true, type: 'varchar', length: 250 })
+    updated_by: string;
+    dtoClass = CompanyDto;
 }
