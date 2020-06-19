@@ -23,6 +23,13 @@ export class CompanyDto extends AbstractDto {
 
     @ApiPropertyOptional()
     url: string;
+
+    @ApiPropertyOptional()
+    createdBy: string;
+
+    @ApiPropertyOptional()
+    updatedBy: string;
+
     constructor(company: CompanyEntity) {
         super(company);
         this.name = company.name;
@@ -31,5 +38,7 @@ export class CompanyDto extends AbstractDto {
         this.phone = company.phone;
         this.website = company.website;
         this.url = company.url;
+        this.createdBy = company.createdBy;
+        this.updatedBy = company.updatedBy;
     }
 }

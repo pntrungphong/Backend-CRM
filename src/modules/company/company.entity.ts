@@ -23,5 +23,11 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     @Column({ nullable: true })
     url: string;
 
+    @Column({ nullable: true })
+    createdBy: string;
+
+    @Column({ nullable: true })
+    updatedBy: string;
+
     dtoClass = CompanyDto;
 }
