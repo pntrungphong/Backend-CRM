@@ -6,10 +6,14 @@ import { IsEmail, IsString } from 'class-validator';
 export class UserLoginDto {
     @IsString()
     @IsEmail()
-    @ApiProperty()
+    @ApiProperty({
+        example: 'admin@gu.io',
+    })
     readonly email: string;
 
     @IsString()
-    @ApiProperty()
+    @ApiProperty({
+        example: 'gu123451',
+    })
     readonly password: string;
 }

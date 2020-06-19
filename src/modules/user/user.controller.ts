@@ -41,14 +41,14 @@ export class UserController {
     constructor(private _userService: UserService) {}
 
     @Get('admin')
-    @Roles(RoleType.USER)
+    @Roles(RoleType.ADMIN)
     @HttpCode(HttpStatus.OK)
     admin(@AuthUser() user: UserEntity): string {
         return 'only for you admin: ' + user.firstName;
     }
 
     @Get('users')
-    @Roles(RoleType.ADMIN)
+    @Roles(RoleType.USER)
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
