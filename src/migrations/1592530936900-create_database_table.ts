@@ -1,6 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-
-export class CreateDatabase1592463310729 implements MigrationInterface {
+export class CreateDatabaseTable1592530936900 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
           CREATE TABLE "contact" (
@@ -13,9 +12,9 @@ export class CreateDatabase1592463310729 implements MigrationInterface {
             "create_by" varchar(200) NOT NULL,
             "update_by" varchar(200) NOT NULL,
             "delete_by" varchar(200) ,
-            "create_at" timestampz NOT NULL DEFAULT now(),
-            "update_at" timestampz NOT NULL DEFAULT now(),
-            "delete_at" timestampz  
+            "create_at" timestamptz NOT NULL DEFAULT now(),
+            "update_at" timestamptz NOT NULL DEFAULT now(),
+            "delete_at" timestamptz  
           );
           
           CREATE TABLE "company" (
@@ -29,9 +28,9 @@ export class CreateDatabase1592463310729 implements MigrationInterface {
             "create_by" varchar(200) NOT NULL,
             "update_by" varchar(200) NOT NULL,
             "delete_by" varchar(200) ,
-            "create_at" timestampz NOT NULL DEFAULT now(),
-            "update_at" timestampz NOT NULL DEFAULT now(),
-            "delete_at" timestampz
+            "create_at" timestamptz NOT NULL DEFAULT now(),
+            "update_at" timestamptz NOT NULL DEFAULT now(),
+            "delete_at" timestamptz
           );
           
           CREATE TABLE "company_contact" (

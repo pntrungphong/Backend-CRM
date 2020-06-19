@@ -28,4 +28,12 @@ export class CompanyDto {
     @IsString()
     @ApiPropertyOptional()
     url: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    createBy: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    updateBy: string;
 }

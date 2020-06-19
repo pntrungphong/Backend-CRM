@@ -3,11 +3,8 @@ import {
     BeforeInsert,
     Column,
     Entity,
-    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-
-import { CompanyContactEntity } from '../company_contact/company_contact.entity';
 
 @Entity({ name: 'company' })
 export class CompanyEntity {
@@ -29,9 +26,10 @@ export class CompanyEntity {
     createAt: Date;
     @Column({ nullable: false, type: 'timestamptz' })
     updateAt: Date;
-    @OneToMany(() => CompanyContactEntity, (cpct) => cpct.cp, {
-        cascade: true,
-    })
+    @Column({ nullable: false, type: 'varchar' })
+    createBy: string;
+    @Column({ nullable: false, type: 'varchar' })
+    updateBy: string;
     @BeforeInsert()
     updateDates(): void {
         this.createAt = new Date();
@@ -41,5 +39,4 @@ export class CompanyEntity {
     resetDates(): void {
         this.updateAt = new Date();
     }
-    cpct: CompanyContactEntity[];
 }
