@@ -9,12 +9,12 @@ export class CreateDatabaseTable1592530936900 implements MigrationInterface {
             "email" varchar(250) ,
             "address" varchar(250) ,
             "website" varchar(250) ,
-            "create_by" varchar(200) NOT NULL,
-            "update_by" varchar(200) NOT NULL,
-            "delete_by" varchar(200) ,
-            "create_at" timestamptz NOT NULL DEFAULT now(),
-            "update_at" timestamptz NOT NULL DEFAULT now(),
-            "delete_at" timestamptz  
+            "created_by" varchar(200) NOT NULL,
+            "updated_by" varchar(200) NOT NULL,
+            "deleted_by" varchar(200) ,
+            "created_at" timestamptz NOT NULL DEFAULT now(),
+            "updated_at" timestamptz NOT NULL DEFAULT now(),
+            "deleted_at" timestamptz  
           );
           
           CREATE TABLE "company" (
@@ -25,12 +25,12 @@ export class CreateDatabaseTable1592530936900 implements MigrationInterface {
             "phone" varchar(15) ,
             "website" varchar(250) ,
             "url" varchar(250) ,
-            "create_by" varchar(200) NOT NULL,
-            "update_by" varchar(200) NOT NULL,
-            "delete_by" varchar(200) ,
-            "create_at" timestamptz NOT NULL DEFAULT now(),
-            "update_at" timestamptz NOT NULL DEFAULT now(),
-            "delete_at" timestamptz
+            "created_by" varchar(200) NOT NULL,
+            "updated_by" varchar(200) NOT NULL,
+            "deleted_by" varchar(200) ,
+            "created_at" timestamptz NOT NULL DEFAULT now(),
+            "updated_at" timestamptz NOT NULL DEFAULT now(),
+            "deleted_at" timestamptz
           );
           
           CREATE TABLE "company_contact" (

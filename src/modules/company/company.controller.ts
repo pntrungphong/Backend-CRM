@@ -19,8 +19,8 @@ import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 
-@Controller('companys')
-@ApiTags('companys')
+@Controller('companies')
+@ApiTags('companies')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
