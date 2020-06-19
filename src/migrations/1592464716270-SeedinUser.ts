@@ -8,7 +8,7 @@ export class SeedinUser1592464716270 implements MigrationInterface {
             ('b6f0f679-4189-4d02-99d6-c960f238c9f7',	'2020-06-18 07:10:39.552488',	'2020-06-18 07:10:39.552488',	
             'ADmin','',	NULL,	'USER',	'admin@gu.io',	'$2b$10$/peOSUoM0gyF4vJjk/rT4uoSaGyr.NW/T.uqQHV4uCVkTwv0UOep6',	''),
             ('39d088f6-cc81-4263-ac27-b920983a4eb0',	'2020-06-18 07:11:45.3831',	    '2020-06-18 07:11:45.3831',	    
-            'Nhan',	'',	NULL,	'USER',	'nhan.ld@gu.io',	'$2b$10$qPmkM8SQFx4wBsuHbkyqI.O1dEmiAI8O28il0XcRlkAyGJwxxDN8y',	''),
+            'Nhan',	'',	NULL,	'USER',	'nhan.lh@gu.io',	'$2b$10$qPmkM8SQFx4wBsuHbkyqI.O1dEmiAI8O28il0XcRlkAyGJwxxDN8y',	''),
             ('48862ade-6f9a-471f-835a-cff4f3b9a567',	'2020-06-18 07:11:59.369909',	'2020-06-18 07:11:59.369909',	
             'Chau',	'',	NULL,	'USER',	'chau.cd@gu.io',	'$2b$10$SmrMnoa1UlHyiTGpHYUbAOtqPlnivycSamI4JslHiuWXcO8r1FxIe',	''),
             ('50b0cb2e-3782-4b11-82c0-4e2f6580ab94',	'2020-06-18 07:12:10.491438',	'2020-06-18 07:12:10.491438',	
