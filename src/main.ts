@@ -38,7 +38,8 @@ async function bootstrap() {
         }),
     );
     app.use(compression());
-    app.use(morgan('combined'));
+    // app.use(morgan('combined'));
+    app.use(morgan('dev'));
 
     const reflector = app.get(Reflector);
 
