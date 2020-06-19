@@ -3,7 +3,7 @@ import { Column, Entity } from 'typeorm';
 import { AbstractEntity } from '../../common/abstract.entity';
 import { ContactDto } from './dto/ContactDto';
 
-@Entity({ name: 'contacts' })
+@Entity({ name: 'contact' })
 export class ContactEntity extends AbstractEntity<ContactDto> {
     @Column({ nullable: false })
     name: string;
@@ -19,6 +19,12 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
 
     @Column({ nullable: true })
     website: string;
+
+    @Column({ nullable: false, name: 'created_by' })
+    createdBy: string;
+
+    @Column({ nullable: false, name: 'updated_by' })
+    updatedBy: string;
 
     dtoClass = ContactDto;
 }

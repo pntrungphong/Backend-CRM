@@ -29,8 +29,10 @@ export class ContactService {
         user: UserEntity,
     ): Promise<ContactEntity> {
         const contactObj = Object.assign(contactCreateDto, {
-            create_by: user.id,
+            createdBy: user.id,
+            updatedBy: user.id,
         });
+        console.table(contactObj);
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
     }
@@ -43,8 +45,7 @@ export class ContactService {
         const contact = await this.contactRepository.findOne({ id });
         const updatedContact = Object.assign(contact, {
             ...contactUpdateDto,
-            update_by: user.id,
-            update_at: Date.now(),
+            updatedBy: user.id,
         });
         return this.contactRepository.save(updatedContact);
     }
