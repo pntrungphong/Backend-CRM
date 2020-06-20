@@ -1,15 +1,27 @@
 import { Injectable } from '@nestjs/common';
 
-import { PageMetaDto } from '../../common/dto/PageMetaDto';
+import { UserEntity } from '../../modules/user/user.entity';
+import { CompanyEntity } from './company.entity';
 import { CompanyRepository } from './company.repository';
-// import { CompanyRegisterDto } from '../auth/dto/CompanyRegisterDto';
-import { CompaniesPageDto } from './dto/CompaniesPageDto';
+import { CreateCompanyDto } from './dto/CreateCompanyDto';
+import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
-
+import { CompaniesPageDto } from './dto/CompaniesPageDto';
 @Injectable()
 export class CompanyService {
     constructor(public readonly companyRepository: CompanyRepository) {}
-
+    async createCompany(
+        user: UserEntity,
+        data: CreateCompanyDto,
+    ): Promise<CompanyEntity> {
+        const companyObj = Object.assign(data, {
+            created_by: user.id,
+            updated_by: user.id,
+        });
+        const company = this.companyRepository.create({ ...companyObj });
+        return this.companyRepository.save(company);
+    }
+    
     async getComapanies(
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDto> {
@@ -26,5 +38,6 @@ export class CompanyService {
             itemCount: companiesCount,
         });
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
+
     }
 }

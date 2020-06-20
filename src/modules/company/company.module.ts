@@ -5,6 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { CompanyController } from './company.controller';
 import { CompanyRepository } from './company.repository';
 import { CompanyService } from './company.service';
+import { UpdateCompanyService } from './updateCompany.service';
 
 @Module({
     imports: [
@@ -12,7 +13,7 @@ import { CompanyService } from './company.service';
         TypeOrmModule.forFeature([CompanyRepository]),
     ],
     controllers: [CompanyController],
-    exports: [CompanyService],
-    providers: [CompanyService],
+    exports: [CompanyService, UpdateCompanyService],
+    providers: [CompanyService, UpdateCompanyService],
 })
 export class CompanyModule {}
