@@ -38,7 +38,6 @@ async function bootstrap() {
         }),
     );
     app.use(compression());
-    app.use(morgan('combined'));
 
     const reflector = app.get(Reflector);
 
