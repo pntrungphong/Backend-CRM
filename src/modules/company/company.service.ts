@@ -41,8 +41,6 @@ export class CompanyService {
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
-
-
     async readCompany(id: string): Promise<CompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
@@ -53,4 +51,24 @@ export class CompanyService {
         return new CompanyDto(company.toDto());
     }
 
+    async findByName(
+        name: string,
+        pageOptionsDto: CompaniesPageOptionsDto,
+    ): Promise<CompaniesPageDto> {
+        const queryBuilder = this.companyRepository
+            .createQueryBuilder('company')
+            .where('(company.name = :name)')
+            .setParameters({ name });
+
+        const [companies, companiesCount] = await queryBuilder
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take)
+            .getManyAndCount();
+
+        const pageMetaDto = new PageMetaDto({
+            pageOptionsDto,
+            itemCount: companiesCount,
+        });
+        return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
+    }
 }

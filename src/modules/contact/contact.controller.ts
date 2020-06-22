@@ -66,8 +66,6 @@ export class ContactController {
         return this._contactService.readContactById(id);
     }
 
-    
-
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: ContactDto, description: 'Successfully Created' })
@@ -79,7 +77,7 @@ export class ContactController {
             contactCreateDto,
             user,
         );
-        return createdContact.toDto();
+        return createdContact.toDto() as ContactDto;
     }
 
     @Put(':id')
@@ -98,6 +96,6 @@ export class ContactController {
             contactData,
             user,
         );
-        return updatedContact.toDto();
+        return updatedContact.toDto() as ContactUpdateDto;
     }
 }

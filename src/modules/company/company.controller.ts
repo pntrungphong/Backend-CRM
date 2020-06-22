@@ -40,7 +40,7 @@ import { UpdateCompanyService } from './updateCompany.service';
 export class CompanyController {
     constructor(
         private _companyService: CompanyService,
-        private readonly _updateCompanyService: UpdateCompanyService,
+        private _updateCompanyService: UpdateCompanyService,
     ) {}
 
     @Get()
@@ -57,18 +57,16 @@ export class CompanyController {
         return this._companyService.getComapanies(pageOptionsDto);
     }
 
-    @Get(':id')
+    @Get('/id')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get companies list',
         type: CompanyDto,
     })
-    async getByIdCompany(@Param('id') id: string) {
+    async getByIdCompany(@Query('id') id: string) {
         return this._companyService.readCompany(id);
     }
-
-
 
     @Post()
     @UseGuards(AuthGuard)
@@ -84,7 +82,7 @@ export class CompanyController {
             user,
             data,
         );
-        return createCompany.toDto();
+        return createCompany.toDto() as CompanyDto;
     }
     @Put(':id/update')
     @UseGuards(AuthGuard)
@@ -94,12 +92,30 @@ export class CompanyController {
         @Param('id') id: string,
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
-    ): Promise<any> {
+    ): Promise<UpdateCompanyDto> {
         const updatedCompany = await this._updateCompanyService.updateCompany(
             id,
             data,
             user,
         );
-        return updatedCompany.toDto();
+        return updatedCompany.toDto() as UpdateCompanyDto;
+    }
+
+    @Get('/findbyname')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(AuthGuard)
+    @UseInterceptors(AuthUserInterceptor)
+    @ApiBearerAuth()
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: CompaniesPageDto,
+    })
+    async getCompaniesByName(
+        @Query('name') name: string,
+        @Query(new ValidationPipe({ transform: true }))
+        pageOptionsDto: CompaniesPageOptionsDto,
+    ) {
+        return this._companyService.findByName(name, pageOptionsDto);
     }
 }
