@@ -61,14 +61,12 @@ export class CompanyController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
-        description: 'Get companies list',
+        description: 'Get company by id',
         type: CompanyDto,
     })
     async getByIdCompany(@Param('id') id: string) {
         return this._companyService.readCompany(id);
     }
-
-
 
     @Post()
     @UseGuards(AuthGuard)
@@ -80,12 +78,14 @@ export class CompanyController {
         @Body() data: CreateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
-        const createCompany = await this._companyService.createCompany(
-            user,
-            data,
-        );
-        return createCompany.toDto();
+        // const createCompany = await this._companyService.createCompany(
+        //     user,
+        //     data,
+        // );
+        // return createCompany.toDto();
+        return this._companyService.createCompany(user, data);
     }
+
     @Put(':id/update')
     @UseGuards(AuthGuard)
     @UseInterceptors(AuthUserInterceptor)
@@ -95,11 +95,12 @@ export class CompanyController {
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<any> {
-        const updatedCompany = await this._updateCompanyService.updateCompany(
-            id,
-            data,
-            user,
-        );
-        return updatedCompany.toDto();
+        // const updatedCompany = await this._updateCompanyService.updateCompany(
+        //     id,
+        //     data,
+        //     user,
+        // );
+        // return updatedCompany.toDto();
+        return this._updateCompanyService.updateCompany(id, data, user);
     }
 }
