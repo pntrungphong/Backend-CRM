@@ -12,5 +12,21 @@ export class UpdateCompanyDto {
 
     @IsString()
     @ApiPropertyOptional()
+    phone: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    address: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    website: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    url: string;
+
+    @IsString()
+    @ApiPropertyOptional()
     updatedBy: string;
 }

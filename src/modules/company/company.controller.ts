@@ -31,17 +31,14 @@ import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { CreateCompanyDto } from './dto/CreateCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
-import { UpdateCompanyService } from './updateCompany.service';
+
 @Controller('company')
 @ApiTags('company')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class CompanyController {
-    constructor(
-        private _companyService: CompanyService,
-        private readonly _updateCompanyService: UpdateCompanyService,
-    ) {}
+    constructor(private _companyService: CompanyService) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -69,38 +66,34 @@ export class CompanyController {
     }
 
     @Post()
-    @UseGuards(AuthGuard)
-    @UseInterceptors(AuthUserInterceptor)
     @HttpCode(HttpStatus.OK)
-    @ApiBearerAuth()
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
     async createCompany(
         @Body() data: CreateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
-        // const createCompany = await this._companyService.createCompany(
-        //     user,
-        //     data,
-        // );
-        // return createCompany.toDto();
-        return this._companyService.createCompany(user, data);
+        const createCompany = await this._companyService.createCompany(
+            user,
+            data,
+        );
+        return createCompany.toDto() as CompanyDto;
     }
 
-    @Put(':id/update')
-    @UseGuards(AuthGuard)
-    @UseInterceptors(AuthUserInterceptor)
-    @ApiBearerAuth()
+    @Put(':id')
+    @ApiOkResponse({
+        type: UpdateCompanyDto,
+        description: 'Successfully Updated',
+    })
     async update(
         @Param('id') id: string,
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
-    ): Promise<any> {
-        // const updatedCompany = await this._updateCompanyService.updateCompany(
-        //     id,
-        //     data,
-        //     user,
-        // );
-        // return updatedCompany.toDto();
-        return this._updateCompanyService.updateCompany(id, data, user);
+    ): Promise<UpdateCompanyDto> {
+        const updatedCompany = await this._companyService.updateCompany(
+            id,
+            data,
+            user,
+        );
+        return updatedCompany.toDto() as UpdateCompanyDto;
     }
 }

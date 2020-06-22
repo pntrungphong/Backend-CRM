@@ -8,6 +8,7 @@ import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { CreateCompanyDto } from './dto/CreateCompanyDto';
+import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @Injectable()
 export class CompanyService {
     constructor(public readonly companyRepository: CompanyRepository) {}
@@ -41,8 +42,6 @@ export class CompanyService {
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
-
-
     async readCompany(id: string): Promise<CompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
@@ -53,4 +52,22 @@ export class CompanyService {
         return new CompanyDto(company.toDto());
     }
 
+    async updateCompany(
+        id: string,
+        data: UpdateCompanyDto,
+        user: UserEntity,
+    ): Promise<CompanyEntity> {
+        const company = await this.companyRepository.findOne({
+            where: { id },
+        });
+        if (!company) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+        const updatedCompany = Object.assign(company, {
+            ...data,
+            updated_by: user.id,
+        });
+
+        return this.companyRepository.save(updatedCompany);
+    }
 }
