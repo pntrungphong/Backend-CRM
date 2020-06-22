@@ -12,7 +12,7 @@ import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @Injectable()
 export class CompanyService {
     constructor(public readonly companyRepository: CompanyRepository) {}
-    async createCompany(
+    async create(
         user: UserEntity,
         data: CreateCompanyDto,
     ): Promise<CompanyEntity> {
@@ -24,7 +24,7 @@ export class CompanyService {
         return this.companyRepository.save(company);
     }
 
-    async getComapanies(
+    async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDto> {
         const queryBuilder = this.companyRepository.createQueryBuilder(
@@ -42,7 +42,7 @@ export class CompanyService {
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
-    async readCompany(id: string): Promise<CompanyDto> {
+    async findById(id: string): Promise<CompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
         });
@@ -73,7 +73,7 @@ export class CompanyService {
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
-    async updateCompany(
+    async update(
         id: string,
         data: UpdateCompanyDto,
         user: UserEntity,

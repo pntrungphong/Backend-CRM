@@ -51,18 +51,18 @@ export class CompanyController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: CompaniesPageOptionsDto,
     ) {
-        return this._companyService.getComapanies(pageOptionsDto);
+        return this._companyService.getList(pageOptionsDto);
     }
 
-    @Get('/id')
+    @Get('/:id')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get company by id',
         type: CompanyDto,
     })
-    async getByIdCompany(@Query('id') id: string) {
-        return this._companyService.readCompany(id);
+    async getCompanyById(@Param('id') id: string) {
+        return this._companyService.findById(id);
     }
 
     @Post()
@@ -72,10 +72,7 @@ export class CompanyController {
         @Body() data: CreateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
-        const createCompany = await this._companyService.createCompany(
-            user,
-            data,
-        );
+        const createCompany = await this._companyService.create(user, data);
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -89,7 +86,7 @@ export class CompanyController {
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<UpdateCompanyDto> {
-        const updatedCompany = await this._companyService.updateCompany(
+        const updatedCompany = await this._companyService.update(
             id,
             data,
             user,
@@ -99,9 +96,6 @@ export class CompanyController {
 
     @Get('/findbyname')
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard)
-    @UseInterceptors(AuthUserInterceptor)
-    @ApiBearerAuth()
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get companies list',

@@ -27,7 +27,6 @@ import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
-import { ContactCreateDto } from './dto/ContactCreateDto';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
@@ -52,7 +51,7 @@ export class ContactController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
     ) {
-        return this._contactService.getContacts(pageOptionsDto);
+        return this._contactService.getList(pageOptionsDto);
     }
 
     @Get(':id')
@@ -63,17 +62,17 @@ export class ContactController {
         type: ContactDto,
     })
     async readContactById(@Param('id') id: string) {
-        return this._contactService.readContactById(id);
+        return this._contactService.findById(id);
     }
 
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: ContactDto, description: 'Successfully Created' })
     async contactCreate(
-        @Body() contactCreateDto: ContactCreateDto,
+        @Body() contactCreateDto: ContactUpdateDto,
         @AuthUser() user: UserEntity,
     ): Promise<ContactDto> {
-        const createdContact = await this._contactService.createContact(
+        const createdContact = await this._contactService.create(
             contactCreateDto,
             user,
         );
@@ -91,7 +90,7 @@ export class ContactController {
         @Body() contactData: ContactUpdateDto,
         @AuthUser() user: UserEntity,
     ) {
-        const updatedContact = await this._contactService.updateContact(
+        const updatedContact = await this._contactService.update(
             contactId,
             contactData,
             user,

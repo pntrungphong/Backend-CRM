@@ -7,7 +7,6 @@ import { ValidatorService } from '../../shared/services/validator.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
-import { ContactCreateDto } from './dto/ContactCreateDto';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
@@ -21,27 +20,23 @@ export class ContactService {
         public readonly awsS3Service: AwsS3Service,
     ) {}
 
-    /**
-     * Find single contact
-     */
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);
     }
 
-    async createContact(
-        contactCreateDto: ContactCreateDto,
+    async create(
+        contactCreateDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
         const contactObj = Object.assign(contactCreateDto, {
             createdBy: user.id,
             updatedBy: user.id,
         });
-        console.table(contactObj);
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
     }
 
-    async updateContact(
+    async update(
         id: string,
         contactUpdateDto: ContactUpdateDto,
         user: UserEntity,
@@ -54,7 +49,7 @@ export class ContactService {
         return this.contactRepository.save(updatedContact);
     }
 
-    async getContacts(
+    async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
         const queryBuilder = this.contactRepository.createQueryBuilder(
@@ -71,7 +66,8 @@ export class ContactService {
         });
         return new ContactsPageDto(contacts.toDtos(), pageMetaDto);
     }
-    async readContactById(id: string): Promise<ContactDto> {
+
+    async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
         });
