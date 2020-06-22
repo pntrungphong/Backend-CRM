@@ -8,15 +8,15 @@ export class UpdateCompanyDto {
 
     @IsString()
     @ApiPropertyOptional()
-    address: string;
-
-    @IsString()
-    @ApiPropertyOptional()
     email: string;
 
     @IsString()
     @ApiPropertyOptional()
     phone: string;
+
+    @IsString()
+    @ApiPropertyOptional()
+    address: string;
 
     @IsString()
     @ApiPropertyOptional()
@@ -28,5 +28,5 @@ export class UpdateCompanyDto {
 
     @IsString()
     @ApiPropertyOptional()
-    updated_by: string;
+    updatedBy: string;
 }

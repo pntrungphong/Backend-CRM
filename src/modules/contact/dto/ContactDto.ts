@@ -11,7 +11,6 @@ export class ContactDto extends AbstractDto {
 
     @ApiPropertyOptional()
     email: string;
-
     @ApiPropertyOptional()
     phone: string;
 

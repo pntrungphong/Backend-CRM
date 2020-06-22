@@ -28,9 +28,9 @@ export class CreateCompanyDto {
 
     @IsString()
     @ApiPropertyOptional()
-    created_by: string;
+    createdBy: string;
 
     @IsString()
     @ApiPropertyOptional()
-    updated_by: string;
+    updatedBy: string;
 }
