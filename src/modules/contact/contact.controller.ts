@@ -3,15 +3,23 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
     Param,
     Post,
     Put,
+    Query,
     UseGuards,
     UseInterceptors,
+    ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -21,6 +29,8 @@ import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
 import { ContactCreateDto } from './dto/ContactCreateDto';
 import { ContactDto } from './dto/ContactDto';
+import { ContactsPageDto } from './dto/ContactsPageDto';
+import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
 
 @Controller('contacts')
@@ -30,6 +40,33 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 @ApiBearerAuth()
 export class ContactController {
     constructor(private _contactService: ContactService) {}
+
+    @Get()
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get contacts list',
+        type: ContactsPageDto,
+    })
+    getCompanies(
+        @Query(new ValidationPipe({ transform: true }))
+        pageOptionsDto: ContactsPageOptionsDto,
+    ) {
+        return this._contactService.getContacts(pageOptionsDto);
+    }
+
+    @Get(':id')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: ContactDto,
+    })
+    async readContactById(@Param('id') id: string) {
+        return this._contactService.readContactById(id);
+    }
+
+    
 
     @Post()
     @HttpCode(HttpStatus.OK)

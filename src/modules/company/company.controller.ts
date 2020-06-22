@@ -13,7 +13,12 @@ import {
     UseInterceptors,
     ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -27,7 +32,6 @@ import { CompanyDto } from './dto/CompanyDto';
 import { CreateCompanyDto } from './dto/CreateCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 import { UpdateCompanyService } from './updateCompany.service';
-
 @Controller('company')
 @ApiTags('company')
 @UseGuards(AuthGuard, RolesGuard)
@@ -53,10 +57,25 @@ export class CompanyController {
         return this._companyService.getComapanies(pageOptionsDto);
     }
 
+    @Get(':id')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: CompanyDto,
+    })
+    async getByIdCompany(@Param('id') id: string) {
+        return this._companyService.readCompany(id);
+    }
+
+
+
     @Post()
     @UseGuards(AuthGuard)
     @UseInterceptors(AuthUserInterceptor)
+    @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
+    @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
     async createCompany(
         @Body() data: CreateCompanyDto,
         @AuthUser() user: UserEntity,

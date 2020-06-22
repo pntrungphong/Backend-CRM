@@ -8,25 +8,9 @@ export class UpdateCompanyDto {
 
     @IsString()
     @ApiPropertyOptional()
-    address: string;
-
-    @IsString()
-    @ApiPropertyOptional()
     email: string;
 
     @IsString()
     @ApiPropertyOptional()
-    phone: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    website: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    url: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    updated_by: string;
+    updatedBy: string;
 }
