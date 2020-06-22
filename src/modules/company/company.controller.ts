@@ -31,17 +31,14 @@ import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { CreateCompanyDto } from './dto/CreateCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
-import { UpdateCompanyService } from './updateCompany.service';
+
 @Controller('company')
 @ApiTags('company')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class CompanyController {
-    constructor(
-        private _companyService: CompanyService,
-        private _updateCompanyService: UpdateCompanyService,
-    ) {}
+    constructor(private _companyService: CompanyService) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -61,7 +58,7 @@ export class CompanyController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
-        description: 'Get companies list',
+        description: 'Get company by id',
         type: CompanyDto,
     })
     async getByIdCompany(@Query('id') id: string) {
@@ -69,10 +66,7 @@ export class CompanyController {
     }
 
     @Post()
-    @UseGuards(AuthGuard)
-    @UseInterceptors(AuthUserInterceptor)
     @HttpCode(HttpStatus.OK)
-    @ApiBearerAuth()
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
     async createCompany(
         @Body() data: CreateCompanyDto,
@@ -84,16 +78,18 @@ export class CompanyController {
         );
         return createCompany.toDto() as CompanyDto;
     }
-    @Put(':id/update')
-    @UseGuards(AuthGuard)
-    @UseInterceptors(AuthUserInterceptor)
-    @ApiBearerAuth()
+
+    @Put(':id')
+    @ApiOkResponse({
+        type: UpdateCompanyDto,
+        description: 'Successfully Updated',
+    })
     async update(
         @Param('id') id: string,
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<UpdateCompanyDto> {
-        const updatedCompany = await this._updateCompanyService.updateCompany(
+        const updatedCompany = await this._companyService.updateCompany(
             id,
             data,
             user,
