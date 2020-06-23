@@ -1,14 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-export class CreateDatabaseTable1592530936900 implements MigrationInterface {
+
+export class CreateDatabase1592884687596 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
           CREATE TABLE "contact" (
             "id" SERIAL PRIMARY KEY,
             "name" varchar(200) NOT NULL,
-            "phone" varchar(15) ,
-            "email" varchar(250) ,
-            "address" varchar(250) ,
-            "website" varchar(250) ,
+            "phone" varchar(500) ,
+            "email" varchar(500) ,
+            "address" varchar(1000) ,
+            "website" varchar(500) ,
+            "tag" varchar(500), 
             "created_by" varchar(200) NOT NULL,
             "updated_by" varchar(200) NOT NULL,
             "deleted_by" varchar(200) ,
@@ -20,11 +22,12 @@ export class CreateDatabaseTable1592530936900 implements MigrationInterface {
           CREATE TABLE "company" (
             "id" SERIAL PRIMARY KEY,
             "name" varchar(200) NOT NULL,
-            "address" varchar(250) ,
-            "email" varchar(250) ,
-            "phone" varchar(15) ,
-            "website" varchar(250) ,
-            "url" varchar(250) ,
+            "address" varchar(1000) ,
+            "email" varchar(500) ,
+            "phone" varchar(500) ,
+            "website" varchar(500) ,
+            "url" varchar(500) ,
+            "tag" varchar(500),
             "created_by" varchar(200) NOT NULL,
             "updated_by" varchar(200) NOT NULL,
             "deleted_by" varchar(200) ,
