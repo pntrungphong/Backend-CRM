@@ -10,15 +10,19 @@ export class ContactDto extends AbstractDto {
     name: string;
 
     @ApiPropertyOptional()
-    email: string;
-    @ApiPropertyOptional()
-    phone: string;
+    email: string[];
 
     @ApiPropertyOptional()
-    address: string;
+    phone: string[];
 
     @ApiPropertyOptional()
-    website: string;
+    address: string[];
+
+    @ApiPropertyOptional()
+    website: string[];
+
+    @ApiPropertyOptional()
+    tag: string[];
 
     @ApiPropertyOptional()
     createdBy: string;
@@ -29,10 +33,11 @@ export class ContactDto extends AbstractDto {
     constructor(contact: ContactEntity) {
         super(contact);
         this.name = contact.name;
-        this.email = contact.email;
-        this.phone = contact.phone;
-        this.address = contact.address;
-        this.website = contact.website;
+        this.email = contact.email.split('|');
+        this.phone = contact.phone.split('|');
+        this.address = contact.address.split('|');
+        this.website = contact.website.split('|');
+        this.tag = contact.tag.split('|');
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
     }
