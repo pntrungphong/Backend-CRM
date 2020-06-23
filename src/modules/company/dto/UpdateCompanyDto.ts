@@ -1,30 +1,38 @@
 'use strict';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 export class UpdateCompanyDto {
     @IsString()
     @ApiPropertyOptional()
     name: string;
 
-    @IsString()
+    @IsArray()
     @ApiPropertyOptional()
-    email: string;
+    email: string[];
+
+    @IsArray()
+    @ApiPropertyOptional()
+    phone: string[];
+
+    @IsArray()
+    @ApiPropertyOptional()
+    address: string[];
+
+    @IsArray()
+    @ApiPropertyOptional()
+    website: string[];
+
+    @IsArray()
+    @ApiPropertyOptional()
+    url: string[];
+
+    @IsArray()
+    @ApiPropertyOptional()
+    tag: string[];
 
     @IsString()
     @ApiPropertyOptional()
-    phone: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    address: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    website: string;
-
-    @IsString()
-    @ApiPropertyOptional()
-    url: string;
+    createBy: string;
 
     @IsString()
     @ApiPropertyOptional()

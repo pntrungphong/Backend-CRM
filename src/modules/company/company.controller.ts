@@ -29,7 +29,6 @@ import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
-import { CreateCompanyDto } from './dto/CreateCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 
 @Controller('company')
@@ -69,7 +68,7 @@ export class CompanyController {
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
     async createCompany(
-        @Body() data: CreateCompanyDto,
+        @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);

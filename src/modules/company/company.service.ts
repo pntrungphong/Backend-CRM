@@ -7,18 +7,23 @@ import { CompanyRepository } from './company.repository';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
-import { CreateCompanyDto } from './dto/CreateCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @Injectable()
 export class CompanyService {
     constructor(public readonly companyRepository: CompanyRepository) {}
     async create(
         user: UserEntity,
-        data: CreateCompanyDto,
+        createDto: UpdateCompanyDto,
     ): Promise<CompanyEntity> {
-        const companyObj = Object.assign(data, {
-            created_by: user.id,
-            updated_by: user.id,
+        const companyObj = Object.assign(createDto, {
+            email: createDto.email.join('|'),
+            phone: createDto.phone.join('|'),
+            address: createDto.address.join('|'),
+            website: createDto.website.join('|'),
+            url: createDto.url.join('|'),
+            tag: createDto.tag.join('|'),
+            createdBy: user.id,
+            updatedBy: user.id,
         });
         const company = this.companyRepository.create({ ...companyObj });
         return this.companyRepository.save(company);
@@ -49,7 +54,7 @@ export class CompanyService {
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return new CompanyDto(company.toDto());
+        return company.toDto() as CompanyDto;
     }
 
     async findByName(
@@ -75,7 +80,7 @@ export class CompanyService {
 
     async update(
         id: string,
-        data: UpdateCompanyDto,
+        updateDto: UpdateCompanyDto,
         user: UserEntity,
     ): Promise<CompanyEntity> {
         const company = await this.companyRepository.findOne({
@@ -85,7 +90,13 @@ export class CompanyService {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         const updatedCompany = Object.assign(company, {
-            ...data,
+            ...updateDto,
+            email: updateDto.email.join('|'),
+            phone: updateDto.phone.join('|'),
+            address: updateDto.address.join('|'),
+            website: updateDto.website.join('|'),
+            url: updateDto.url.join('|'),
+            tag: updateDto.tag.join('|'),
             updated_by: user.id,
         });
 
