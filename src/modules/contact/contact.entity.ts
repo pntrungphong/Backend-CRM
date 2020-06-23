@@ -20,6 +20,9 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @Column({ nullable: true })
     website: string;
 
+    @Column({ nullable: true })
+    tag: string;
+
     @Column({ nullable: false, name: 'created_by' })
     createdBy: string;
 
