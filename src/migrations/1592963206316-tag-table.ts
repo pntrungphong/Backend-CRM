@@ -16,7 +16,6 @@ export class CreateDatabase1592963206316 implements MigrationInterface {
           );
           
           ALTER TABLE "tagContact" ADD FOREIGN KEY ("id_contact") REFERENCES "contact" ("id");
-          
           ALTER TABLE "tagCompany" ADD FOREIGN KEY ("id_company") REFERENCES "company" ("id");
         `);
     }
