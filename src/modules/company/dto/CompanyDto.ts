@@ -10,31 +10,38 @@ export class CompanyDto extends AbstractDto {
     name: string;
 
     @ApiPropertyOptional()
-    email: string;
+    email: string[];
 
     @ApiPropertyOptional()
-    phone: string;
+    phone: string[];
 
     @ApiPropertyOptional()
-    address: string;
+    address: string[];
 
     @ApiPropertyOptional()
-    website: string;
+    website: string[];
+
     @ApiPropertyOptional()
-    url: string;
+    url: string[];
+
+    @ApiPropertyOptional()
+    tag: string[];
+
     @ApiPropertyOptional()
     createdBy: string;
+
     @ApiPropertyOptional()
     updatedBy: string;
 
     constructor(company: CompanyEntity) {
         super(company);
         this.name = company.name;
-        this.email = company.email;
-        this.phone = company.phone;
-        this.address = company.address;
-        this.website = company.website;
-        this.url = company.url;
+        this.email = company.email.split('|');
+        this.phone = company.phone.split('|');
+        this.address = company.address.split('|');
+        this.website = company.website.split('|');
+        this.url = company.url.split('|');
+        this.tag = company.tag.split('|');
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
     }
