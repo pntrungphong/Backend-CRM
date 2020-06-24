@@ -42,7 +42,7 @@ export class ContactController {
     constructor(
         private _contactService: ContactService,
         private _websitetService: WebsiteService,
-    ) { }
+    ) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -86,7 +86,7 @@ export class ContactController {
         await this._websitetService.create(
             createDto.website,
             createdContact.id,
-            // 'contact',
+            'contact',
         );
         return createdContact.toDto() as ContactUpdateDto;
     }
@@ -99,13 +99,18 @@ export class ContactController {
     })
     async update(
         @Param('id') contactId: string,
-        @Body() contactData: ContactUpdateDto,
+        @Body() updateDto: ContactUpdateDto,
         @AuthUser() user: UserEntity,
     ) {
         const updatedContact = await this._contactService.update(
             contactId,
-            contactData,
+            updateDto,
             user,
+        );
+        await this._websitetService.update(
+            updateDto.website,
+            updatedContact.id,
+            'contact',
         );
         return updatedContact.toDto() as ContactUpdateDto;
     }

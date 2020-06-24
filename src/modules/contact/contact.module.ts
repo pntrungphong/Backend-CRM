@@ -2,24 +2,19 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
-import { CompanyWebsiteRepository } from '../website/company.website.repository';
-import { ContactWebsiteRepository } from '../website/contact.website.repository';
-import { WebsiteService } from '../website/website.service';
+import { WebsiteModule } from '../website/website.module';
 import { ContactController } from './contact.controller';
 import { ContactRepository } from './contact.repository';
 import { ContactService } from './contact.service';
 
 @Module({
     imports: [
+        WebsiteModule,
         forwardRef(() => AuthModule),
-        TypeOrmModule.forFeature([
-            ContactRepository,
-            ContactWebsiteRepository,
-            CompanyWebsiteRepository,
-        ]),
+        TypeOrmModule.forFeature([ContactRepository]),
     ],
     controllers: [ContactController],
     exports: [ContactService],
-    providers: [ContactService, WebsiteService],
+    providers: [ContactService],
 })
 export class ContactModule {}

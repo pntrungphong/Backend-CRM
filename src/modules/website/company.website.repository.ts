@@ -1,9 +1,9 @@
 import { Repository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
-import { ContactWebsiteEntity } from './contact.website.entity';
+import { CompanyWebsiteEntity } from './company.website.entity';
 
-@EntityRepository(ContactWebsiteEntity)
+@EntityRepository(CompanyWebsiteEntity)
 export class CompanyWebsiteRepository extends Repository<
-    ContactWebsiteEntity
+    CompanyWebsiteEntity
 > {}

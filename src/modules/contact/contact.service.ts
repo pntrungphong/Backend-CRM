@@ -5,7 +5,6 @@ import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
 import { UserEntity } from '../user/user.entity';
-import { ContactWebsiteRepository } from '../website/contact.website.repository';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
 import { ContactDto } from './dto/ContactDto';
@@ -17,7 +16,6 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 export class ContactService {
     constructor(
         public readonly contactRepository: ContactRepository,
-        public readonly websiteRepository: ContactWebsiteRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
     ) {}

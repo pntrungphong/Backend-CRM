@@ -3,6 +3,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
+import { CreateWebsiteDto } from '../../website/dto/CreateWebsiteDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 
 export class ContactUpdateDto {
@@ -27,6 +28,6 @@ export class ContactUpdateDto {
     readonly address: string[];
 
     @IsOptional()
-    @ApiProperty({ type: [WebsiteDto] })
+    @ApiProperty({ type: [CreateWebsiteDto] })
     website: WebsiteDto[];
 }
