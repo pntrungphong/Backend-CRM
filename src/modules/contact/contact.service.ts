@@ -5,6 +5,7 @@ import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
 import { UserEntity } from '../user/user.entity';
+import { ContactWebsiteRepository } from '../website/contact.website.repository';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
 import { ContactDto } from './dto/ContactDto';
@@ -16,6 +17,7 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 export class ContactService {
     constructor(
         public readonly contactRepository: ContactRepository,
+        public readonly websiteRepository: ContactWebsiteRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
     ) {}
@@ -34,8 +36,6 @@ export class ContactService {
             phone: createDto.phone.join('|'),
             email: createDto.email.join('|'),
             address: createDto.address.join('|'),
-            website: createDto.website.join('|'),
-            tag: createDto.tag.join('|'),
         });
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
@@ -53,8 +53,6 @@ export class ContactService {
             phone: contactUpdateDto.phone.join('|'),
             email: contactUpdateDto.email.join('|'),
             address: contactUpdateDto.address.join('|'),
-            website: contactUpdateDto.website.join('|'),
-            tag: contactUpdateDto.tag.join('|'),
         });
         return this.contactRepository.save(updatedContact);
     }
@@ -62,9 +60,9 @@ export class ContactService {
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
-        const queryBuilder = this.contactRepository.createQueryBuilder(
-            'contact',
-        );
+        const queryBuilder = this.contactRepository
+            .createQueryBuilder('contact')
+            .leftJoinAndSelect('contact.website', 'website');
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -80,10 +78,11 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
+            relations: ['website'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return new ContactDto(contact.toDto());
+        return contact.toDto() as ContactDto;
     }
 }

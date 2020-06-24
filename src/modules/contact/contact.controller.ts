@@ -26,6 +26,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../user/user.entity';
+import { WebsiteService } from '../website/website.service';
 import { ContactService } from './contact.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
@@ -38,7 +39,10 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class ContactController {
-    constructor(private _contactService: ContactService) {}
+    constructor(
+        private _contactService: ContactService,
+        private _websitetService: WebsiteService,
+    ) { }
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -78,6 +82,11 @@ export class ContactController {
         const createdContact = await this._contactService.create(
             createDto,
             user,
+        );
+        await this._websitetService.create(
+            createDto.website,
+            createdContact.id,
+            // 'contact',
         );
         return createdContact.toDto() as ContactUpdateDto;
     }

@@ -15,18 +15,24 @@ export class AdditionalTable1592963206316 implements MigrationInterface {
             "id_contact" integer    
           );
 
-          CREATE TABLE "website" (
+          CREATE TABLE "contact_website" (
             "id" SERIAL PRIMARY KEY,
             "id_source" integer,
-            "type" varchar(20),
+            "name" varchar(50),    
+            "url" varchar(50)    
+          );
+
+          CREATE TABLE "company_website" (
+            "id" SERIAL PRIMARY KEY,
+            "id_source" integer,
             "name" varchar(50),    
             "url" varchar(50)    
           );
           
           ALTER TABLE "tagContact" ADD FOREIGN KEY ("id_contact") REFERENCES "contact" ("id");
           ALTER TABLE "tagCompany" ADD FOREIGN KEY ("id_company") REFERENCES "company" ("id");
-          ALTER TABLE "website" ADD FOREIGN KEY ("id_source") REFERENCES company ("id");
-          ALTER TABLE "website" ADD FOREIGN KEY ("id_source") REFERENCES contact ("id");
+          ALTER TABLE "contact_website" ADD FOREIGN KEY ("id_source") REFERENCES contact ("id");
+          ALTER TABLE "company_website" ADD FOREIGN KEY ("id_source") REFERENCES company ("id");
         `);
     }
 
