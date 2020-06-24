@@ -39,7 +39,6 @@ export class CompanyDto extends AbstractDto {
         this.email = company.email.split('|');
         this.phone = company.phone.split('|');
         this.address = company.address.split('|');
-        this.website = company.website.split('|');
         this.url = company.url.split('|');
         this.createdBy = company.createdBy;
         this.companyContact = company.cpt;

@@ -20,10 +20,6 @@ export class UpdateCompanyDto {
 
     @IsArray()
     @ApiPropertyOptional()
-    website: string[];
-
-    @IsArray()
-    @ApiPropertyOptional()
     url: string[];
 
     @IsString()

@@ -19,7 +19,6 @@ export class CompanyService {
             email: createDto.email.join('|'),
             phone: createDto.phone.join('|'),
             address: createDto.address.join('|'),
-            website: createDto.website.join('|'),
             url: createDto.url.join('|'),
             createdBy: user.id,
             updatedBy: user.id,
@@ -93,7 +92,6 @@ export class CompanyService {
             email: updateDto.email.join('|'),
             phone: updateDto.phone.join('|'),
             address: updateDto.address.join('|'),
-            website: updateDto.website.join('|'),
             url: updateDto.url.join('|'),
             updated_by: user.id,
         });

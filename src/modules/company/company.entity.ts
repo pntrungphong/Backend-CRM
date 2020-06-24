@@ -15,8 +15,6 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     @Column({ nullable: true, type: 'varchar', length: 500 })
     phone: string;
     @Column({ nullable: true, type: 'varchar', length: 500 })
-    website: string;
-    @Column({ nullable: true, type: 'varchar', length: 500 })
     url: string;
     @Column({
         nullable: true,
