@@ -1,7 +1,7 @@
 'use strict';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class ContactUpdateDto {
     @IsString()
@@ -9,23 +9,28 @@ export class ContactUpdateDto {
     @ApiProperty()
     readonly name: string;
 
-    @IsString()
-    @IsEmail()
+    @IsArray()
     @IsOptional()
     @ApiProperty()
-    readonly email: string;
+    readonly email: string[];
 
+    @IsArray()
     @IsOptional()
     @ApiProperty()
-    readonly phone: string;
+    readonly phone: string[];
 
-    @IsString()
+    @IsArray()
     @IsOptional()
     @ApiProperty()
-    readonly address: string;
+    readonly address: string[];
 
-    @IsString()
+    @IsArray()
     @IsOptional()
     @ApiProperty()
-    readonly website: string;
+    readonly website: string[];
+
+    @IsArray()
+    @IsOptional()
+    @ApiProperty()
+    readonly tag: string[];
 }

@@ -92,19 +92,4 @@ export class CompanyController {
         );
         return updatedCompany.toDto() as UpdateCompanyDto;
     }
-
-    @Get('/findbyname')
-    @HttpCode(HttpStatus.OK)
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'Get companies list',
-        type: CompaniesPageDto,
-    })
-    async getCompaniesByName(
-        @Query('name') name: string,
-        @Query(new ValidationPipe({ transform: true }))
-        pageOptionsDto: CompaniesPageOptionsDto,
-    ) {
-        return this._companyService.findByName(name, pageOptionsDto);
-    }
 }

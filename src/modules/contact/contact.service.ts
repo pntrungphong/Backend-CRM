@@ -25,12 +25,17 @@ export class ContactService {
     }
 
     async create(
-        contactCreateDto: ContactUpdateDto,
+        createDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
-        const contactObj = Object.assign(contactCreateDto, {
+        const contactObj = Object.assign(createDto, {
             createdBy: user.id,
             updatedBy: user.id,
+            phone: createDto.phone.join('|'),
+            email: createDto.email.join('|'),
+            address: createDto.address.join('|'),
+            website: createDto.website.join('|'),
+            tag: createDto.tag.join('|'),
         });
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
@@ -45,6 +50,11 @@ export class ContactService {
         const updatedContact = Object.assign(contact, {
             ...contactUpdateDto,
             updatedBy: user.id,
+            phone: contactUpdateDto.phone.join('|'),
+            email: contactUpdateDto.email.join('|'),
+            address: contactUpdateDto.address.join('|'),
+            website: contactUpdateDto.website.join('|'),
+            tag: contactUpdateDto.tag.join('|'),
         });
         return this.contactRepository.save(updatedContact);
     }

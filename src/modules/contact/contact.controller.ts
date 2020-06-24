@@ -32,8 +32,8 @@ import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
 
-@Controller('contacts')
-@ApiTags('contacts')
+@Controller('contact')
+@ApiTags('contact')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
@@ -47,7 +47,7 @@ export class ContactController {
         description: 'Get contacts list',
         type: ContactsPageDto,
     })
-    getCompanies(
+    getAll(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
     ) {
@@ -61,22 +61,25 @@ export class ContactController {
         description: 'Get companies list',
         type: ContactDto,
     })
-    async readContactById(@Param('id') id: string) {
+    async getById(@Param('id') id: string) {
         return this._contactService.findById(id);
     }
 
     @Post()
     @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({ type: ContactDto, description: 'Successfully Created' })
-    async contactCreate(
-        @Body() contactCreateDto: ContactUpdateDto,
+    @ApiOkResponse({
+        type: ContactUpdateDto,
+        description: 'Successfully Created',
+    })
+    async create(
+        @Body() createDto: ContactUpdateDto,
         @AuthUser() user: UserEntity,
-    ): Promise<ContactDto> {
+    ): Promise<ContactUpdateDto> {
         const createdContact = await this._contactService.create(
-            contactCreateDto,
+            createDto,
             user,
         );
-        return createdContact.toDto() as ContactDto;
+        return createdContact.toDto() as ContactUpdateDto;
     }
 
     @Put(':id')
@@ -85,7 +88,7 @@ export class ContactController {
         description: 'Update infomation contact',
         type: ContactUpdateDto,
     })
-    async updateContact(
+    async update(
         @Param('id') contactId: string,
         @Body() contactData: ContactUpdateDto,
         @AuthUser() user: UserEntity,
