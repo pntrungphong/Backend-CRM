@@ -26,10 +26,6 @@ export class UpdateCompanyDto {
     @ApiPropertyOptional()
     url: string[];
 
-    @IsArray()
-    @ApiPropertyOptional()
-    tag: string[];
-
     @IsString()
     @ApiPropertyOptional()
     createBy: string;

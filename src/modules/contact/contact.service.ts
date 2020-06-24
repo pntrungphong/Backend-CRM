@@ -35,7 +35,6 @@ export class ContactService {
             email: createDto.email.join('|'),
             address: createDto.address.join('|'),
             website: createDto.website.join('|'),
-            tag: createDto.tag.join('|'),
         });
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
@@ -54,7 +53,6 @@ export class ContactService {
             email: contactUpdateDto.email.join('|'),
             address: contactUpdateDto.address.join('|'),
             website: contactUpdateDto.website.join('|'),
-            tag: contactUpdateDto.tag.join('|'),
         });
         return this.contactRepository.save(updatedContact);
     }
@@ -62,9 +60,9 @@ export class ContactService {
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
-        const queryBuilder = this.contactRepository.createQueryBuilder(
-            'contact',
-        );
+        const queryBuilder = this.contactRepository
+            .createQueryBuilder('contact')
+            .innerJoinAndSelect('contact.cpt', 'cpt');
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)

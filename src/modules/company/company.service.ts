@@ -21,7 +21,6 @@ export class CompanyService {
             address: createDto.address.join('|'),
             website: createDto.website.join('|'),
             url: createDto.url.join('|'),
-            tag: createDto.tag.join('|'),
             createdBy: user.id,
             updatedBy: user.id,
         });
@@ -32,9 +31,9 @@ export class CompanyService {
     async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository.createQueryBuilder(
-            'company',
-        );
+        const queryBuilder = this.companyRepository
+            .createQueryBuilder('company')
+            .innerJoinAndSelect('company.cpt', 'cpt');
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -96,7 +95,6 @@ export class CompanyService {
             address: updateDto.address.join('|'),
             website: updateDto.website.join('|'),
             url: updateDto.url.join('|'),
-            tag: updateDto.tag.join('|'),
             updated_by: user.id,
         });
 

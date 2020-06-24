@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
+import { CompanyContactEntity } from '../companyContact/companyContact.entity';
 import { CompanyDto } from './dto/CompanyDto';
 
 @Entity({ name: 'company' })
@@ -17,8 +18,6 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     website: string;
     @Column({ nullable: true, type: 'varchar', length: 500 })
     url: string;
-    @Column({ nullable: false, type: 'varchar', length: 500 })
-    tag: string;
     @Column({
         nullable: true,
         type: 'varchar',
@@ -33,5 +32,10 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
         name: 'updated_by',
     })
     updatedBy: string;
+
+    @OneToMany(() => CompanyContactEntity, (cpt) => cpt.company)
+    @JoinColumn()
+    cpt: CompanyContactEntity[];
+
     dtoClass = CompanyDto;
 }
