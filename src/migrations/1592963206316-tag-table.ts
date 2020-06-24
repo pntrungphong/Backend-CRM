@@ -12,13 +12,7 @@ export class CreateDatabase1592963206316 implements MigrationInterface {
           CREATE TABLE "tagContact" (
             "id" SERIAL PRIMARY KEY,
             "tag" varchar(500),
-            "id_contact" integer
-          );
-          
-          CREATE TABLE "contact_referral" (
-            "id" SERIAL PRIMARY KEY,
-            "id_source" integer,
-            "id_target" integer
+            "id_contact" integer    
           );
           
           ALTER TABLE "tagContact" ADD FOREIGN KEY ("id_contact") REFERENCES "contact" ("id");
