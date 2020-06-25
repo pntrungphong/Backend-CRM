@@ -3,27 +3,31 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/AbstractDto';
+import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { CompanyEntity } from '../company.entity';
 
 export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: [] })
     email: string;
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: [] })
     phone: string;
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: [] })
     address: string;
 
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: [WebsiteDto] })
     website: string;
+
     @ApiPropertyOptional()
     url: string;
+
     @ApiPropertyOptional()
     createdBy: string;
+
     @ApiPropertyOptional()
     updatedBy: string;
 

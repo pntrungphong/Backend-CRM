@@ -5,31 +5,28 @@ import { CompanyDto } from './dto/CompanyDto';
 
 @Entity({ name: 'company' })
 export class CompanyEntity extends AbstractEntity<CompanyDto> {
-    @Column({ nullable: false, type: 'varchar', length: 200 })
+    @Column({ nullable: false })
     name: string;
-    @Column({ nullable: true, type: 'varchar', length: 250 })
-    address: string;
-    @Column({ nullable: false, type: 'varchar', length: 250 })
-    email: string;
-    @Column({ nullable: true, type: 'varchar', length: 15 })
-    phone: string;
-    @Column({ nullable: true, type: 'varchar', length: 250 })
-    website: string;
-    @Column({ nullable: true, type: 'varchar', length: 250 })
+    @Column({ nullable: false })
     url: string;
+    @Column({ nullable: true, type: 'jsonb' })
+    address: string;
+    @Column({ nullable: true, type: 'jsonb' })
+    email: string;
+    @Column({ nullable: true, type: 'jsonb' })
+    phone: string;
+    @Column({ nullable: true, type: 'jsonb' })
+    website: string;
     @Column({
         nullable: true,
-        type: 'varchar',
-        length: 250,
         name: 'created_by',
     })
     createdBy: string;
     @Column({
         nullable: true,
-        type: 'varchar',
-        length: 250,
         name: 'updated_by',
     })
     updatedBy: string;
+
     dtoClass = CompanyDto;
 }

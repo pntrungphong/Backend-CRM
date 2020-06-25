@@ -29,7 +29,6 @@ import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
-import { CreateCompanyDto } from './dto/CreateCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 
 @Controller('company')
@@ -50,7 +49,7 @@ export class CompanyController {
     getCompanies(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: CompaniesPageOptionsDto,
-    ) {
+    ): Promise<CompaniesPageDto> {
         return this._companyService.getList(pageOptionsDto);
     }
 
@@ -61,7 +60,7 @@ export class CompanyController {
         description: 'Get company by id',
         type: CompanyDto,
     })
-    async getCompanyById(@Param('id') id: string) {
+    async getCompanyById(@Param('id') id: string): Promise<CompanyDto> {
         return this._companyService.findById(id);
     }
 
@@ -69,7 +68,7 @@ export class CompanyController {
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
     async createCompany(
-        @Body() data: CreateCompanyDto,
+        @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);

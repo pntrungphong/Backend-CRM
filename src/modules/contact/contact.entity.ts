@@ -8,20 +8,17 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @Column({ nullable: false })
     name: string;
 
-    @Column({ unique: true, nullable: true })
+    @Column({ unique: true, nullable: true, type: 'jsonb' })
     email: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'jsonb' })
     phone: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'jsonb' })
     address: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: false, type: 'jsonb' })
     website: string;
-
-    @Column({ nullable: true })
-    tag: string;
 
     @Column({ nullable: false, name: 'created_by' })
     createdBy: string;
