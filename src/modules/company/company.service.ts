@@ -21,15 +21,25 @@ export class CompanyService {
             updatedBy: user.id,
         });
         const company = this.companyRepository.create({ ...companyObj });
+
         return this.companyRepository.save(company);
     }
 
     async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository
-            .createQueryBuilder('company')
-            .leftJoinAndSelect('company.cpt', 'cpt');
+        const queryBuilder = this.companyRepository.createQueryBuilder(
+            'company',
+        );
+        // .leftJoinAndSelect('company.cpt', 'cpt');
+
+        // handle query
+        queryBuilder.where('1 = 1');
+        queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
+            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        });
+        queryBuilder.orderBy('company.updated_at', pageOptionsDto.order);
+
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)

@@ -28,6 +28,7 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
+import { ContactReferralService } from './contactreferral.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
@@ -42,6 +43,7 @@ export class ContactController {
     constructor(
         private _contactService: ContactService,
         private _companyContactService: CompanyContactService,
+        private _contactReferralService: ContactReferralService,
     ) {}
 
     @Get()
@@ -83,10 +85,19 @@ export class ContactController {
             createDto,
             user,
         );
-        await this._companyContactService.createCompany(
-            createDto.company,
-            createdContact.id,
-        );
+        if (createDto.company) {
+            await this._companyContactService.createCompany(
+                createDto.company,
+                createdContact.id,
+            );
+        }
+        if (createDto.contactReferral) {
+            await this._contactReferralService.create(
+                createDto.contactReferral,
+                createdContact.id,
+            );
+        }
+
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -106,11 +117,15 @@ export class ContactController {
             updateDto,
             user,
         );
-
         await this._companyContactService.updateCompany(
             updateDto.company,
             updatedContact.id,
         );
+        await this._contactReferralService.update(
+            updateDto.contactReferral,
+            updatedContact.id,
+        );
+
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }

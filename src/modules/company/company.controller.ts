@@ -105,6 +105,7 @@ export class CompanyController {
             data.contact,
             updatedCompany.id,
         );
+
         return updatedCompany.toDto() as UpdateCompanyDto;
     }
 }
