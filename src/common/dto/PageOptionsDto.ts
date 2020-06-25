@@ -1,14 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-    IsEnum,
-    IsInt,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    Max,
-    Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 
 import { Order } from '../constants/order';
 
@@ -49,7 +41,6 @@ export class PageOptionsDto {
 
     @ApiPropertyOptional()
     @IsString()
-    @IsNotEmpty()
     @IsOptional()
-    readonly q?: string;
+    readonly q?: string = '';
 }
