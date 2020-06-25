@@ -31,6 +31,12 @@ export class CompanyService {
         const queryBuilder = this.companyRepository.createQueryBuilder(
             'company',
         );
+        // handle query
+        queryBuilder.where('1 = 1');
+        queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
+            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        });
+        queryBuilder.orderBy('company.updated_at', pageOptionsDto.order);
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
