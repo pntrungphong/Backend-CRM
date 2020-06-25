@@ -30,6 +30,7 @@ import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
+import { TagCompanyService } from './tagcompany.service';
 
 @Controller('company')
 @ApiTags('company')
@@ -37,7 +38,8 @@ import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class CompanyController {
-    constructor(private _companyService: CompanyService) {}
+    constructor(private _companyService: CompanyService,
+        private _tagcompanyService: TagCompanyService) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -72,6 +74,9 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
+
+        await this._tagcompanyService.create(data.tagCompany, createCompany.id);
+
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -90,6 +95,10 @@ export class CompanyController {
             data,
             user,
         );
+        
         return updatedCompany.toDto() as UpdateCompanyDto;
     }
+
+
+
 }

@@ -1,6 +1,7 @@
 'use strict';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsString } from 'class-validator';
+import { TagCompanyDto } from './TagCompanyDto';
 export class UpdateCompanyDto {
     @IsString()
     @ApiPropertyOptional()
@@ -20,15 +21,11 @@ export class UpdateCompanyDto {
 
     @IsArray()
     @ApiPropertyOptional()
-    website: string[];
-
-    @IsArray()
-    @ApiPropertyOptional()
     url: string[];
 
     @IsArray()
     @ApiPropertyOptional()
-    tag: string[];
+    tagCompany: TagCompanyDto[];
 
     @IsString()
     @ApiPropertyOptional()

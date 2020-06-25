@@ -3,14 +3,21 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { UserEntity } from '../../modules/user/user.entity';
 import { CompanyEntity } from './company.entity';
+import { TagCompanyEntity } from './tagcompany.entity';
 import { CompanyRepository } from './company.repository';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
+import { getRepository } from 'typeorm';
+import { TagCompanyService } from './tagcompany.service';
+import { TagCompanyDto } from './dto/TagCompanyDto';
 @Injectable()
 export class CompanyService {
-    constructor(public readonly companyRepository: CompanyRepository) {}
+    constructor(
+        public readonly companyRepository: CompanyRepository, 
+        private _tagcompanyService: TagCompanyService) {}
+    
     async create(
         user: UserEntity,
         createDto: UpdateCompanyDto,
@@ -19,22 +26,21 @@ export class CompanyService {
             email: createDto.email.join('|'),
             phone: createDto.phone.join('|'),
             address: createDto.address.join('|'),
-            website: createDto.website.join('|'),
             url: createDto.url.join('|'),
-            tag: createDto.tag.join('|'),
             createdBy: user.id,
             updatedBy: user.id,
         });
         const company = this.companyRepository.create({ ...companyObj });
+
         return this.companyRepository.save(company);
     }
 
     async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository.createQueryBuilder(
-            'company',
-        );
+        const queryBuilder = await getRepository(CompanyEntity)
+            .createQueryBuilder('company')
+            .leftJoinAndSelect('company.tagCompany', 'tagCompany');
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -94,9 +100,7 @@ export class CompanyService {
             email: updateDto.email.join('|'),
             phone: updateDto.phone.join('|'),
             address: updateDto.address.join('|'),
-            website: updateDto.website.join('|'),
             url: updateDto.url.join('|'),
-            tag: updateDto.tag.join('|'),
             updated_by: user.id,
         });
 
