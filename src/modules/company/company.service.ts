@@ -41,7 +41,8 @@ export class CompanyService {
         const queryBuilder = await getRepository(CompanyEntity)
             .createQueryBuilder('company')
             .leftJoinAndSelect('company.tagCompany', 'tagCompany');
-        const [companies, companiesCount] = await queryBuilder
+        
+            const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();

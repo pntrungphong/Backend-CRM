@@ -43,7 +43,7 @@ export class CompanyController {
 
     @Get()
     @HttpCode(HttpStatus.OK)
-    @ApiResponse({
+    @ApiResponse({ 
         status: HttpStatus.OK,
         description: 'Get companies list',
         type: CompaniesPageDto,

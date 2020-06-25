@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { FindConditions } from 'typeorm';
+import { FindConditions, getRepository } from 'typeorm';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
@@ -11,14 +11,15 @@ import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
+import { ContactReferralService } from '../contactreferral/contactreferral.service';
 
-@Injectable()
+@Injectable()   
 export class ContactService {
     constructor(
         public readonly contactRepository: ContactRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
-    ) {}
+        private _contactReferralService: ContactReferralService) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);
@@ -28,17 +29,13 @@ export class ContactService {
         createDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
-        const contactObj = Object.assign(createDto, {
+        const contactObj = Object.assign({...createDto,
             createdBy: user.id,
-            updatedBy: user.id,
-            phone: createDto.phone.join('|'),
-            email: createDto.email.join('|'),
-            address: createDto.address.join('|'),
-            website: createDto.website.join('|'),
-            tag: createDto.tag.join('|'),
-        });
-        const contact = this.contactRepository.create({ ...contactObj });
+            updatedBy: user.id}
+        );
+        const contact = this.contactRepository.create({...contactObj});
         return this.contactRepository.save(contact);
+
     }
 
     async update(
@@ -62,11 +59,12 @@ export class ContactService {
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
-        const queryBuilder = this.contactRepository.createQueryBuilder(
-            'contact',
-        );
+        const queryBuilder = await getRepository(ContactEntity)
+        .createQueryBuilder('contact')
+        .leftJoinAndSelect('contact.id', 'referral_contact');
+
         const [contacts, contactsCount] = await queryBuilder
-            .skip(pageOptionsDto.skip)
+            .skip(pageOptionsDto.skip) 
             .take(pageOptionsDto.take)
             .getManyAndCount();
 

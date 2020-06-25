@@ -18,7 +18,7 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     url: string;
     @Column({
         nullable: true,
-        type: 'varchar',
+        type: 'varchar', 
         length: 200,
         name: 'created_by',
     })

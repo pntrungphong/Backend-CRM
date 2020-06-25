@@ -1,7 +1,8 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany, JoinColumn } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { ContactDto } from './dto/ContactDto';
+import { ContactReferralEntity } from '../contactreferral/contactreferral.entity';
 
 @Entity({ name: 'contact' })
 export class ContactEntity extends AbstractEntity<ContactDto> {
@@ -20,14 +21,15 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @Column({ nullable: true })
     website: string;
 
-    @Column({ nullable: true })
-    tag: string;
-
     @Column({ nullable: false, name: 'created_by' })
     createdBy: string;
 
     @Column({ nullable: false, name: 'updated_by' })
     updatedBy: string;
+
+    @OneToMany(type => ContactReferralEntity, (contactReferral) => contactReferral.contact)
+    @JoinColumn()
+    contactReferral: ContactReferralEntity[];
 
     dtoClass = ContactDto;
 }
