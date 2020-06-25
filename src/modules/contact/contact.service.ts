@@ -55,6 +55,12 @@ export class ContactService {
         const queryBuilder = this.contactRepository
             .createQueryBuilder('contact')
             .leftJoinAndSelect('contact.company', 'cpt');
+        // handle query
+        queryBuilder.where('1 = 1');
+        queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
+            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        });
+        queryBuilder.orderBy('contact.updated_at', pageOptionsDto.order);
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
