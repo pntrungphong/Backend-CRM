@@ -31,10 +31,6 @@ export class ContactService {
         const contactObj = Object.assign(createDto, {
             createdBy: user.id,
             updatedBy: user.id,
-            phone: createDto.phone.join('|'),
-            email: createDto.email.join('|'),
-            address: createDto.address.join('|'),
-            website: createDto.website.join('|'),
         });
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
@@ -42,17 +38,13 @@ export class ContactService {
 
     async update(
         id: string,
-        contactUpdateDto: ContactUpdateDto,
+        updateDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
         const contact = await this.contactRepository.findOne({ id });
         const updatedContact = Object.assign(contact, {
-            ...contactUpdateDto,
+            ...updateDto,
             updatedBy: user.id,
-            phone: contactUpdateDto.phone.join('|'),
-            email: contactUpdateDto.email.join('|'),
-            address: contactUpdateDto.address.join('|'),
-            website: contactUpdateDto.website.join('|'),
         });
         return this.contactRepository.save(updatedContact);
     }
@@ -82,6 +74,6 @@ export class ContactService {
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return new ContactDto(contact.toDto());
+        return contact.toDto() as ContactDto;
     }
 }

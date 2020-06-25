@@ -50,7 +50,7 @@ export class ContactController {
     getAll(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
-    ) {
+    ): Promise<ContactsPageDto> {
         return this._contactService.getList(pageOptionsDto);
     }
 
@@ -61,7 +61,7 @@ export class ContactController {
         description: 'Get companies list',
         type: ContactDto,
     })
-    async getById(@Param('id') id: string) {
+    async getById(@Param('id') id: string): Promise<ContactDto> {
         return this._contactService.findById(id);
     }
 
@@ -90,12 +90,12 @@ export class ContactController {
     })
     async update(
         @Param('id') contactId: string,
-        @Body() contactData: ContactUpdateDto,
+        @Body() updateDto: ContactUpdateDto,
         @AuthUser() user: UserEntity,
-    ) {
+    ): Promise<ContactUpdateDto> {
         const updatedContact = await this._contactService.update(
             contactId,
-            contactData,
+            updateDto,
             user,
         );
         return updatedContact.toDto() as ContactUpdateDto;

@@ -49,7 +49,7 @@ export class CompanyController {
     getCompanies(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: CompaniesPageOptionsDto,
-    ) {
+    ): Promise<CompaniesPageDto> {
         return this._companyService.getList(pageOptionsDto);
     }
 
@@ -60,7 +60,7 @@ export class CompanyController {
         description: 'Get company by id',
         type: CompanyDto,
     })
-    async getCompanyById(@Param('id') id: string) {
+    async getCompanyById(@Param('id') id: string): Promise<CompanyDto> {
         return this._companyService.findById(id);
     }
 
