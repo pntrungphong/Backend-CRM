@@ -17,13 +17,10 @@ export class CompanyService {
         createDto: UpdateCompanyDto,
     ): Promise<CompanyEntity> {
         const companyObj = Object.assign(createDto, {
-            email: createDto.email.join('|'),
-            phone: createDto.phone.join('|'),
-            address: createDto.address.join('|'),
-            url: createDto.url.join('|'),
             createdBy: user.id,
             updatedBy: user.id,
         });
+        console.table(companyObj);
         const company = this.companyRepository.create({ ...companyObj });
         return this.companyRepository.save(company);
     }
@@ -90,10 +87,6 @@ export class CompanyService {
         }
         const updatedCompany = Object.assign(company, {
             ...updateDto,
-            email: updateDto.email.join('|'),
-            phone: updateDto.phone.join('|'),
-            address: updateDto.address.join('|'),
-            url: updateDto.url.join('|'),
             updated_by: user.id,
         });
 

@@ -31,9 +31,6 @@ export class ContactService {
         const contactObj = Object.assign(createDto, {
             createdBy: user.id,
             updatedBy: user.id,
-            phone: createDto.phone.join('|'),
-            email: createDto.email.join('|'),
-            address: createDto.address.join('|'),
         });
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
@@ -41,16 +38,13 @@ export class ContactService {
 
     async update(
         id: string,
-        contactUpdateDto: ContactUpdateDto,
+        updateDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
         const contact = await this.contactRepository.findOne({ id });
         const updatedContact = Object.assign(contact, {
-            ...contactUpdateDto,
+            ...updateDto,
             updatedBy: user.id,
-            phone: contactUpdateDto.phone.join('|'),
-            email: contactUpdateDto.email.join('|'),
-            address: contactUpdateDto.address.join('|'),
         });
         return this.contactRepository.save(updatedContact);
     }
@@ -58,9 +52,9 @@ export class ContactService {
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
-        const queryBuilder = this.contactRepository
-            .createQueryBuilder('contact')
-            .leftJoinAndSelect('contact.website', 'website');
+        const queryBuilder = this.contactRepository.createQueryBuilder(
+            'contact',
+        );
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -76,7 +70,6 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['website'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);

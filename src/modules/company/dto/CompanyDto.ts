@@ -10,20 +10,20 @@ export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
 
-    @ApiPropertyOptional()
-    email: string[];
+    @ApiPropertyOptional({ type: [] })
+    email: string;
+
+    @ApiPropertyOptional({ type: [] })
+    phone: string;
+
+    @ApiPropertyOptional({ type: [] })
+    address: string;
+
+    @ApiPropertyOptional({ type: [WebsiteDto] })
+    website: string;
 
     @ApiPropertyOptional()
-    phone: string[];
-
-    @ApiPropertyOptional()
-    address: string[];
-
-    @ApiPropertyOptional()
-    url: string[];
-
-    @ApiPropertyOptional()
-    tag: string[];
+    url: string;
 
     @ApiPropertyOptional()
     createdBy: string;
@@ -31,17 +31,14 @@ export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
-    @ApiPropertyOptional({ type: [WebsiteDto] })
-    website: WebsiteDto[];
-
     constructor(company: CompanyEntity) {
         super(company);
         this.name = company.name;
-        this.email = company.email.split('|');
-        this.phone = company.phone.split('|');
-        this.address = company.address.split('|');
+        this.email = company.email;
+        this.phone = company.phone;
+        this.address = company.address;
         this.website = company.website;
-        this.url = company.url.split('|');
+        this.url = company.url;
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
     }

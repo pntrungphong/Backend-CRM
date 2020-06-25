@@ -26,7 +26,6 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../user/user.entity';
-import { WebsiteService } from '../website/website.service';
 import { ContactService } from './contact.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
@@ -39,10 +38,7 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class ContactController {
-    constructor(
-        private _contactService: ContactService,
-        private _websitetService: WebsiteService,
-    ) {}
+    constructor(private _contactService: ContactService) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -54,7 +50,7 @@ export class ContactController {
     getAll(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
-    ) {
+    ): Promise<ContactsPageDto> {
         return this._contactService.getList(pageOptionsDto);
     }
 
@@ -65,7 +61,7 @@ export class ContactController {
         description: 'Get companies list',
         type: ContactDto,
     })
-    async getById(@Param('id') id: string) {
+    async getById(@Param('id') id: string): Promise<ContactDto> {
         return this._contactService.findById(id);
     }
 
@@ -83,11 +79,6 @@ export class ContactController {
             createDto,
             user,
         );
-        await this._websitetService.create(
-            createDto.website,
-            createdContact.id,
-            'contact',
-        );
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -101,16 +92,11 @@ export class ContactController {
         @Param('id') contactId: string,
         @Body() updateDto: ContactUpdateDto,
         @AuthUser() user: UserEntity,
-    ) {
+    ): Promise<ContactUpdateDto> {
         const updatedContact = await this._contactService.update(
             contactId,
             updateDto,
             user,
-        );
-        await this._websitetService.update(
-            updateDto.website,
-            updatedContact.id,
-            'contact',
         );
         return updatedContact.toDto() as ContactUpdateDto;
     }
