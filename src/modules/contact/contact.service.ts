@@ -11,7 +11,7 @@ import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
-import { ContactReferralService } from '../contactreferral/contactreferral.service';
+import { ContactReferralService } from './contactreferral.service';
 
 @Injectable()   
 export class ContactService {
@@ -29,40 +29,45 @@ export class ContactService {
         createDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
-        const contactObj = Object.assign({...createDto,
+        const contactObj = Object.assign(createDto, {
             createdBy: user.id,
-            updatedBy: user.id}
-        );
-        const contact = this.contactRepository.create({...contactObj});
+            updatedBy: user.id
+        });
+        const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
 
     }
 
     async update(
         id: string,
-        contactUpdateDto: ContactUpdateDto,
+        updateDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
         const contact = await this.contactRepository.findOne({ id });
         const updatedContact = Object.assign(contact, {
-            ...contactUpdateDto,
+            ...updateDto,
             updatedBy: user.id,
-            phone: contactUpdateDto.phone.join('|'),
-            email: contactUpdateDto.email.join('|'),
-            address: contactUpdateDto.address.join('|'),
-            website: contactUpdateDto.website.join('|'),
-            tag: contactUpdateDto.tag.join('|'),
         });
+        
         return this.contactRepository.save(updatedContact);
     }
 
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
-        const queryBuilder = await getRepository(ContactEntity)
-        .createQueryBuilder('contact')
-        .leftJoinAndSelect('contact.id', 'referral_contact');
+        const queryBuilder = this.contactRepository
+            .createQueryBuilder('contact')
+            .leftJoinAndSelect('contact.contactReferral', 'contactReferral')
+            //.where('(contact.id = contactReferral.idSource)')
+            //.setParameters({ name });
 
+
+        // handle query
+        // queryBuilder.where('1 = 1');
+        // queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
+        //     name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        // });
+        // queryBuilder.orderBy('contact.updated_at', pageOptionsDto.order);
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip) 
             .take(pageOptionsDto.take)
@@ -78,10 +83,11 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
+            relations: ['contactReferral']
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return new ContactDto(contact.toDto());
+        return contact.toDto() as ContactDto;
     }
 }

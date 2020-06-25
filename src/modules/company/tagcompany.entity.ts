@@ -15,9 +15,9 @@ export class TagCompanyEntity {
   @Column({name: 'tag'})
   tag: string;
 
-  @ManyToOne(type => CompanyEntity, (company) => company.tagCompany)
-  @JoinColumn({
-      name: 'id_company', 
-  })
+//   @ManyToOne(type => CompanyEntity, (company) => company.tagCompany)
+//   @JoinColumn({
+//       name: 'id_company', 
+//   })
   company: CompanyEntity;
 }

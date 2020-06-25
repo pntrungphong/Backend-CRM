@@ -14,22 +14,17 @@ import { TagCompanyService } from './tagcompany.service';
 import { TagCompanyDto } from './dto/TagCompanyDto';
 @Injectable()
 export class CompanyService {
-    constructor(
-        public readonly companyRepository: CompanyRepository, 
-        private _tagcompanyService: TagCompanyService) {}
-    
+    constructor(public readonly companyRepository: CompanyRepository) {}
+
     async create(
         user: UserEntity,
         createDto: UpdateCompanyDto,
     ): Promise<CompanyEntity> {
         const companyObj = Object.assign(createDto, {
-            email: createDto.email.join('|'),
-            phone: createDto.phone.join('|'),
-            address: createDto.address.join('|'),
-            url: createDto.url.join('|'),
             createdBy: user.id,
             updatedBy: user.id,
         });
+        console.table(companyObj);
         const company = this.companyRepository.create({ ...companyObj });
 
         return this.companyRepository.save(company);
@@ -38,11 +33,16 @@ export class CompanyService {
     async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDto> {
-        const queryBuilder = await getRepository(CompanyEntity)
-            .createQueryBuilder('company')
-            .leftJoinAndSelect('company.tagCompany', 'tagCompany');
-        
-            const [companies, companiesCount] = await queryBuilder
+        const queryBuilder = this.companyRepository.createQueryBuilder(
+            'company',
+        );
+        // handle query
+        queryBuilder.where('1 = 1');
+        queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
+            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        });
+        queryBuilder.orderBy('company.updated_at', pageOptionsDto.order);
+        const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();
@@ -98,10 +98,6 @@ export class CompanyService {
         }
         const updatedCompany = Object.assign(company, {
             ...updateDto,
-            email: updateDto.email.join('|'),
-            phone: updateDto.phone.join('|'),
-            address: updateDto.address.join('|'),
-            url: updateDto.url.join('|'),
             updated_by: user.id,
         });
 

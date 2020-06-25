@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 
-import { ContactReferralDto } from './dto/ContactReferralDto';
+import { ContactReferralDto } from '../contactreferral/dto/ContactReferralDto';
 import { ContactReferralRepository } from './contactreferral.repository';
 @Injectable()
 export class ContactReferralService {
@@ -11,17 +11,25 @@ export class ContactReferralService {
         idContact: string,
     ) {
         for await (const contactReferral of createContactReferralDto) {
-            const contactReferralObj = Object.assign({
-                ...contactReferral, 
-                idContact,
+            const contactReferralObj = Object.assign(contactReferral,{
+                idSource: idContact
             });
             const contactReferralCompany = this.contactreferralRepository.create({ ...contactReferralObj});
-            this.contactreferralRepository.save(contactReferralCompany);
+            await this.contactreferralRepository.save(contactReferralCompany);
         } 
         
     }
 
+    async update(
+        updaDto: ContactReferralDto[],
+        idContact: string,
+    ) {
+        const relations = await this.contactreferralRepository.find({idSource: idContact});
+        await this.contactreferralRepository.remove(relations);
+        const contactClean = updaDto.map(it => ({ idTarget: it.idTarget, hastag: it.hastag}));
+        await this.create(contactClean, idContact);
 
+    }
 
     // async findById(id: string): Promise<CompanyDto> {
     //     const company = await this.companyRepository.findOne({

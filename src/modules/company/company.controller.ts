@@ -51,7 +51,7 @@ export class CompanyController {
     getCompanies(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: CompaniesPageOptionsDto,
-    ) {
+    ): Promise<CompaniesPageDto> {
         return this._companyService.getList(pageOptionsDto);
     }
 
@@ -62,7 +62,7 @@ export class CompanyController {
         description: 'Get company by id',
         type: CompanyDto,
     })
-    async getCompanyById(@Param('id') id: string) {
+    async getCompanyById(@Param('id') id: string): Promise<CompanyDto> {
         return this._companyService.findById(id);
     }
 
@@ -74,9 +74,6 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
-
-        await this._tagcompanyService.create(data.tagCompany, createCompany.id);
-
         return createCompany.toDto() as CompanyDto;
     }
 

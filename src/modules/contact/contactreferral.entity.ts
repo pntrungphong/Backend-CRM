@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { ContactEntity } from '../contact/contact.entity';
+import { ContactEntity } from './contact.entity';
 import { integer } from 'aws-sdk/clients/cloudfront';
-import { ContactReferralDto } from './dto/ContactReferralDto';
+import { ContactReferralDto } from '../contactreferral/dto/ContactReferralDto';
+import { type } from 'os';
 
 @Entity({ name: 'contact_referral' })
 export class ContactReferralEntity {
@@ -15,10 +16,10 @@ export class ContactReferralEntity {
   @Column({name: 'id_target'})
   idTarget: string;
 
-  @Column({name: 'status'})
-  status: string;
+  @Column({name: 'hastag'})
+  hastag: string;
 
-  @ManyToOne(type => ContactEntity, (contact) => contact.id)
+  @ManyToOne(type => ContactEntity, (contact) => contact.contactReferral)
   @JoinColumn({
       name: 'id_source', 
   })

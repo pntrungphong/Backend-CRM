@@ -5,8 +5,8 @@ import { AuthModule } from '../auth/auth.module';
 import { ContactController } from './contact.controller';
 import { ContactRepository } from './contact.repository';
 import { ContactService } from './contact.service';
-import { ContactReferralService } from 'modules/contactreferral/contactreferral.service';
-import { ContactReferralRepository } from 'modules/contactreferral/contactreferral.repository';
+import { ContactReferralService } from './contactreferral.service';
+import { ContactReferralRepository } from './contactreferral.repository';
 
 @Module({
     imports: [

@@ -31,6 +31,7 @@ import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
+import { ContactReferralService } from './contactreferral.service';
 
 @Controller('contact')
 @ApiTags('contact')
@@ -38,7 +39,8 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class ContactController {
-    constructor(private _contactService: ContactService) {}
+    constructor(private _contactService: ContactService,
+        private _contactReferralService: ContactReferralService) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -50,7 +52,7 @@ export class ContactController {
     getAll(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
-    ) {
+    ): Promise<ContactsPageDto> {
         return this._contactService.getList(pageOptionsDto);
     }
 
@@ -61,7 +63,7 @@ export class ContactController {
         description: 'Get companies list',
         type: ContactDto,
     })
-    async getById(@Param('id') id: string) {
+    async getById(@Param('id') id: string): Promise<ContactDto> {
         return this._contactService.findById(id);
     }
 
@@ -79,6 +81,11 @@ export class ContactController {
             createDto,
             user,
         );
+        await this._contactReferralService.create(
+            createDto.contactReferral,
+            createdContact.id
+        );
+
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -90,14 +97,19 @@ export class ContactController {
     })
     async update(
         @Param('id') contactId: string,
-        @Body() contactData: ContactUpdateDto,
+        @Body() updateDto: ContactUpdateDto,
         @AuthUser() user: UserEntity,
-    ) {
+    ): Promise<ContactUpdateDto> {
         const updatedContact = await this._contactService.update(
             contactId,
-            contactData,
+            updateDto,
             user,
         );
+        await this._contactReferralService.update(
+            updateDto.contactReferral,
+            updatedContact.id
+        );
+
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }

@@ -4,39 +4,31 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ContactReferralDto } from '../../contactreferral/dto/ContactReferralDto';
 
+import { WebsiteDto } from '../../website/dto/WebsiteDto';
+
 export class ContactUpdateDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    readonly name: string;
+    name: string;
 
-    @IsArray()
     @IsOptional()
-    @ApiProperty({type: []})
-    readonly email: string;
+    @ApiProperty({ type: [] })
+    email: string;
 
-    @IsArray()
     @IsOptional()
-    @ApiProperty({type: []})
-    readonly phone: string;
+    @ApiProperty({ type: [] })
+    phone: string;
 
-    @IsArray()
     @IsOptional()
-    @ApiProperty({type: []})
-    readonly address: string;
+    @ApiProperty({ type: [] })
+    address: string;
 
-    @IsArray()
     @IsOptional()
-    @ApiProperty()
-    readonly website: string[];
+    @ApiProperty({ type: [WebsiteDto] })
+    website: string;
 
-    @IsArray()
     @IsOptional()
-    @ApiProperty()
-    readonly tag: string[];
-
-    @IsArray()
-    @IsOptional()
-    @ApiProperty()
-    readonly contactReferral: ContactReferralDto[];
+    @ApiProperty({ type: [ContactReferralDto] })
+    contactReferral: ContactReferralDto[];
 }
