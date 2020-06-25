@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CompanyContactModule } from '../../modules/companyContact/companyContact.module';
 import { AuthModule } from '../auth/auth.module';
+import { CompanyContactModule } from '../company-contact/companyContact.module';
 import { ContactController } from './contact.controller';
 import { ContactRepository } from './contact.repository';
 import { ContactService } from './contact.service';

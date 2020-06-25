@@ -1,4 +1,3 @@
-import { integer } from 'aws-sdk/clients/cloudfront';
 import {
     Column,
     Entity,
@@ -14,12 +13,10 @@ import { ContactEntity } from '../contact/contact.entity';
 export class CompanyContactEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    @Column({ name: 'status' })
-    status: boolean;
     @Column({ name: 'id_company' })
-    companyId: integer;
+    companyId: string;
     @Column({ name: 'id_contact' })
-    contactId: integer;
+    contactId: string;
 
     @ManyToOne(() => CompanyEntity, (company) => company.cpt, {
         onDelete: 'NO ACTION',
@@ -30,7 +27,7 @@ export class CompanyContactEntity {
     })
     company: CompanyEntity;
 
-    @ManyToOne(() => ContactEntity, (contact) => contact.cpt, {
+    @ManyToOne(() => ContactEntity, (contact) => contact.company, {
         onDelete: 'NO ACTION',
         onUpdate: 'NO ACTION',
     })

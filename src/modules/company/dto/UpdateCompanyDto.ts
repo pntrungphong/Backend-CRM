@@ -2,7 +2,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
-import { LinkContactDto } from '../../companyContact/dto/UpdateLinkCompanyDto';
+import { CompanyContactDto } from '../../company-contact/dto/CompanyContactDto';
+import { LinkContactDto } from '../../company-contact/dto/UpdateLinkCompanyDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 export class UpdateCompanyDto {
     @IsString()
@@ -30,6 +31,7 @@ export class UpdateCompanyDto {
     website: string;
 
     @IsArray()
+    @IsOptional()
     @ApiProperty({ type: [LinkContactDto] })
-    linkContact: LinkContactDto[];
+    contact: CompanyContactDto[];
 }

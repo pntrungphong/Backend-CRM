@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
-import { CompanyContactEntity } from '../companyContact/companyContact.entity';
+import { CompanyContactEntity } from '../company-contact/companyContact.entity';
 import { ContactDto } from './dto/ContactDto';
 
 @Entity({ name: 'contact' })
@@ -26,9 +26,10 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
 
     @Column({ nullable: false, name: 'updated_by' })
     updatedBy: string;
+
     @OneToMany(() => CompanyContactEntity, (cpt) => cpt.contact)
     @JoinColumn()
-    cpt: CompanyContactEntity[];
+    company: CompanyContactEntity[];
 
     dtoClass = ContactDto;
 }

@@ -20,7 +20,6 @@ export class CompanyService {
             createdBy: user.id,
             updatedBy: user.id,
         });
-        console.table(companyObj);
         const company = this.companyRepository.create({ ...companyObj });
         return this.companyRepository.save(company);
     }
@@ -46,6 +45,7 @@ export class CompanyService {
     async findById(id: string): Promise<CompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
+            relations: ['cpt'],
         });
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);

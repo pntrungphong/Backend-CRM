@@ -25,7 +25,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../../modules/user/user.entity';
-import { LinkCompanyContactService } from '../companyContact/companyContact.service';
+import { CompanyContactService } from '../company-contact/companyContact.service';
 import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
@@ -40,7 +40,7 @@ import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 export class CompanyController {
     constructor(
         private _companyService: CompanyService,
-        private _linkCompanyContactService: LinkCompanyContactService,
+        private _companyContactService: CompanyContactService,
     ) {}
 
     @Get()
@@ -76,10 +76,13 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
-        await this._linkCompanyContactService.createContact(
-            data.linkContact,
-            createCompany.id,
-        );
+        console.table(data.contact);
+        if (data.contact) {
+            await this._companyContactService.createContact(
+                data.contact,
+                createCompany.id,
+            );
+        }
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -97,6 +100,10 @@ export class CompanyController {
             id,
             data,
             user,
+        );
+        await this._companyContactService.updateContact(
+            data.contact,
+            updatedCompany.id,
         );
         return updatedCompany.toDto() as UpdateCompanyDto;
     }

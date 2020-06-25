@@ -3,14 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
 import { CompanyContactRepository } from './companyContact.repository';
-import { LinkCompanyContactService } from './companyContact.service';
+import { CompanyContactService } from './companyContact.service';
 
 @Module({
     imports: [
         forwardRef(() => AuthModule),
         TypeOrmModule.forFeature([CompanyContactRepository]),
     ],
-    exports: [LinkCompanyContactService],
-    providers: [LinkCompanyContactService],
+    exports: [CompanyContactService],
+    providers: [CompanyContactService],
 })
 export class CompanyContactModule {}

@@ -54,7 +54,7 @@ export class ContactService {
     ): Promise<ContactsPageDto> {
         const queryBuilder = this.contactRepository
             .createQueryBuilder('contact')
-            .leftJoinAndSelect('contact.cpt', 'cpt');
+            .leftJoinAndSelect('contact.company', 'cpt');
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -70,6 +70,7 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
+            relations: ['company'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);

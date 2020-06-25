@@ -1,9 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CompanyContactModule } from '../../modules/companyContact/companyContact.module';
-import { CompanyContactRepository } from '../../modules/companyContact/companyContact.repository';
 import { AuthModule } from '../auth/auth.module';
+import { CompanyContactModule } from '../company-contact/companyContact.module';
 import { CompanyController } from './company.controller';
 import { CompanyRepository } from './company.repository';
 import { CompanyService } from './company.service';
@@ -12,7 +11,7 @@ import { CompanyService } from './company.service';
     imports: [
         CompanyContactModule,
         forwardRef(() => AuthModule),
-        TypeOrmModule.forFeature([CompanyRepository, CompanyContactRepository]),
+        TypeOrmModule.forFeature([CompanyRepository]),
     ],
     controllers: [CompanyController],
     exports: [CompanyService],
