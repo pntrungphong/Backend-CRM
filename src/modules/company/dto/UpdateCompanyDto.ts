@@ -1,7 +1,8 @@
 'use strict';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
+import { LinkContactDto } from '../../companyContact/dto/UpdateLinkCompanyDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 export class UpdateCompanyDto {
     @IsString()
@@ -27,4 +28,8 @@ export class UpdateCompanyDto {
     @IsOptional()
     @ApiProperty({ type: [WebsiteDto] })
     website: string;
+
+    @IsArray()
+    @ApiProperty({ type: [LinkContactDto] })
+    linkContact: LinkContactDto[];
 }

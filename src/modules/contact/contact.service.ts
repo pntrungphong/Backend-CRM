@@ -54,7 +54,7 @@ export class ContactService {
     ): Promise<ContactsPageDto> {
         const queryBuilder = this.contactRepository
             .createQueryBuilder('contact')
-            .innerJoinAndSelect('contact.cpt', 'cpt');
+            .leftJoinAndSelect('contact.cpt', 'cpt');
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)

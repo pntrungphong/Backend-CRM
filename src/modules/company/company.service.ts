@@ -30,7 +30,7 @@ export class CompanyService {
     ): Promise<CompaniesPageDto> {
         const queryBuilder = this.companyRepository
             .createQueryBuilder('company')
-            .innerJoinAndSelect('company.cpt', 'cpt');
+            .leftJoinAndSelect('company.cpt', 'cpt');
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)

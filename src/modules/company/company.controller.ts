@@ -25,6 +25,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../../modules/user/user.entity';
+import { LinkCompanyContactService } from '../companyContact/companyContact.service';
 import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
@@ -37,7 +38,10 @@ import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class CompanyController {
-    constructor(private _companyService: CompanyService) {}
+    constructor(
+        private _companyService: CompanyService,
+        private _linkCompanyContactService: LinkCompanyContactService,
+    ) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -72,6 +76,10 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
+        await this._linkCompanyContactService.createContact(
+            data.linkContact,
+            createCompany.id,
+        );
         return createCompany.toDto() as CompanyDto;
     }
 
