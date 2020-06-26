@@ -32,12 +32,9 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @JoinColumn()
     company: CompanyContactEntity[];
 
-    @OneToMany(
-        () => ContactReferralEntity,
-        (contactReferral) => contactReferral.contact,
-    )
+    @OneToMany(() => ContactReferralEntity, (referral) => referral.contact)
     @JoinColumn()
-    contactReferral: ContactReferralEntity[];
+    referral: ContactReferralEntity[];
 
     dtoClass = ContactDto;
 }

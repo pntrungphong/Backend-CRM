@@ -55,17 +55,16 @@ export class ContactService {
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
     ): Promise<ContactsPageDto> {
-        const queryBuilder = this.contactRepository
-            .createQueryBuilder('contact')
-            .leftJoinAndSelect('contact.company', 'cpt')
-            .leftJoinAndSelect('contact.contactReferral', 'contactReferral');
+        const queryBuilder = this.contactRepository.createQueryBuilder(
+            'contact',
+        );
 
         // handle query
-        // queryBuilder.where('1 = 1');
-        // queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
-        //     name: `%${pageOptionsDto.q.toLowerCase()}%`,
-        // });
-        // queryBuilder.orderBy('contact.updated_at', pageOptionsDto.order);
+        queryBuilder.where('1 = 1');
+        queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
+            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        });
+        queryBuilder.orderBy('contact.updated_at', pageOptionsDto.order);
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -81,7 +80,7 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['company', 'contactReferral'],
+            relations: ['company', 'referral'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);

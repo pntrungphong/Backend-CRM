@@ -31,7 +31,6 @@ export class CompanyService {
         const queryBuilder = this.companyRepository.createQueryBuilder(
             'company',
         );
-        // .leftJoinAndSelect('company.cpt', 'cpt');
 
         // handle query
         queryBuilder.where('1 = 1');
@@ -61,27 +60,6 @@ export class CompanyService {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         return company.toDto() as CompanyDto;
-    }
-
-    async findByName(
-        name: string,
-        pageOptionsDto: CompaniesPageOptionsDto,
-    ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository
-            .createQueryBuilder('company')
-            .where('(company.name = :name)')
-            .setParameters({ name });
-
-        const [companies, companiesCount] = await queryBuilder
-            .skip(pageOptionsDto.skip)
-            .take(pageOptionsDto.take)
-            .getManyAndCount();
-
-        const pageMetaDto = new PageMetaDto({
-            pageOptionsDto,
-            itemCount: companiesCount,
-        });
-        return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
     async update(

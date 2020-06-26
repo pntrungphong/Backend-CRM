@@ -38,5 +38,5 @@ export class ContactUpdateDto {
     @IsArray()
     @IsOptional()
     @ApiProperty({ type: [ContactReferralDto] })
-    contactReferral: ContactReferralDto[];
+    referral: ContactReferralDto[];
 }

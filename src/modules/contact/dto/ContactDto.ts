@@ -34,7 +34,7 @@ export class ContactDto extends AbstractDto {
     updatedBy: string;
 
     @ApiPropertyOptional({ type: [ContactReferralEntity] })
-    contactReferral: ContactReferralEntity[];
+    referral: ContactReferralEntity[];
 
     constructor(contact: ContactEntity) {
         super(contact);
@@ -44,7 +44,7 @@ export class ContactDto extends AbstractDto {
         this.address = contact.address;
         this.website = contact.website;
         this.company = contact.company;
-        this.contactReferral = contact.contactReferral;
+        this.referral = contact.referral;
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
     }

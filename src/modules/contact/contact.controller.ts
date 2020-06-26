@@ -91,9 +91,9 @@ export class ContactController {
                 createdContact.id,
             );
         }
-        if (createDto.contactReferral) {
+        if (createDto.referral) {
             await this._contactReferralService.create(
-                createDto.contactReferral,
+                createDto.referral,
                 createdContact.id,
             );
         }
@@ -122,7 +122,7 @@ export class ContactController {
             updatedContact.id,
         );
         await this._contactReferralService.update(
-            updateDto.contactReferral,
+            updateDto.referral,
             updatedContact.id,
         );
 
