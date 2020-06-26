@@ -8,6 +8,8 @@ import { ContactRepository } from './contact.repository';
 import { ContactService } from './contact.service';
 import { ContactReferralRepository } from './contactreferral.repository';
 import { ContactReferralService } from './contactreferral.service';
+import { TagContactRepository } from './tagcontact.repository';
+import { TagContactService } from './tagcontact.service';
 
 @Module({
     imports: [
@@ -16,10 +18,11 @@ import { ContactReferralService } from './contactreferral.service';
         TypeOrmModule.forFeature([
             ContactRepository,
             ContactReferralRepository,
+            TagContactRepository,
         ]),
     ],
     controllers: [ContactController],
     exports: [ContactService],
-    providers: [ContactService, ContactReferralService],
+    providers: [ContactService, ContactReferralService, TagContactService],
 })
 export class ContactModule {}

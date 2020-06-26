@@ -31,6 +31,7 @@ import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
+import { TagCompanyService } from './tagcompany.service';
 
 @Controller('company')
 @ApiTags('company')
@@ -41,6 +42,7 @@ export class CompanyController {
     constructor(
         private _companyService: CompanyService,
         private _companyContactService: CompanyContactService,
+        private _tagCompanyService: TagCompanyService,
     ) {}
 
     @Get()
@@ -76,13 +78,13 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
-        console.table(data.contact);
         if (data.contact) {
             await this._companyContactService.createContact(
                 data.contact,
                 createCompany.id,
             );
         }
+        await this._tagCompanyService.create(data.tagCompany, createCompany.id);
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -101,8 +103,8 @@ export class CompanyController {
             data,
             user,
         );
-        await this._companyContactService.updateContact(
-            data.contact,
+        await this._tagCompanyService.update(
+            data.tagCompany,
             updatedCompany.id,
         );
 

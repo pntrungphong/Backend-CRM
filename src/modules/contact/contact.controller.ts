@@ -33,6 +33,7 @@ import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
+import { TagContactService } from './tagcontact.service';
 
 @Controller('contact')
 @ApiTags('contact')
@@ -43,6 +44,7 @@ export class ContactController {
     constructor(
         private _contactService: ContactService,
         private _companyContactService: CompanyContactService,
+        private _tagContactService: TagContactService,
         private _contactReferralService: ContactReferralService,
     ) {}
 
@@ -97,7 +99,10 @@ export class ContactController {
                 createdContact.id,
             );
         }
-
+        await this._tagContactService.create(
+            createDto.tagContact,
+            createdContact.id,
+        );
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -125,7 +130,10 @@ export class ContactController {
             updateDto.referral,
             updatedContact.id,
         );
-
+        await this._tagContactService.update(
+            updateDto.tagContact,
+            updatedContact.id,
+        );
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }

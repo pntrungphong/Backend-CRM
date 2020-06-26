@@ -7,6 +7,7 @@ import { CompanyContactDto } from '../../company-contact/dto/CompanyContactDto';
 import { LinkCompanyDto } from '../../company-contact/dto/UpdateLinkContactDto';
 import { ContactReferralDto } from '../../contactreferral/dto/ContactReferralDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
+import { TagContactDto } from './TagContactDto';
 
 export class ContactUpdateDto {
     @IsString()
@@ -39,4 +40,9 @@ export class ContactUpdateDto {
     @IsOptional()
     @ApiProperty({ type: [ContactReferralDto] })
     referral: ContactReferralDto[];
+
+    @IsArray()
+    @IsOptional()
+    @ApiProperty({ type: [TagContactDto] })
+    tagContact: TagContactDto[];
 }

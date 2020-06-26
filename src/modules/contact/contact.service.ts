@@ -80,7 +80,7 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['company', 'referral'],
+            relations: ['company', 'referral', 'tagContact'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
