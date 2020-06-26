@@ -20,8 +20,8 @@ export class CompanyService {
             createdBy: user.id,
             updatedBy: user.id,
         });
-        console.table(companyObj);
         const company = this.companyRepository.create({ ...companyObj });
+
         return this.companyRepository.save(company);
     }
 
@@ -31,12 +31,14 @@ export class CompanyService {
         const queryBuilder = this.companyRepository.createQueryBuilder(
             'company',
         );
+
         // handle query
         queryBuilder.where('1 = 1');
         queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
             name: `%${pageOptionsDto.q.toLowerCase()}%`,
         });
         queryBuilder.orderBy('company.updated_at', pageOptionsDto.order);
+
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -52,32 +54,12 @@ export class CompanyService {
     async findById(id: string): Promise<CompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
+            relations: ['cpt'],
         });
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         return company.toDto() as CompanyDto;
-    }
-
-    async findByName(
-        name: string,
-        pageOptionsDto: CompaniesPageOptionsDto,
-    ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository
-            .createQueryBuilder('company')
-            .where('(company.name = :name)')
-            .setParameters({ name });
-
-        const [companies, companiesCount] = await queryBuilder
-            .skip(pageOptionsDto.skip)
-            .take(pageOptionsDto.take)
-            .getManyAndCount();
-
-        const pageMetaDto = new PageMetaDto({
-            pageOptionsDto,
-            itemCount: companiesCount,
-        });
-        return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
     async update(

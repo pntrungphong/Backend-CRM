@@ -2,17 +2,24 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
+import { CompanyContactModule } from '../company-contact/companyContact.module';
 import { ContactController } from './contact.controller';
 import { ContactRepository } from './contact.repository';
 import { ContactService } from './contact.service';
+import { ContactReferralRepository } from './contactreferral.repository';
+import { ContactReferralService } from './contactreferral.service';
 
 @Module({
     imports: [
+        CompanyContactModule,
         forwardRef(() => AuthModule),
-        TypeOrmModule.forFeature([ContactRepository]),
+        TypeOrmModule.forFeature([
+            ContactRepository,
+            ContactReferralRepository,
+        ]),
     ],
     controllers: [ContactController],
     exports: [ContactService],
-    providers: [ContactService],
+    providers: [ContactService, ContactReferralService],
 })
 export class ContactModule {}

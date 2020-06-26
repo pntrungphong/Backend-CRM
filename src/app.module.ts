@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { contextMiddleware } from './middlewares';
 import { AuthModule } from './modules/auth/auth.module';
-import { ContactModule } from './modules/contact/contact.module';
 import { CompanyModule } from './modules/company/company.module';
+import { ContactModule } from './modules/contact/contact.module';
 import { MathModule } from './modules/math/math.module';
 import { UserModule } from './modules/user/user.module';
 import { ConfigService } from './shared/services/config.service';
@@ -20,7 +20,7 @@ import { SharedModule } from './shared/shared.module';
         ContactModule,
         CompanyModule,
         TypeOrmModule.forRootAsync({
-            imports: [SharedModule, CompanyModule],
+            imports: [SharedModule],
             useFactory: (configService: ConfigService) =>
                 configService.typeOrmConfig,
             inject: [ConfigService],

@@ -25,6 +25,12 @@ export class UpdateColumnLength1592964720304 implements MigrationInterface {
             ADD phone jsonb,
             ADD website jsonb
         `);
+
+        await queryRunner.query(`
+            ALTER TABLE contact_referral
+            DROP COLUMN status, 
+            ADD hastag jsonb
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

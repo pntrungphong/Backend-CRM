@@ -25,8 +25,10 @@ import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
+import { CompanyContactService } from '../company-contact/companyContact.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
+import { ContactReferralService } from './contactreferral.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
@@ -38,7 +40,11 @@ import { ContactUpdateDto } from './dto/ContactUpdateDto';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class ContactController {
-    constructor(private _contactService: ContactService) {}
+    constructor(
+        private _contactService: ContactService,
+        private _companyContactService: CompanyContactService,
+        private _contactReferralService: ContactReferralService,
+    ) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -79,6 +85,19 @@ export class ContactController {
             createDto,
             user,
         );
+        if (createDto.company) {
+            await this._companyContactService.createCompany(
+                createDto.company,
+                createdContact.id,
+            );
+        }
+        if (createDto.referral) {
+            await this._contactReferralService.create(
+                createDto.referral,
+                createdContact.id,
+            );
+        }
+
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -98,6 +117,15 @@ export class ContactController {
             updateDto,
             user,
         );
+        await this._companyContactService.updateCompany(
+            updateDto.company,
+            updatedContact.id,
+        );
+        await this._contactReferralService.update(
+            updateDto.referral,
+            updatedContact.id,
+        );
+
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }

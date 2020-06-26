@@ -7,6 +7,7 @@ import { ValidatorService } from '../../shared/services/validator.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
+import { ContactReferralService } from './contactreferral.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
@@ -18,6 +19,7 @@ export class ContactService {
         public readonly contactRepository: ContactRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
+        private _contactReferralService: ContactReferralService,
     ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
@@ -46,6 +48,7 @@ export class ContactService {
             ...updateDto,
             updatedBy: user.id,
         });
+
         return this.contactRepository.save(updatedContact);
     }
 
@@ -55,6 +58,7 @@ export class ContactService {
         const queryBuilder = this.contactRepository.createQueryBuilder(
             'contact',
         );
+
         // handle query
         queryBuilder.where('1 = 1');
         queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
@@ -76,6 +80,7 @@ export class ContactService {
     async findById(id: string): Promise<ContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
+            relations: ['company', 'referral'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
