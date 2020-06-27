@@ -1,11 +1,13 @@
 'use strict';
 
 import {
+    Body,
     // Body,
     Controller,
     Get,
     HttpCode,
     HttpStatus,
+    Put,
     // Post,
     Query,
     UseGuards,
@@ -25,6 +27,7 @@ import { Roles } from '../../decorators/roles.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
+import { UpdateUserDto } from './dto/UpdateUserDto';
 // import { UserRegisterDto } from '../auth/dto/UserRegisterDto';
 // import { UserDto } from './dto/UserDto';
 import { UsersPageDto } from './dto/UsersPageDto';
@@ -60,6 +63,22 @@ export class UserController {
         pageOptionsDto: UsersPageOptionsDto,
     ): Promise<UsersPageDto> {
         return this._userService.getUsers(pageOptionsDto);
+    }
+
+    @Put('changePassword')
+    @ApiResponse({
+        type: UpdateUserDto,
+        description: 'Successfully Updated',
+    })
+    async update(
+        @Body() data: UpdateUserDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<UpdateUserDto> {
+        const updatedPassword = await this._userService.resetPassword(
+            data,
+            user,
+        );
+        return updatedPassword.toDto() as UpdateUserDto;
     }
 
     // @Post('users')

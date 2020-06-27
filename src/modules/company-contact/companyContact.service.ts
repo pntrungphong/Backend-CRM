@@ -7,18 +7,27 @@ import { CompanyContactDto } from './dto/CompanyContactDto';
 export class CompanyContactService {
     constructor(public readonly relationRepository: CompanyContactRepository) {}
 
-    async createContact(contacts: CompanyContactDto[], companyId: string) {
+    async createContact(
+        contacts: CompanyContactDto[],
+        companyId: string,
+    ): Promise<void> {
         for await (const contact of contacts) {
             await this.createRelation(contact.contactId, companyId);
         }
     }
-    async createCompany(companies: CompanyContactDto[], contactId: string) {
+    async createCompany(
+        companies: CompanyContactDto[],
+        contactId: string,
+    ): Promise<void> {
         for await (const company of companies) {
             await this.createRelation(contactId, company.companyId);
         }
     }
 
-    async updateContact(contacts: CompanyContactDto[], companyId: string) {
+    async updateContact(
+        contacts: CompanyContactDto[],
+        companyId: string,
+    ): Promise<void> {
         const relations = await this.relationRepository.find({ companyId });
         await this.relationRepository.remove(relations);
         const contactClean = contacts.map((it) => ({
@@ -28,7 +37,10 @@ export class CompanyContactService {
         await this.createContact(contactClean, companyId);
     }
 
-    async updateCompany(companies: CompanyContactDto[], contactId: string) {
+    async updateCompany(
+        companies: CompanyContactDto[],
+        contactId: string,
+    ): Promise<void> {
         const relations = await this.relationRepository.find({ contactId });
         await this.relationRepository.remove(relations);
         const contactClean = companies.map((it) => ({
@@ -38,7 +50,7 @@ export class CompanyContactService {
         await this.createCompany(contactClean, contactId);
     }
 
-    async createRelation(contactId: string, companyId: string) {
+    async createRelation(contactId: string, companyId: string): Promise<void> {
         const relationObj = { contactId, companyId };
         const relation = this.relationRepository.create({ ...relationObj });
         await this.relationRepository.save(relation);
