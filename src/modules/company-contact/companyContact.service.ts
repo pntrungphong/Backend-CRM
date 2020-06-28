@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { CompanyRepository } from '../company/company.repository';
+import { CompanyDto } from '../company/dto/CompanyDto';
 import { CompanyContactRepository } from './companyContact.repository';
 import { CompanyContactDto } from './dto/CompanyContactDto';
 
 @Injectable()
 export class CompanyContactService {
-    constructor(public readonly relationRepository: CompanyContactRepository) {}
+    constructor(
+        public readonly relationRepository: CompanyContactRepository,
+        public readonly companyRepository: CompanyRepository,
+    ) {}
 
     async createContact(
         contacts: CompanyContactDto[],
@@ -54,5 +59,17 @@ export class CompanyContactService {
         const relationObj = { contactId, companyId };
         const relation = this.relationRepository.create({ ...relationObj });
         await this.relationRepository.save(relation);
+    }
+
+    async getCompanyByIdContact(contactId: string): Promise<CompanyDto[]> {
+        const listIdCompany = await this.relationRepository.find({ contactId });
+        const abc = [];
+        for await (const iterator of listIdCompany) {
+            const nameCompany = await this.companyRepository.findOne({
+                id: iterator.companyId,
+            });
+            abc.push(nameCompany);
+        }
+        return abc.toDtos();
     }
 }

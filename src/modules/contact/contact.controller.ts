@@ -26,6 +26,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { CompanyContactService } from '../company-contact/companyContact.service';
+import { CompanyDto } from '../company/dto/CompanyDto';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
 import { ContactReferralService } from './contactreferral.service';
@@ -69,6 +70,19 @@ export class ContactController {
     })
     async getById(@Param('id') id: string): Promise<ContactDto> {
         return this._contactService.findById(id);
+    }
+
+    @Get(':id/company')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: CompanyDto,
+    })
+    async getCompanyByIdContact(
+        @Param('id') id: string,
+    ): Promise<CompanyDto[]> {
+        return this._companyContactService.getCompanyByIdContact(id);
     }
 
     @Post()
