@@ -26,6 +26,7 @@ import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../../modules/user/user.entity';
 import { CompanyContactService } from '../company-contact/companyContact.service';
+import { ContactDto } from '../contact/dto/ContactDto';
 import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
@@ -67,6 +68,18 @@ export class CompanyController {
     async getCompanyById(@Param('id') id: string): Promise<CompanyDto> {
         return this._companyService.findById(id);
     }
+    @Get(':id/contact')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: ContactDto,
+    })
+    async getContactByIdCompany(
+        @Param('id') id: string,
+    ): Promise<ContactDto[]> {
+        return this._companyContactService.getContactByIdCompany(id);
+    }
 
     @Post()
     @HttpCode(HttpStatus.OK)
@@ -76,7 +89,6 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
-        console.table(data.contact);
         if (data.contact) {
             await this._companyContactService.createContact(
                 data.contact,
