@@ -4,14 +4,16 @@ import { FindConditions } from 'typeorm';
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
+import { CompanyRepository } from '../company/company.repository';
+import { GeneralInfoDto } from '../company/dto/GeneralInfoDto';
 import { UserEntity } from '../user/user.entity';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
-import { ContactReferralService } from './contactreferral.service';
-import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
+import { DetailContactDto } from './dto/DetailContactDto';
+import { ContactReferralService } from './referral/contactreferral.service';
 
 @Injectable()
 export class ContactService {
@@ -20,6 +22,7 @@ export class ContactService {
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
         private _contactReferralService: ContactReferralService,
+        private _companyRepository: CompanyRepository,
     ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
@@ -77,14 +80,20 @@ export class ContactService {
         return new ContactsPageDto(contacts.toDtos(), pageMetaDto);
     }
 
-    async findById(id: string): Promise<ContactDto> {
+    async findById(id: string): Promise<DetailContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['company', 'referral'],
+            relations: ['company', 'referral', 'tag'],
         });
+
+        const listIdCompany = contact.company.map((it) => it.companyId);
+        const rawDatas = await this._companyRepository.findByIds(listIdCompany);
+        const result = new DetailContactDto(contact);
+        result.company = rawDatas.map((it) => new GeneralInfoDto(it));
+
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return contact.toDto() as ContactDto;
+        return result;
     }
 }

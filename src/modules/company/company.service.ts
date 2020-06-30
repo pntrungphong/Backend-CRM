@@ -2,15 +2,20 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { UserEntity } from '../../modules/user/user.entity';
+import { ContactRepository } from '../contact/contact.repository';
+import { GeneralInfoDto } from '../contact/dto/GeneralInfoDto';
 import { CompanyEntity } from './company.entity';
 import { CompanyRepository } from './company.repository';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
-import { CompanyDto } from './dto/CompanyDto';
+import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @Injectable()
 export class CompanyService {
-    constructor(public readonly companyRepository: CompanyRepository) {}
+    constructor(
+        public readonly companyRepository: CompanyRepository,
+        private readonly _contactRepository: ContactRepository,
+    ) {}
 
     async create(
         user: UserEntity,
@@ -51,15 +56,21 @@ export class CompanyService {
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
-    async findById(id: string): Promise<CompanyDto> {
+    async findById(id: string): Promise<DetailCompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['cpt'],
+            relations: ['cpt', 'tag'],
         });
+
+        const listIdContact = company.cpt.map((it) => it.contactId);
+        const rawDatas = await this._contactRepository.findByIds(listIdContact);
+        const result = new DetailCompanyDto(company);
+        result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
+
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return company.toDto() as CompanyDto;
+        return result;
     }
 
     async update(

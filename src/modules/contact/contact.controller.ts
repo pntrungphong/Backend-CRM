@@ -28,11 +28,12 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
-import { ContactReferralService } from './contactreferral.service';
-import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
+import { DetailContactDto } from './dto/DetailContactDto';
+import { ContactReferralService } from './referral/contactreferral.service';
+import { TagContactService } from './tag/tagcontact.service';
 
 @Controller('contact')
 @ApiTags('contact')
@@ -43,6 +44,7 @@ export class ContactController {
     constructor(
         private _contactService: ContactService,
         private _companyContactService: CompanyContactService,
+        private _tagContactService: TagContactService,
         private _contactReferralService: ContactReferralService,
     ) {}
 
@@ -65,9 +67,9 @@ export class ContactController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get companies list',
-        type: ContactDto,
+        type: DetailContactDto,
     })
-    async getById(@Param('id') id: string): Promise<ContactDto> {
+    async getById(@Param('id') id: string): Promise<DetailContactDto> {
         return this._contactService.findById(id);
     }
 
@@ -97,7 +99,7 @@ export class ContactController {
                 createdContact.id,
             );
         }
-
+        await this._tagContactService.create(createDto.tag, createdContact.id);
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -125,7 +127,7 @@ export class ContactController {
             updateDto.referral,
             updatedContact.id,
         );
-
+        await this._tagContactService.update(updateDto.tag, updatedContact.id);
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }
