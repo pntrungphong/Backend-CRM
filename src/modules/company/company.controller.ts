@@ -19,7 +19,6 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
-
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
@@ -80,10 +79,10 @@ export class CompanyController {
     ): Promise<ContactDto[]> {
         return this._companyContactService.getContactByIdCompany(id);
     }
-
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
+    
     async createCompany(
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
