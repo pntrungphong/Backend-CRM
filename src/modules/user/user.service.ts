@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindConditions } from 'typeorm';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { FileNotImageException } from '../../exceptions/file-not-image.exception';
 import { IFile } from '../../interfaces/IFile';
+import { UtilsService } from '../../providers/utils.service';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
 import { UserRegisterDto } from '../auth/dto/UserRegisterDto';
+import { UpdateUserDto } from './dto/UpdateUserDto';
 import { UsersPageDto } from './dto/UsersPageDto';
 import { UsersPageOptionsDto } from './dto/UsersPageOptionsDto';
 import { UserEntity } from './user.entity';
@@ -75,5 +77,23 @@ export class UserService {
             itemCount: usersCount,
         });
         return new UsersPageDto(users.toDtos(), pageMetaDto);
+    }
+
+    async changePassword(
+        updateUserDto: UpdateUserDto,
+        userid: UserEntity,
+    ): Promise<UserEntity> {
+        const currentUser = await this.userRepository.findOne({
+            where: { id: userid.id },
+        });
+        const isPasswordValid = await UtilsService.validateHash(
+            updateUserDto.oldPass,
+            currentUser && currentUser.password,
+        );
+        if (!isPasswordValid) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+        currentUser.password = updateUserDto.newPass;
+        return this.userRepository.save(currentUser);
     }
 }
