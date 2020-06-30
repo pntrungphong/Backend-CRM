@@ -31,7 +31,7 @@ import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
-import { TagCompanyService } from './tagcompany.service';
+import { TagCompanyService } from './tag/tagcompany.service';
 
 @Controller('company')
 @ApiTags('company')
@@ -43,7 +43,7 @@ export class CompanyController {
         private _companyService: CompanyService,
         private _companyContactService: CompanyContactService,
         private _tagCompanyService: TagCompanyService,
-    ) {}
+    ) { }
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -84,7 +84,7 @@ export class CompanyController {
                 createCompany.id,
             );
         }
-        await this._tagCompanyService.create(data.tagCompany, createCompany.id);
+        await this._tagCompanyService.create(data.tag, createCompany.id);
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -104,7 +104,7 @@ export class CompanyController {
             user,
         );
         await this._tagCompanyService.update(
-            data.tagCompany,
+            data.tag,
             updatedCompany.id,
         );
 

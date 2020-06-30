@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ContactReferralDto } from '../contactreferral/dto/ContactReferralDto';
+import { ContactReferralDto } from './dto/ContactReferralDto';
 import { ContactReferralRepository } from './contactreferral.repository';
 @Injectable()
 export class ContactReferralService {
     constructor(
         public readonly contactreferralRepository: ContactReferralRepository,
-    ) {}
+    ) { }
     async create(
         createContactReferralDto: ContactReferralDto[],
         idContact: string,

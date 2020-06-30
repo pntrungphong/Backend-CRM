@@ -6,10 +6,10 @@ import { CompanyContactModule } from '../company-contact/companyContact.module';
 import { ContactController } from './contact.controller';
 import { ContactRepository } from './contact.repository';
 import { ContactService } from './contact.service';
-import { ContactReferralRepository } from './contactreferral.repository';
-import { ContactReferralService } from './contactreferral.service';
-import { TagContactRepository } from './tagcontact.repository';
-import { TagContactService } from './tagcontact.service';
+import { ContactReferralRepository } from './referral/contactreferral.repository';
+import { ContactReferralService } from './referral/contactreferral.service';
+import { TagContactRepository } from './tag/tagcontact.repository';
+import { TagContactService } from './tag/tagcontact.service';
 
 @Module({
     imports: [
@@ -25,4 +25,4 @@ import { TagContactService } from './tagcontact.service';
     exports: [ContactService],
     providers: [ContactService, ContactReferralService, TagContactService],
 })
-export class ContactModule {}
+export class ContactModule { }

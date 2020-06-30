@@ -6,8 +6,7 @@ import { AbstractDto } from '../../../common/dto/AbstractDto';
 import { CompanyContactDto } from '../../company-contact/dto/CompanyContactDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { CompanyEntity } from '../company.entity';
-import { TagCompanyEntity } from '../tagcompany.entity';
-// import { TagCompanyEntity } from '../tagcompany.entity';
+import { TagCompanyEntity } from '../tag/tagcompany.entity';
 
 export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
@@ -38,7 +37,7 @@ export class CompanyDto extends AbstractDto {
     updatedBy: string;
 
     @ApiPropertyOptional({ type: [TagCompanyEntity] })
-    tagCompany: TagCompanyEntity[];
+    tag: TagCompanyEntity[];
 
     constructor(company: CompanyEntity) {
         super(company);
@@ -51,6 +50,6 @@ export class CompanyDto extends AbstractDto {
         this.contact = company.cpt;
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
-        this.tagCompany = company.tagCompany;
+        this.tag = company.tag;
     }
 }

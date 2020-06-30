@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { CompanyEntity } from './company.entity';
+import { CompanyEntity } from '../company.entity';
 
 @Entity({ name: 'tag_company' })
 export class TagCompanyEntity {
@@ -20,7 +20,7 @@ export class TagCompanyEntity {
     @Column({ name: 'tag' })
     tag: string;
 
-    @ManyToOne(() => CompanyEntity, (company) => company.tagCompany)
+    @ManyToOne(() => CompanyEntity, (company) => company.tag)
     @JoinColumn({
         name: 'id_company',
     })

@@ -6,8 +6,8 @@ import { CompanyContactModule } from '../company-contact/companyContact.module';
 import { CompanyController } from './company.controller';
 import { CompanyRepository } from './company.repository';
 import { CompanyService } from './company.service';
-import { TagCompanyRepository } from './tagcompany.repository';
-import { TagCompanyService } from './tagcompany.service';
+import { TagCompanyRepository } from './tag/tagcompany.repository';
+import { TagCompanyService } from './tag/tagcompany.service';
 
 @Module({
     imports: [
@@ -19,4 +19,4 @@ import { TagCompanyService } from './tagcompany.service';
     exports: [CompanyService],
     providers: [CompanyService, TagCompanyService],
 })
-export class CompanyModule {}
+export class CompanyModule { }

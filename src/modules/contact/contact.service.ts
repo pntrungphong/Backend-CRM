@@ -7,7 +7,7 @@ import { ValidatorService } from '../../shared/services/validator.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
-import { ContactReferralService } from './contactreferral.service';
+import { ContactReferralService } from './referral/contactreferral.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
@@ -20,7 +20,7 @@ export class ContactService {
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
         private _contactReferralService: ContactReferralService,
-    ) {}
+    ) { }
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);

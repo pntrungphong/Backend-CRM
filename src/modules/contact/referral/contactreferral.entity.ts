@@ -6,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ContactEntity } from './contact.entity';
+import { ContactEntity } from '../contact.entity';
 
 @Entity({ name: 'contact_referral' })
 export class ContactReferralEntity {

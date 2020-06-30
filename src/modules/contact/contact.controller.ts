@@ -28,12 +28,12 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
-import { ContactReferralService } from './contactreferral.service';
+import { ContactReferralService } from './referral/contactreferral.service';
 import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
-import { TagContactService } from './tagcontact.service';
+import { TagContactService } from './tag/tagcontact.service';
 
 @Controller('contact')
 @ApiTags('contact')
@@ -46,7 +46,7 @@ export class ContactController {
         private _companyContactService: CompanyContactService,
         private _tagContactService: TagContactService,
         private _contactReferralService: ContactReferralService,
-    ) {}
+    ) { }
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -100,7 +100,7 @@ export class ContactController {
             );
         }
         await this._tagContactService.create(
-            createDto.tagContact,
+            createDto.tag,
             createdContact.id,
         );
         return createdContact.toDto() as ContactUpdateDto;
@@ -131,7 +131,7 @@ export class ContactController {
             updatedContact.id,
         );
         await this._tagContactService.update(
-            updateDto.tagContact,
+            updateDto.tag,
             updatedContact.id,
         );
         return updatedContact.toDto() as ContactUpdateDto;

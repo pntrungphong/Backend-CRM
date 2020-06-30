@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { TagContactDto } from './dto/TagContactDto';
-// import { TagContactDto } from './dto/TagContactDto';
 import { TagContactRepository } from './tagcontact.repository';
 @Injectable()
 export class TagContactService {
-    constructor(public readonly tagContactRepository: TagContactRepository) {}
+    constructor(public readonly tagContactRepository: TagContactRepository) { }
     async create(createTagDto: TagContactDto[], idContact: string) {
         for await (const tag of createTagDto) {
             const tagContactObj = { ...tag, idContact };
