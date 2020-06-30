@@ -1,22 +1,28 @@
-import { integer } from 'aws-sdk/clients/cloudfront';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { CompanyEntity } from './company.entity';
 
-@Entity({ name: 'tagCompany' })
+@Entity({ name: 'tag_company' })
 export class TagCompanyEntity {
     @PrimaryGeneratedColumn('uuid')
     id: number;
 
     @Column({ name: 'id_company' })
-    idCompany: integer;
+    idCompany: string;
 
     @Column({ name: 'tag' })
     tag: string;
 
-    //   @ManyToOne(type => CompanyEntity, (company) => company.tagCompany)
-    //   @JoinColumn({
-    //       name: 'id_company',
-    //   })
+    @ManyToOne(() => CompanyEntity, (company) => company.tagCompany)
+    @JoinColumn({
+        name: 'id_company',
+    })
     company: CompanyEntity;
 }

@@ -54,7 +54,7 @@ export class CompanyService {
     async findById(id: string): Promise<CompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['cpt'],
+            relations: ['cpt', 'tagCompany'],
         });
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
