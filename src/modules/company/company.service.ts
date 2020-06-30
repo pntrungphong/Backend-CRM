@@ -56,6 +56,7 @@ export class CompanyService {
             where: { id },
             relations: ['cpt', 'tagCompany'],
         });
+
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }

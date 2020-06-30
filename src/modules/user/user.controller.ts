@@ -1,11 +1,13 @@
 'use strict';
 
 import {
+    Body,
     // Body,
     Controller,
     Get,
     HttpCode,
     HttpStatus,
+    Put,
     // Post,
     Query,
     UseGuards,
@@ -25,8 +27,7 @@ import { Roles } from '../../decorators/roles.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
-// import { UserRegisterDto } from '../auth/dto/UserRegisterDto';
-// import { UserDto } from './dto/UserDto';
+import { UpdateUserDto } from './dto/UpdateUserDto';
 import { UsersPageDto } from './dto/UsersPageDto';
 import { UsersPageOptionsDto } from './dto/UsersPageOptionsDto';
 import { UserEntity } from './user.entity';
@@ -38,7 +39,7 @@ import { UserService } from './user.service';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class UserController {
-    constructor(private _userService: UserService) {}
+    constructor(private _userService: UserService) { }
 
     @Get('admin')
     @Roles(RoleType.ADMIN)
@@ -62,24 +63,19 @@ export class UserController {
         return this._userService.getUsers(pageOptionsDto);
     }
 
-    // @Post('users')
-    // @HttpCode(HttpStatus.OK)
-    // @ApiOkResponse({ type: UserDto, description: 'Successfully Created' })
-    // async userCreate(
-    //     @Body() userRegisterDto: UserRegisterDto,
-    // ): Promise<UserDto> {
-    //     const createdUser = await this._userService.createUser(userRegisterDto);
-    //     return createdUser.toDto();
-    // }
-    // @Put(':id')
-    // @Roles(RoleType.USER)
-    // @HttpCode(HttpStatus.OK)
-    // @ApiOkResponse({
-    //     description: 'Update infomation user',
-    //     type: UserUpdateDto,
-    // })
-    // async updateUser(@Param('id') userId: string, @Body() userData: UserUpdateDto) {
-    //     console.log("get there")
-    //     return await this._userService.updateUser(userId, userData);
-    // }
+    @Put('password')
+    @ApiResponse({
+        type: UpdateUserDto,
+        description: 'Successfully Updated',
+    })
+    async update(
+        @Body() data: UpdateUserDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<UpdateUserDto> {
+        const updatedPassword = await this._userService.changePassword(
+            data,
+            user,
+        );
+        return updatedPassword.toDto() as UpdateUserDto;
+    }
 }
