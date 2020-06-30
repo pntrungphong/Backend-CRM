@@ -12,6 +12,9 @@ import { ContactDto } from './dto/ContactDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
+import { CompanyRepository } from '../company/company.repository';
+import { DetailContactDto } from './dto/DetailContactDto';
+import { GeneralInfoDto } from '../company/dto/GeneralInfoDto';
 
 @Injectable()
 export class ContactService {
@@ -20,6 +23,7 @@ export class ContactService {
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
         private _contactReferralService: ContactReferralService,
+        private _companyRepository: CompanyRepository,
     ) { }
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
@@ -77,14 +81,20 @@ export class ContactService {
         return new ContactsPageDto(contacts.toDtos(), pageMetaDto);
     }
 
-    async findById(id: string): Promise<ContactDto> {
+    async findById(id: string): Promise<DetailContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['company', 'referral', 'tagContact'],
+            relations: ['company', 'referral', 'tag'],
         });
+
+        let listIdCompany = contact.company.map(it => it.companyId);
+        let rawDatas = await this._companyRepository.findByIds([...listIdCompany]);
+        let result = new DetailContactDto(contact);
+        result.company = rawDatas.map(it => new GeneralInfoDto(it));
+
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return contact.toDto() as ContactDto;
+        return result;
     }
 }

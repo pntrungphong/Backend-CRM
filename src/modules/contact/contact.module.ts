@@ -10,6 +10,8 @@ import { ContactReferralRepository } from './referral/contactreferral.repository
 import { ContactReferralService } from './referral/contactreferral.service';
 import { TagContactRepository } from './tag/tagcontact.repository';
 import { TagContactService } from './tag/tagcontact.service';
+import { CompanyRepository } from '../company/company.repository';
+import { CompanyModule } from '../company/company.module';
 
 @Module({
     imports: [
@@ -18,7 +20,7 @@ import { TagContactService } from './tag/tagcontact.service';
         TypeOrmModule.forFeature([
             ContactRepository,
             ContactReferralRepository,
-            TagContactRepository,
+            TagContactRepository, CompanyRepository,
         ]),
     ],
     controllers: [ContactController],

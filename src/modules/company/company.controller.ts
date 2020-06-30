@@ -32,6 +32,7 @@ import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 import { TagCompanyService } from './tag/tagcompany.service';
+import { DetailCompanyDto } from './dto/DetailCompanyDto';
 
 @Controller('company')
 @ApiTags('company')
@@ -66,25 +67,14 @@ export class CompanyController {
         description: 'Get company by id',
         type: CompanyDto,
     })
-    async getCompanyById(@Param('id') id: string): Promise<CompanyDto> {
+    async getCompanyById(@Param('id') id: string): Promise<DetailCompanyDto> {
         return this._companyService.findById(id);
     }
-    @Get(':id/contact')
-    @HttpCode(HttpStatus.OK)
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'Get companies list',
-        type: ContactDto,
-    })
-    async getContactByIdCompany(
-        @Param('id') id: string,
-    ): Promise<ContactDto[]> {
-        return this._companyContactService.getContactByIdCompany(id);
-    }
+
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
-    
+
     async createCompany(
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,

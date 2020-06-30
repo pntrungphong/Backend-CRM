@@ -6,11 +6,17 @@ import { CompanyEntity } from './company.entity';
 import { CompanyRepository } from './company.repository';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
-import { CompanyDto } from './dto/CompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
+import { ContactRepository } from '../contact/contact.repository';
+import { DetailCompanyDto } from './dto/DetailCompanyDto';
+import { GeneralInfoDto } from '../contact/dto/GeneralInfoDto';
 @Injectable()
 export class CompanyService {
-    constructor(public readonly companyRepository: CompanyRepository) {}
+    constructor(
+        public readonly companyRepository: CompanyRepository,
+        private readonly _contactRepository: ContactRepository
+
+    ) { }
 
     async create(
         user: UserEntity,
@@ -51,16 +57,21 @@ export class CompanyService {
         return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
     }
 
-    async findById(id: string): Promise<CompanyDto> {
+    async findById(id: string): Promise<DetailCompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['cpt', 'tagCompany'],
+            relations: ['cpt', 'tag'],
         });
+
+        let listIdContact = company.cpt.map(it => it.contactId);
+        let rawDatas = await this._contactRepository.findByIds([...listIdContact]);
+        let result = new DetailCompanyDto(company);
+        result.contact = rawDatas.map(it => new GeneralInfoDto(it));
 
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        return company.toDto() as CompanyDto;
+        return result;
     }
 
     async update(

@@ -34,7 +34,7 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     @JoinColumn()
     cpt: CompanyContactEntity[];
 
-    @OneToMany(() => TagCompanyEntity, (tagCompany) => tagCompany.company)
+    @OneToMany(() => TagCompanyEntity, (tag) => tag.company)
     @JoinColumn()
     tag: TagCompanyEntity[];
 

@@ -8,12 +8,13 @@ import { CompanyRepository } from './company.repository';
 import { CompanyService } from './company.service';
 import { TagCompanyRepository } from './tag/tagcompany.repository';
 import { TagCompanyService } from './tag/tagcompany.service';
+import { ContactRepository } from '../contact/contact.repository';
 
 @Module({
     imports: [
         CompanyContactModule,
         forwardRef(() => AuthModule),
-        TypeOrmModule.forFeature([CompanyRepository, TagCompanyRepository]),
+        TypeOrmModule.forFeature([CompanyRepository, TagCompanyRepository, ContactRepository]),
     ],
     controllers: [CompanyController],
     exports: [CompanyService],
