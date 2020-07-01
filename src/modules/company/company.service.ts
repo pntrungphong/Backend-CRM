@@ -1,22 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Backup } from 'aws-sdk';
+import { table } from 'console';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { UserEntity } from '../../modules/user/user.entity';
+import { CompanyContactDto } from '../company-contact/dto/CompanyContactDto';
+import { ContactRepository } from '../contact/contact.repository';
+import { GeneralInfoDto } from '../contact/dto/GeneralInfoDto';
 import { CompanyEntity } from './company.entity';
 import { CompanyRepository } from './company.repository';
+import { CompaniesPageDetailDto } from './dto/CompaniesPageDetailDto';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
-import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
-import { ContactRepository } from '../contact/contact.repository';
+import { CompanyDto } from './dto/CompanyDto';
 import { DetailCompanyDto } from './dto/DetailCompanyDto';
-import { GeneralInfoDto } from '../contact/dto/GeneralInfoDto';
+import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @Injectable()
 export class CompanyService {
     constructor(
         public readonly companyRepository: CompanyRepository,
-        private readonly _contactRepository: ContactRepository
-
-    ) { }
+        private readonly _contactRepository: ContactRepository,
+    ) {}
 
     async create(
         user: UserEntity,
@@ -33,28 +37,47 @@ export class CompanyService {
 
     async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
-    ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository.createQueryBuilder(
-            'company',
-        );
-
+    ): Promise<CompaniesPageDetailDto> {
+        const queryBuilder = this.companyRepository
+            .createQueryBuilder('company')
+            .leftJoinAndSelect('company.cpt', 'cpt')
+            .where('1=1')
+            .andWhere('LOWER (company.name) LIKE :name', {
+                name: `%${pageOptionsDto.q.toLowerCase()}%`,
+            })
+            .addOrderBy('company."updated_at"', pageOptionsDto.order);
         // handle query
-        queryBuilder.where('1 = 1');
-        queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
-            name: `%${pageOptionsDto.q.toLowerCase()}%`,
-        });
-        queryBuilder.orderBy('company.updated_at', pageOptionsDto.order);
+        //  queryBuilder.where('1 = 1');
+        //  queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
+        //      name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        //  });
+        //    queryBuilder.addOrderBy('company.updated_at', pageOptionsDto.order);
 
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();
-
+        const listIdCompany = companies.map((it) => it.id);
+        const results = [];
+        for await (const iterator of listIdCompany) {
+            const company = await this.companyRepository.findOne({
+                where: { id: iterator },
+                relations: ['cpt', 'tag'],
+            });
+            console.table(company);
+            const listIdContact = company.cpt.map((it) => it.contactId);
+            const rawDatas = await this._contactRepository.findByIds([
+                ...listIdContact,
+            ]);
+            const result = new DetailCompanyDto(company);
+            result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
+            results.push(result);
+        }
         const pageMetaDto = new PageMetaDto({
             pageOptionsDto,
             itemCount: companiesCount,
         });
-        return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
+        return new CompaniesPageDetailDto(results, pageMetaDto);
     }
 
     async findById(id: string): Promise<DetailCompanyDto> {
@@ -63,11 +86,12 @@ export class CompanyService {
             relations: ['cpt', 'tag'],
         });
 
-        let listIdContact = company.cpt.map(it => it.contactId);
-        let rawDatas = await this._contactRepository.findByIds([...listIdContact]);
-        let result = new DetailCompanyDto(company);
-        result.contact = rawDatas.map(it => new GeneralInfoDto(it));
-
+        const listIdContact = company.cpt.map((it) => it.contactId);
+        const rawDatas = await this._contactRepository.findByIds([
+            ...listIdContact,
+        ]);
+        const result = new DetailCompanyDto(company);
+        result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }

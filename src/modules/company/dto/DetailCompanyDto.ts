@@ -1,13 +1,13 @@
 'use strict';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
+
+import { GeneralInfoDto } from '../../contact/dto/GeneralInfoDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { CompanyEntity } from '../company.entity';
 import { TagCompanyEntity } from '../tag/tagcompany.entity';
-import { GeneralInfoDto } from '../../contact/dto/GeneralInfoDto';
 
 export class DetailCompanyDto {
-
     @ApiPropertyOptional()
     id: string;
 
@@ -44,8 +44,8 @@ export class DetailCompanyDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
-    @ApiPropertyOptional({ type: [TagCompanyEntity] })
-    tag: TagCompanyEntity[];
+    // @ApiPropertyOptional({ type: [TagCompanyEntity] })
+    // tag: TagCompanyEntity[];
 
     constructor(company: CompanyEntity) {
         this.id = company.id;
@@ -59,6 +59,6 @@ export class DetailCompanyDto {
         this.updatedBy = company.updatedBy;
         this.createdAt = company.createdAt;
         this.updatedAt = company.updatedAt;
-        this.tag = company.tag;
+        // this.tag = company.tag;
     }
 }
