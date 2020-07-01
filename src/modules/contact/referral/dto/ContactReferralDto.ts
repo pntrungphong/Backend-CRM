@@ -6,6 +6,6 @@ export class ContactReferralDto {
     @ApiProperty()
     idTarget: string;
 
-    @ApiProperty({ type: [{}] })
+    @ApiProperty({ type: [] })
     hastag: string;
 }

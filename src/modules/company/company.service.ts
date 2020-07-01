@@ -62,14 +62,14 @@ export class CompanyService {
             relations: ['cpt', 'tag'],
         });
 
+        if (!company) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
         const listIdContact = company.cpt.map((it) => it.idContact);
         const rawDatas = await this._contactRepository.findByIds(listIdContact);
         const result = new DetailCompanyDto(company);
         result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
 
-        if (!company) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
         return result;
     }
 

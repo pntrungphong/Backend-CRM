@@ -2,13 +2,13 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { GeneralInfoDto } from '../../company/dto/GeneralInfoDto';
+import { GeneralInfoDto as CompnayData } from '../../company/dto/GeneralInfoDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { ContactEntity } from '../contact.entity';
-import { ContactReferralEntity } from '../referral/contactreferral.entity';
 import { TagContactDto } from '../tag/dto/TagContactDto';
+import { GeneralInfoDto as ContactData } from './GeneralInfoDto';
 
 export class DetailContactDto {
     @ApiPropertyOptional()
@@ -35,8 +35,8 @@ export class DetailContactDto {
     @ApiPropertyOptional({ type: [WebsiteDto] })
     website: string;
 
-    @ApiPropertyOptional({ type: [GeneralInfoDto] })
-    company: GeneralInfoDto[];
+    @ApiPropertyOptional({ type: [CompnayData] })
+    company: CompnayData[];
 
     @ApiPropertyOptional()
     createdBy: string;
@@ -44,8 +44,8 @@ export class DetailContactDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
-    @ApiPropertyOptional({ type: [ContactReferralEntity] })
-    referral: ContactReferralEntity[];
+    @ApiPropertyOptional({ type: [ContactData] })
+    referral: ContactData[];
 
     @ApiPropertyOptional({ type: [TagContactDto] })
     tag: TagContactDto[];
@@ -57,7 +57,6 @@ export class DetailContactDto {
         this.phone = contact.phone;
         this.address = contact.address;
         this.website = contact.website;
-        this.referral = contact.referral;
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
         this.createdAt = contact.createdAt;
