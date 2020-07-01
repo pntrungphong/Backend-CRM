@@ -13,7 +13,7 @@ export class TagCompanyEntity {
     @PrimaryGeneratedColumn('uuid')
     id: number;
 
-    @Column({ name: 'id_company' })
+    @Column({ name: 'company_id' })
     idCompany: string;
 
     @Column({ name: 'tag' })
@@ -21,7 +21,7 @@ export class TagCompanyEntity {
 
     @ManyToOne(() => CompanyEntity, (company) => company.tag)
     @JoinColumn({
-        name: 'id_company',
+        name: 'company_id',
     })
     company: CompanyEntity;
 }

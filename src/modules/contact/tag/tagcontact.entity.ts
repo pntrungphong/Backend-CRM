@@ -13,7 +13,7 @@ export class TagContactEntity {
     @PrimaryGeneratedColumn('uuid')
     id: number;
 
-    @Column({ name: 'id_contact' })
+    @Column({ name: 'contact_id' })
     idContact: string;
 
     @Column({ name: 'tag' })
@@ -21,7 +21,7 @@ export class TagContactEntity {
 
     @ManyToOne(() => ContactEntity, (contact) => contact.tag)
     @JoinColumn({
-        name: 'id_contact',
+        name: 'contact_id',
     })
     contact: ContactEntity;
 }
