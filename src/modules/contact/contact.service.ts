@@ -86,7 +86,7 @@ export class ContactService {
             relations: ['company', 'referral', 'tag'],
         });
 
-        const listIdCompany = contact.company.map((it) => it.companyId);
+        const listIdCompany = contact.company.map((it) => it.idCompany);
         const rawDatas = await this._companyRepository.findByIds(listIdCompany);
         const result = new DetailContactDto(contact);
         result.company = rawDatas.map((it) => new GeneralInfoDto(it));

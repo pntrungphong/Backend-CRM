@@ -65,7 +65,7 @@ export class CompanyController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get company by id',
-        type: CompanyDto,
+        type: DetailCompanyDto,
     })
     async getCompanyById(@Param('id') id: string): Promise<DetailCompanyDto> {
         return this._companyService.findById(id);
