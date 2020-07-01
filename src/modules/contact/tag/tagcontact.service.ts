@@ -4,14 +4,17 @@ import { TagContactDto } from './dto/TagContactDto';
 import { TagContactRepository } from './tagcontact.repository';
 @Injectable()
 export class TagContactService {
-    constructor(public readonly tagContactRepository: TagContactRepository) { }
-    async create(createTagDto: TagContactDto[], idContact: string) {
+    constructor(public readonly tagContactRepository: TagContactRepository) {}
+    async create(
+        createTagDto: TagContactDto[],
+        idContact: string,
+    ): Promise<void> {
         for await (const tag of createTagDto) {
             const tagContactObj = { ...tag, idContact };
             const tagContact = this.tagContactRepository.create({
                 ...tagContactObj,
             });
-            this.tagContactRepository.save(tagContact);
+            await this.tagContactRepository.save(tagContact);
         }
     }
 

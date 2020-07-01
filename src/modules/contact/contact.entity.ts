@@ -1,10 +1,9 @@
-
 import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company-contact/companyContact.entity';
-import { ContactReferralEntity } from './referral/contactreferral.entity';
 import { ContactDto } from './dto/ContactDto';
+import { ContactReferralEntity } from './referral/contactreferral.entity';
 import { TagContactEntity } from './tag/tagcontact.entity';
 
 @Entity({ name: 'contact' })

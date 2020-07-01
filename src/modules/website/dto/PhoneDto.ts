@@ -2,7 +2,10 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class LinkContactDto {
+export class PhoneDto {
     @ApiPropertyOptional()
-    idContact: string;
+    number: string;
+
+    @ApiPropertyOptional()
+    type: string;
 }

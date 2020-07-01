@@ -3,27 +3,28 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/AbstractDto';
-import { CompanyContactDto } from '../../company-contact/dto/CompanyContactDto';
 import { GeneralInfoDto } from '../../contact/dto/GeneralInfoDto';
+import { EmailDto } from '../../website/dto/EmailDto';
+import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { CompanyEntity } from '../company.entity';
-// import { TagCompanyEntity } from '../tagcompany.entity';
+import { TagCompanyDto } from '../tag/dto/TagCompanyDto';
 
 export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
 
-    @ApiPropertyOptional({ type: [] })
+    @ApiPropertyOptional({ type: [EmailDto] })
     email: string;
 
-    @ApiPropertyOptional({ type: [] })
+    @ApiPropertyOptional({ type: [PhoneDto] })
     phone: string;
-
-    @ApiPropertyOptional({ type: [] })
-    address: string;
 
     @ApiPropertyOptional({ type: [WebsiteDto] })
     website: string;
+
+    @ApiPropertyOptional({ type: [] })
+    address: string;
 
     @ApiPropertyOptional()
     url: string;
@@ -37,8 +38,8 @@ export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
-    // @ApiPropertyOptional({ type: [TagCompanyEntity] })
-    // tagCompany: TagCompanyEntity[];
+    @ApiPropertyOptional({ type: [TagCompanyDto] })
+    tag: TagCompanyDto[];
 
     constructor(company: CompanyEntity) {
         super(company);
@@ -50,5 +51,6 @@ export class CompanyDto extends AbstractDto {
         this.url = company.url;
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
+        this.tag = company.tag;
     }
 }

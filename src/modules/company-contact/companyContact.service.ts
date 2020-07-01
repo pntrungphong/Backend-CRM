@@ -17,70 +17,70 @@ export class CompanyContactService {
 
     async createContact(
         contacts: CompanyContactDto[],
-        companyId: string,
+        idCompany: string,
     ): Promise<void> {
         for await (const contact of contacts) {
-            await this.createRelation(contact.contactId, companyId);
+            await this.createRelation(contact.idContact, idCompany);
         }
     }
     async createCompany(
         companies: CompanyContactDto[],
-        contactId: string,
+        idContact: string,
     ): Promise<void> {
         for await (const company of companies) {
-            await this.createRelation(contactId, company.companyId);
+            await this.createRelation(idContact, company.idCompany);
         }
     }
 
     async updateContact(
         contacts: CompanyContactDto[],
-        companyId: string,
+        idCompany: string,
     ): Promise<void> {
-        const relations = await this.relationRepository.find({ companyId });
+        const relations = await this.relationRepository.find({ idCompany });
         await this.relationRepository.remove(relations);
         const contactClean = contacts.map((it) => ({
-            companyId: it.companyId,
-            contactId: it.contactId,
+            idCompany: it.idCompany,
+            idContact: it.idContact,
         }));
-        await this.createContact(contactClean, companyId);
+        await this.createContact(contactClean, idCompany);
     }
 
     async updateCompany(
         companies: CompanyContactDto[],
-        contactId: string,
+        idContact: string,
     ): Promise<void> {
-        const relations = await this.relationRepository.find({ contactId });
+        const relations = await this.relationRepository.find({ idContact });
         await this.relationRepository.remove(relations);
         const contactClean = companies.map((it) => ({
-            companyId: it.companyId,
-            contactId: it.contactId,
+            idCompany: it.idCompany,
+            idContact: it.idContact,
         }));
-        await this.createCompany(contactClean, contactId);
+        await this.createCompany(contactClean, idContact);
     }
 
-    async createRelation(contactId: string, companyId: string): Promise<void> {
-        const relationObj = { contactId, companyId };
+    async createRelation(idContact: string, idCompany: string): Promise<void> {
+        const relationObj = { idContact, idCompany };
         const relation = this.relationRepository.create({ ...relationObj });
         await this.relationRepository.save(relation);
     }
 
-    async getCompanyByIdContact(contactId: string): Promise<CompanyDto[]> {
-        const listIdCompany = await this.relationRepository.find({ contactId });
+    async getCompanyByIdContact(idContact: string): Promise<CompanyDto[]> {
+        const listIdCompany = await this.relationRepository.find({ idContact });
         const abc = [];
         for await (const iterator of listIdCompany) {
             const nameCompany = await this.companyRepository.findOne({
-                id: iterator.companyId,
+                id: iterator.idCompany,
             });
             abc.push(nameCompany);
         }
         return abc.toDtos();
     }
-    async getContactByIdCompany(companyId: string): Promise<ContactDto[]> {
-        const listIdContact = await this.relationRepository.find({ companyId });
+    async getContactByIdCompany(idCompany: string): Promise<ContactDto[]> {
+        const listIdContact = await this.relationRepository.find({ idCompany });
         const abc = [];
         for await (const iterator of listIdContact) {
             const nameContact = await this.contactRepository.findOne({
-                id: iterator.contactId,
+                id: iterator.idContact,
             });
             abc.push(nameContact);
         }

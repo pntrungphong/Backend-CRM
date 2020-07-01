@@ -52,8 +52,7 @@ export class CompanyService {
                 where: { id: iterator },
                 relations: ['cpt', 'tag'],
             });
-            console.table(company);
-            const listIdContact = company.cpt.map((it) => it.contactId);
+            const listIdContact = company.cpt.map((it) => it.idContact);
             const rawDatas = await this._contactRepository.findByIds([
                 ...listIdContact,
             ]);
@@ -74,12 +73,11 @@ export class CompanyService {
             relations: ['cpt', 'tag'],
         });
 
-        const listIdContact = company.cpt.map((it) => it.contactId);
-        const rawDatas = await this._contactRepository.findByIds([
-            ...listIdContact,
-        ]);
+        const listIdContact = company.cpt.map((it) => it.idContact);
+        const rawDatas = await this._contactRepository.findByIds(listIdContact);
         const result = new DetailCompanyDto(company);
         result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
+
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }

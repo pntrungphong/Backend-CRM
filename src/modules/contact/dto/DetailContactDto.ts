@@ -2,17 +2,15 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { AbstractDto } from '../../../common/dto/AbstractDto';
-import { CompanyContactEntity } from '../../company-contact/companyContact.entity';
+import { GeneralInfoDto } from '../../company/dto/GeneralInfoDto';
+import { EmailDto } from '../../website/dto/EmailDto';
+import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { ContactEntity } from '../contact.entity';
 import { ContactReferralEntity } from '../referral/contactreferral.entity';
-import { TagContactEntity } from '../tag/tagcontact.entity';
-import { GeneralInfoDto } from '../../company/dto/GeneralInfoDto';
+import { TagContactDto } from '../tag/dto/TagContactDto';
 
 export class DetailContactDto {
-
-
     @ApiPropertyOptional()
     id: string;
 
@@ -25,10 +23,10 @@ export class DetailContactDto {
     @ApiPropertyOptional()
     name: string;
 
-    @ApiPropertyOptional({ type: [] })
+    @ApiPropertyOptional({ type: [EmailDto] })
     email: string;
 
-    @ApiPropertyOptional({ type: [] })
+    @ApiPropertyOptional({ type: [PhoneDto] })
     phone: string;
 
     @ApiPropertyOptional({ type: [] })
@@ -49,8 +47,8 @@ export class DetailContactDto {
     @ApiPropertyOptional({ type: [ContactReferralEntity] })
     referral: ContactReferralEntity[];
 
-    @ApiPropertyOptional({ type: [TagContactEntity] })
-    tag: TagContactEntity[];
+    @ApiPropertyOptional({ type: [TagContactDto] })
+    tag: TagContactDto[];
 
     constructor(contact: ContactEntity) {
         this.id = contact.id;

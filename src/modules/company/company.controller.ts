@@ -19,20 +19,20 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../../modules/user/user.entity';
 import { CompanyContactService } from '../company-contact/companyContact.service';
-import { ContactDto } from '../contact/dto/ContactDto';
 import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
+import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 import { TagCompanyService } from './tag/tagcompany.service';
-import { DetailCompanyDto } from './dto/DetailCompanyDto';
 
 @Controller('company')
 @ApiTags('company')
@@ -44,7 +44,7 @@ export class CompanyController {
         private _companyService: CompanyService,
         private _companyContactService: CompanyContactService,
         private _tagCompanyService: TagCompanyService,
-    ) { }
+    ) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -65,7 +65,7 @@ export class CompanyController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get company by id',
-        type: CompanyDto,
+        type: DetailCompanyDto,
     })
     async getCompanyById(@Param('id') id: string): Promise<DetailCompanyDto> {
         return this._companyService.findById(id);
@@ -74,7 +74,6 @@ export class CompanyController {
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: CompanyDto, description: 'Successfully Created' })
-
     async createCompany(
         @Body() data: UpdateCompanyDto,
         @AuthUser() user: UserEntity,
@@ -105,10 +104,7 @@ export class CompanyController {
             data,
             user,
         );
-        await this._tagCompanyService.update(
-            data.tag,
-            updatedCompany.id,
-        );
+        await this._tagCompanyService.update(data.tag, updatedCompany.id);
 
         return updatedCompany.toDto() as UpdateCompanyDto;
     }

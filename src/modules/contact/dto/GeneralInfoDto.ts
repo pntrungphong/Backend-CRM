@@ -11,8 +11,8 @@ export class GeneralInfoDto {
     @ApiPropertyOptional()
     id: string;
 
-    constructor(contact: ContactEntity) {
-        this.id = contact.id;
-        this.name = contact.name;
+    constructor(company: ContactEntity) {
+        this.id = company.id;
+        this.name = company.name;
     }
 }

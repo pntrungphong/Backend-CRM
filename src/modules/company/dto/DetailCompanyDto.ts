@@ -3,9 +3,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { GeneralInfoDto } from '../../contact/dto/GeneralInfoDto';
+import { EmailDto } from '../../website/dto/EmailDto';
+import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { CompanyEntity } from '../company.entity';
-import { TagCompanyEntity } from '../tag/tagcompany.entity';
+import { TagCompanyDto } from '../tag/dto/TagCompanyDto';
 
 export class DetailCompanyDto {
     @ApiPropertyOptional()
@@ -20,10 +22,10 @@ export class DetailCompanyDto {
     @ApiPropertyOptional()
     name: string;
 
-    @ApiPropertyOptional({ type: [] })
+    @ApiPropertyOptional({ type: [EmailDto] })
     email: string;
 
-    @ApiPropertyOptional({ type: [] })
+    @ApiPropertyOptional({ type: [PhoneDto] })
     phone: string;
 
     @ApiPropertyOptional({ type: [] })
@@ -44,8 +46,8 @@ export class DetailCompanyDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
-    // @ApiPropertyOptional({ type: [TagCompanyEntity] })
-    // tag: TagCompanyEntity[];
+    @ApiPropertyOptional({ type: [TagCompanyDto] })
+    tag: TagCompanyDto[];
 
     constructor(company: CompanyEntity) {
         this.id = company.id;
@@ -59,6 +61,6 @@ export class DetailCompanyDto {
         this.updatedBy = company.updatedBy;
         this.createdAt = company.createdAt;
         this.updatedAt = company.updatedAt;
-        // this.tag = company.tag;
+        this.tag = company.tag;
     }
 }

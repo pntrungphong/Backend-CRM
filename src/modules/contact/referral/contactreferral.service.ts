@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { ContactReferralDto } from './dto/ContactReferralDto';
 import { ContactReferralRepository } from './contactreferral.repository';
+import { ContactReferralDto } from './dto/ContactReferralDto';
 @Injectable()
 export class ContactReferralService {
     constructor(
         public readonly contactreferralRepository: ContactReferralRepository,
-    ) { }
+    ) {}
     async create(
         createContactReferralDto: ContactReferralDto[],
         idContact: string,
-    ) {
+    ): Promise<void> {
         for await (const contactReferral of createContactReferralDto) {
             const contactReferralObj = Object.assign(contactReferral, {
                 idSource: idContact,
@@ -22,7 +22,10 @@ export class ContactReferralService {
         }
     }
 
-    async update(updateDto: ContactReferralDto[], idContact: string) {
+    async update(
+        updateDto: ContactReferralDto[],
+        idContact: string,
+    ): Promise<void> {
         const relations = await this.contactreferralRepository.find({
             idSource: idContact,
         });

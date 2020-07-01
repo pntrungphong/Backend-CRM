@@ -6,9 +6,9 @@ import { IsOptional } from 'class-validator';
 export class CompanyContactDto {
     @IsOptional()
     @ApiProperty()
-    companyId: string;
+    idCompany: string;
 
     @IsOptional()
     @ApiProperty()
-    contactId: string;
+    idContact: string;
 }

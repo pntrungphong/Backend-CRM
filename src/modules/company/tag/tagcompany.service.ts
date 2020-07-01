@@ -4,18 +4,22 @@ import { TagCompanyDto } from './dto/TagCompanyDto';
 import { TagCompanyRepository } from './tagcompany.repository';
 @Injectable()
 export class TagCompanyService {
-    constructor(public readonly tagcompanyRepository: TagCompanyRepository) { }
-    async create(createTagDto: TagCompanyDto[], idCompany: string) {
+    constructor(public readonly tagcompanyRepository: TagCompanyRepository) {}
+
+    async create(
+        createTagDto: TagCompanyDto[],
+        idCompany: string,
+    ): Promise<void> {
         for await (const tag of createTagDto) {
             const tagCompanyObj = { ...tag, idCompany };
             const tagCompany = this.tagcompanyRepository.create({
                 ...tagCompanyObj,
             });
-            this.tagcompanyRepository.save(tagCompany);
+            await this.tagcompanyRepository.save(tagCompany);
         }
     }
 
-    async update(updateDto: TagCompanyDto[], idCompany: string) {
+    async update(updateDto: TagCompanyDto[], idCompany: string): Promise<void> {
         const relations = await this.tagcompanyRepository.find({
             idCompany,
         });
