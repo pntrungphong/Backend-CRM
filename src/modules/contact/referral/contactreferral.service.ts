@@ -23,7 +23,10 @@ export class ContactReferralService {
         }
     }
 
-    async update(updateDto: ContactReferralDto[], idContact: string): Promise<void> {
+    async update(
+        updateDto: ContactReferralDto[],
+        idContact: string,
+    ): Promise<void> {
         const relations = await this.contactreferralRepository.find({
             idSource: idContact,
         });

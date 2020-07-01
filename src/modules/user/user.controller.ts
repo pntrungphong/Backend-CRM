@@ -2,11 +2,13 @@
 
 import {
     Body,
+    // Body,
     Controller,
     Get,
     HttpCode,
     HttpStatus,
     Put,
+    // Post,
     Query,
     UseGuards,
     UseInterceptors,
@@ -37,7 +39,7 @@ import { UserService } from './user.service';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class UserController {
-    constructor(private _userService: UserService) {}
+    constructor(private _userService: UserService) { }
 
     @Get('admin')
     @Roles(RoleType.ADMIN)

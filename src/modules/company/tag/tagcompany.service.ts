@@ -19,7 +19,7 @@ export class TagCompanyService {
         }
     }
 
-    async update(updateDto: TagCompanyDto[], idCompany: string) {
+    async update(updateDto: TagCompanyDto[], idCompany: string): Promise<void> {
         const relations = await this.tagcompanyRepository.find({
             idCompany,
         });

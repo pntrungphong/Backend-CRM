@@ -28,6 +28,7 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
+import { ContactPageDetailDto } from './dto/ContactsPageDetailDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
@@ -58,7 +59,7 @@ export class ContactController {
     getAll(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
-    ): Promise<ContactsPageDto> {
+    ): Promise<ContactPageDetailDto> {
         return this._contactService.getList(pageOptionsDto);
     }
 

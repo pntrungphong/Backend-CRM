@@ -6,7 +6,7 @@ import { ContactRepository } from '../contact/contact.repository';
 import { GeneralInfoDto } from '../contact/dto/GeneralInfoDto';
 import { CompanyEntity } from './company.entity';
 import { CompanyRepository } from './company.repository';
-import { CompaniesPageDto } from './dto/CompaniesPageDto';
+import { CompaniesPageDetailDto } from './dto/CompaniesPageDetailDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
@@ -32,28 +32,39 @@ export class CompanyService {
 
     async getList(
         pageOptionsDto: CompaniesPageOptionsDto,
-    ): Promise<CompaniesPageDto> {
-        const queryBuilder = this.companyRepository.createQueryBuilder(
-            'company',
-        );
-
-        // handle query
-        queryBuilder.where('1 = 1');
-        queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
-            name: `%${pageOptionsDto.q.toLowerCase()}%`,
-        });
-        queryBuilder.orderBy('company.updated_at', pageOptionsDto.order);
-
+    ): Promise<CompaniesPageDetailDto> {
+        const queryBuilder = this.companyRepository
+            .createQueryBuilder('company')
+            .leftJoinAndSelect('company.cpt', 'cpt')
+            .where('1=1')
+            .andWhere('LOWER (company.name) LIKE :name', {
+                name: `%${pageOptionsDto.q.toLowerCase()}%`,
+            })
+            .addOrderBy('company.updatedAt', pageOptionsDto.order);
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();
-
+        const listIdCompany = companies.map((it) => it.id);
+        const results = [];
+        for await (const iterator of listIdCompany) {
+            const company = await this.companyRepository.findOne({
+                where: { id: iterator },
+                relations: ['cpt', 'tag'],
+            });
+            const listIdContact = company.cpt.map((it) => it.idContact);
+            const rawDatas = await this._contactRepository.findByIds([
+                ...listIdContact,
+            ]);
+            const result = new DetailCompanyDto(company);
+            result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
+            results.push(result);
+        }
         const pageMetaDto = new PageMetaDto({
             pageOptionsDto,
             itemCount: companiesCount,
         });
-        return new CompaniesPageDto(companies.toDtos(), pageMetaDto);
+        return new CompaniesPageDetailDto(results, pageMetaDto);
     }
 
     async findById(id: string): Promise<DetailCompanyDto> {

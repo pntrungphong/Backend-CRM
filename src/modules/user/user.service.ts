@@ -20,7 +20,7 @@ export class UserService {
         public readonly userRepository: UserRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
-    ) {}
+    ) { }
 
     /**
      * Find single user
@@ -65,20 +65,6 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
-    async getUsers(pageOptionsDto: UsersPageOptionsDto): Promise<UsersPageDto> {
-        const queryBuilder = this.userRepository.createQueryBuilder('user');
-        const [users, usersCount] = await queryBuilder
-            .skip(pageOptionsDto.skip)
-            .take(pageOptionsDto.take)
-            .getManyAndCount();
-
-        const pageMetaDto = new PageMetaDto({
-            pageOptionsDto,
-            itemCount: usersCount,
-        });
-        return new UsersPageDto(users.toDtos(), pageMetaDto);
-    }
-
     async changePassword(
         updateUserDto: UpdateUserDto,
         userid: UserEntity,
@@ -95,5 +81,19 @@ export class UserService {
         }
         currentUser.password = updateUserDto.newPass;
         return this.userRepository.save(currentUser);
+    }
+
+    async getUsers(pageOptionsDto: UsersPageOptionsDto): Promise<UsersPageDto> {
+        const queryBuilder = this.userRepository.createQueryBuilder('user');
+        const [users, usersCount] = await queryBuilder
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take)
+            .getManyAndCount();
+
+        const pageMetaDto = new PageMetaDto({
+            pageOptionsDto,
+            itemCount: usersCount,
+        });
+        return new UsersPageDto(users.toDtos(), pageMetaDto);
     }
 }
