@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { TagCompanyDto } from './dto/TagCompanyDto';
+import { TagsPageDto } from './dto/TagsPageDto';
 import { TagCompanyRepository } from './tagcompany.repository';
 @Injectable()
 export class TagCompanyService {
@@ -28,5 +29,15 @@ export class TagCompanyService {
             tag: it.tag,
         }));
         await this.create(contactClean, idCompany);
+    }
+
+    async getList(name: string): Promise<TagsPageDto> {
+        const queryBuilder = this.tagcompanyRepository
+            .createQueryBuilder('tag_company')
+            .where('tag_company.tag ILIKE :name', {
+                name: `%${name}%`,
+            });
+        const tags = await queryBuilder.take(15).getMany();
+        return new TagsPageDto(tags);
     }
 }

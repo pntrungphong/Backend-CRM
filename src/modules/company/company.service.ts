@@ -26,7 +26,6 @@ export class CompanyService {
             updatedBy: user.id,
         });
         const company = this.companyRepository.create({ ...companyObj });
-
         return this.companyRepository.save(company);
     }
 
@@ -35,7 +34,7 @@ export class CompanyService {
     ): Promise<CompaniesPageDetailDto> {
         const queryBuilder = this.companyRepository
             .createQueryBuilder('company')
-            .leftJoinAndSelect('company.cpt', 'cpt')
+            .leftJoinAndSelect('company.contact', 'contact')
             .where('1=1')
             .andWhere('LOWER (company.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
@@ -50,9 +49,9 @@ export class CompanyService {
         for await (const iterator of listIdCompany) {
             const company = await this.companyRepository.findOne({
                 where: { id: iterator },
-                relations: ['cpt', 'tag'],
+                relations: ['contact', 'tag'],
             });
-            const listIdContact = company.cpt.map((it) => it.idContact);
+            const listIdContact = company.contact.map((it) => it.idContact);
             const rawDatas = await this._contactRepository.findByIds([
                 ...listIdContact,
             ]);
@@ -70,13 +69,13 @@ export class CompanyService {
     async findById(id: string): Promise<DetailCompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['cpt', 'tag'],
+            relations: ['contact', 'tag'],
         });
 
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        const listIdContact = company.cpt.map((it) => it.idContact);
+        const listIdContact = company.contact.map((it) => it.idContact);
         const rawDatas = await this._contactRepository.findByIds(listIdContact);
         const result = new DetailCompanyDto(company);
         result.contact = rawDatas.map((it) => new GeneralInfoDto(it));

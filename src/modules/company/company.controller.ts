@@ -27,11 +27,14 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { UserEntity } from '../../modules/user/user.entity';
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { CompanyService } from './company.service';
+import { CompaniesPageDetailDto } from './dto/CompaniesPageDetailDto';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
+import { TagCompanyDto } from './tag/dto/TagCompanyDto';
+import { TagsPageDto } from './tag/dto/TagsPageDto';
 import { TagCompanyService } from './tag/tagcompany.service';
 
 @Controller('company')
@@ -56,8 +59,22 @@ export class CompanyController {
     getCompanies(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: CompaniesPageOptionsDto,
-    ): Promise<CompaniesPageDto> {
+    ): Promise<CompaniesPageDetailDto> {
         return this._companyService.getList(pageOptionsDto);
+    }
+
+    @Get('/tag')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get company tag list',
+        type: TagsPageDto,
+    })
+    getTags(
+        @Query()
+        tagName: TagCompanyDto,
+    ): Promise<TagsPageDto> {
+        return this._tagCompanyService.getList(tagName.tag);
     }
 
     @Get('/:id')

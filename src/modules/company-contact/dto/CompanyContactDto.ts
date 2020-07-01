@@ -11,4 +11,14 @@ export class CompanyContactDto {
     @IsOptional()
     @ApiProperty()
     idContact: string;
+
+    @IsOptional()
+    @ApiProperty()
+    title: string;
+
+    constructor(idContact: string, idCompany: string, title: string) {
+        this.idCompany = idCompany;
+        this.idContact = idContact;
+        this.title = title;
+    }
 }

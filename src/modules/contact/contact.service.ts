@@ -22,7 +22,7 @@ export class ContactService {
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
         private _companyRepository: CompanyRepository,
-    ) { }
+    ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);
@@ -84,7 +84,10 @@ export class ContactService {
                 ...listIdCompany,
             ]);
             const result = new DetailContactDto(contact);
-            result.company = rawDatas.map((it) => new CompanyData(it));
+            result.company = rawDatas.map(
+                (it, index) =>
+                    new CompanyData(it, contact.company[index].title),
+            );
             results.push(result);
         }
         const pageMetaDto = new PageMetaDto({
@@ -106,7 +109,9 @@ export class ContactService {
         const listIdCompany = contact.company.map((it) => it.idCompany);
         const rawDatas = await this._companyRepository.findByIds(listIdCompany);
         const result = new DetailContactDto(contact);
-        result.company = rawDatas.map((it) => new CompanyData(it));
+        result.company = rawDatas.map(
+            (it, index) => new CompanyData(it, contact.company[index].title),
+        );
 
         // handle contact referral
         const listIdReferral = contact.referral.map((it) => it.idTarget);
