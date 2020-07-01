@@ -4,17 +4,16 @@ import { FindConditions } from 'typeorm';
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
+import { CompanyRepository } from '../company/company.repository';
+import { GeneralInfoDto } from '../company/dto/GeneralInfoDto';
 import { UserEntity } from '../user/user.entity';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
-import { ContactReferralService } from './referral/contactreferral.service';
-import { ContactDto } from './dto/ContactDto';
-import { ContactsPageDto } from './dto/ContactsPageDto';
+import { ContactPageDetailDto } from './dto/ContactsPageDetailDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
-import { CompanyRepository } from '../company/company.repository';
 import { DetailContactDto } from './dto/DetailContactDto';
-import { GeneralInfoDto } from '../company/dto/GeneralInfoDto';
+import { ContactReferralService } from './referral/contactreferral.service';
 
 @Injectable()
 export class ContactService {
@@ -24,7 +23,7 @@ export class ContactService {
         public readonly awsS3Service: AwsS3Service,
         private _contactReferralService: ContactReferralService,
         private _companyRepository: CompanyRepository,
-    ) { }
+    ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);
@@ -58,27 +57,42 @@ export class ContactService {
 
     async getList(
         pageOptionsDto: ContactsPageOptionsDto,
-    ): Promise<ContactsPageDto> {
-        const queryBuilder = this.contactRepository.createQueryBuilder(
-            'contact',
-        );
+    ): Promise<ContactPageDetailDto> {
+        const queryBuilder = this.contactRepository
+            .createQueryBuilder('contact')
+            .leftJoinAndSelect('contact.company', 'company');
 
         // handle query
         queryBuilder.where('1 = 1');
         queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
             name: `%${pageOptionsDto.q.toLowerCase()}%`,
         });
-        queryBuilder.orderBy('contact.updated_at', pageOptionsDto.order);
+        queryBuilder.orderBy('contact.updatedAt', pageOptionsDto.order);
         const [contacts, contactsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();
 
+        const listIdContact = contacts.map((it) => it.id);
+        const results = [];
+        for await (const iterator of listIdContact) {
+            const contact = await this.contactRepository.findOne({
+                where: { id: iterator },
+                relations: ['company', 'tag', 'referral'],
+            });
+            const listIdCompany = contact.company.map((it) => it.companyId);
+            const rawDatas = await this._companyRepository.findByIds([
+                ...listIdCompany,
+            ]);
+            const result = new DetailContactDto(contact);
+            result.company = rawDatas.map((it) => new GeneralInfoDto(it));
+            results.push(result);
+        }
         const pageMetaDto = new PageMetaDto({
             pageOptionsDto,
             itemCount: contactsCount,
         });
-        return new ContactsPageDto(contacts.toDtos(), pageMetaDto);
+        return new ContactPageDetailDto(results, pageMetaDto);
     }
 
     async findById(id: string): Promise<DetailContactDto> {
@@ -87,10 +101,12 @@ export class ContactService {
             relations: ['company', 'referral', 'tag'],
         });
 
-        let listIdCompany = contact.company.map(it => it.companyId);
-        let rawDatas = await this._companyRepository.findByIds([...listIdCompany]);
-        let result = new DetailContactDto(contact);
-        result.company = rawDatas.map(it => new GeneralInfoDto(it));
+        const listIdCompany = contact.company.map((it) => it.companyId);
+        const rawDatas = await this._companyRepository.findByIds([
+            ...listIdCompany,
+        ]);
+        const result = new DetailContactDto(contact);
+        result.company = rawDatas.map((it) => new GeneralInfoDto(it));
 
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);

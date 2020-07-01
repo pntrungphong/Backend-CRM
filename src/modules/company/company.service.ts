@@ -1,18 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Backup } from 'aws-sdk';
-import { table } from 'console';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { UserEntity } from '../../modules/user/user.entity';
-import { CompanyContactDto } from '../company-contact/dto/CompanyContactDto';
 import { ContactRepository } from '../contact/contact.repository';
 import { GeneralInfoDto } from '../contact/dto/GeneralInfoDto';
 import { CompanyEntity } from './company.entity';
 import { CompanyRepository } from './company.repository';
 import { CompaniesPageDetailDto } from './dto/CompaniesPageDetailDto';
-import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
-import { CompanyDto } from './dto/CompanyDto';
 import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
 @Injectable()
@@ -45,14 +40,7 @@ export class CompanyService {
             .andWhere('LOWER (company.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
-            .addOrderBy('company."updated_at"', pageOptionsDto.order);
-        // handle query
-        //  queryBuilder.where('1 = 1');
-        //  queryBuilder.andWhere('LOWER (company.name) LIKE :name', {
-        //      name: `%${pageOptionsDto.q.toLowerCase()}%`,
-        //  });
-        //    queryBuilder.addOrderBy('company.updated_at', pageOptionsDto.order);
-
+            .addOrderBy('company.updatedAt', pageOptionsDto.order);
         const [companies, companiesCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)

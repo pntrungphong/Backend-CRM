@@ -28,12 +28,13 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { UserEntity } from '../user/user.entity';
 import { ContactService } from './contact.service';
-import { ContactReferralService } from './referral/contactreferral.service';
+import { ContactPageDetailDto } from './dto/ContactsPageDetailDto';
 import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
-import { TagContactService } from './tag/tagcontact.service';
 import { DetailContactDto } from './dto/DetailContactDto';
+import { ContactReferralService } from './referral/contactreferral.service';
+import { TagContactService } from './tag/tagcontact.service';
 
 @Controller('contact')
 @ApiTags('contact')
@@ -46,7 +47,7 @@ export class ContactController {
         private _companyContactService: CompanyContactService,
         private _tagContactService: TagContactService,
         private _contactReferralService: ContactReferralService,
-    ) { }
+    ) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -58,7 +59,7 @@ export class ContactController {
     getAll(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: ContactsPageOptionsDto,
-    ): Promise<ContactsPageDto> {
+    ): Promise<ContactPageDetailDto> {
         return this._contactService.getList(pageOptionsDto);
     }
 
@@ -99,10 +100,7 @@ export class ContactController {
                 createdContact.id,
             );
         }
-        await this._tagContactService.create(
-            createDto.tag,
-            createdContact.id,
-        );
+        await this._tagContactService.create(createDto.tag, createdContact.id);
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -130,10 +128,7 @@ export class ContactController {
             updateDto.referral,
             updatedContact.id,
         );
-        await this._tagContactService.update(
-            updateDto.tag,
-            updatedContact.id,
-        );
+        await this._tagContactService.update(updateDto.tag, updatedContact.id);
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }
