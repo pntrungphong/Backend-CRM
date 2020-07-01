@@ -4,5 +4,5 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class LinkContactDto {
     @ApiPropertyOptional()
-    contactId: string;
+    idContact: string;
 }

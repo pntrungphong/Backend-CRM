@@ -14,9 +14,9 @@ export class CompanyContactEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
     @Column({ name: 'id_company' })
-    companyId: string;
+    idCompany: string;
     @Column({ name: 'id_contact' })
-    contactId: string;
+    idContact: string;
 
     @ManyToOne(() => CompanyEntity, (company) => company.cpt, {
         onDelete: 'NO ACTION',
