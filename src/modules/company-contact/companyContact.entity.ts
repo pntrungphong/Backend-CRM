@@ -13,17 +13,17 @@ import { ContactEntity } from '../contact/contact.entity';
 export class CompanyContactEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-    @Column({ name: 'id_company' })
-    companyId: string;
-    @Column({ name: 'id_contact' })
-    contactId: string;
+    @Column({ name: 'company_id' })
+    idCompany: string;
+    @Column({ name: 'contact_id' })
+    idContact: string;
 
     @ManyToOne(() => CompanyEntity, (company) => company.cpt, {
         onDelete: 'NO ACTION',
         onUpdate: 'NO ACTION',
     })
     @JoinColumn({
-        name: 'id_company',
+        name: 'company_id',
     })
     company: CompanyEntity;
 
@@ -32,7 +32,7 @@ export class CompanyContactEntity {
         onUpdate: 'NO ACTION',
     })
     @JoinColumn({
-        name: 'id_contact',
+        name: 'contact_id',
     })
     contact: ContactEntity;
 }

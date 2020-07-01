@@ -6,17 +6,17 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ContactEntity } from './contact.entity';
+import { ContactEntity } from '../contact.entity';
 
 @Entity({ name: 'contact_referral' })
 export class ContactReferralEntity {
     @PrimaryGeneratedColumn('uuid')
     id: number;
 
-    @Column({ name: 'id_source' })
+    @Column({ name: 'source_id' })
     idSource: string;
 
-    @Column({ name: 'id_target' })
+    @Column({ name: 'target_id' })
     idTarget: string;
 
     @Column({ name: 'hastag' })
@@ -24,7 +24,7 @@ export class ContactReferralEntity {
 
     @ManyToOne(() => ContactEntity, (contact) => contact.referral)
     @JoinColumn({
-        name: 'id_source',
+        name: 'source_id',
     })
     contact: ContactEntity;
 }

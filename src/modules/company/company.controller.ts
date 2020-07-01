@@ -30,7 +30,9 @@ import { CompanyService } from './company.service';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
+import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
+import { TagCompanyService } from './tag/tagcompany.service';
 
 @Controller('company')
 @ApiTags('company')
@@ -41,6 +43,7 @@ export class CompanyController {
     constructor(
         private _companyService: CompanyService,
         private _companyContactService: CompanyContactService,
+        private _tagCompanyService: TagCompanyService,
     ) {}
 
     @Get()
@@ -62,9 +65,9 @@ export class CompanyController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get company by id',
-        type: CompanyDto,
+        type: DetailCompanyDto,
     })
-    async getCompanyById(@Param('id') id: string): Promise<CompanyDto> {
+    async getCompanyById(@Param('id') id: string): Promise<DetailCompanyDto> {
         return this._companyService.findById(id);
     }
 
@@ -76,13 +79,13 @@ export class CompanyController {
         @AuthUser() user: UserEntity,
     ): Promise<CompanyDto> {
         const createCompany = await this._companyService.create(user, data);
-        console.table(data.contact);
         if (data.contact) {
             await this._companyContactService.createContact(
                 data.contact,
                 createCompany.id,
             );
         }
+        await this._tagCompanyService.create(data.tag, createCompany.id);
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -101,10 +104,7 @@ export class CompanyController {
             data,
             user,
         );
-        await this._companyContactService.updateContact(
-            data.contact,
-            updatedCompany.id,
-        );
+        await this._tagCompanyService.update(data.tag, updatedCompany.id);
 
         return updatedCompany.toDto() as UpdateCompanyDto;
     }

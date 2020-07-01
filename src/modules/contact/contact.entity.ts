@@ -2,8 +2,9 @@ import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company-contact/companyContact.entity';
-import { ContactReferralEntity } from './contactreferral.entity';
 import { ContactDto } from './dto/ContactDto';
+import { ContactReferralEntity } from './referral/contactreferral.entity';
+import { TagContactEntity } from './tag/tagcontact.entity';
 
 @Entity({ name: 'contact' })
 export class ContactEntity extends AbstractEntity<ContactDto> {
@@ -35,6 +36,10 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @OneToMany(() => ContactReferralEntity, (referral) => referral.contact)
     @JoinColumn()
     referral: ContactReferralEntity[];
+
+    @OneToMany(() => TagContactEntity, (tag) => tag.contact)
+    @JoinColumn()
+    tag: TagContactEntity[];
 
     dtoClass = ContactDto;
 }

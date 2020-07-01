@@ -2,8 +2,7 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { AbstractDto } from '../../../common/dto/AbstractDto';
-import { CompanyContactEntity } from '../../company-contact/companyContact.entity';
+import { GeneralInfoDto } from '../../company/dto/GeneralInfoDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
@@ -11,7 +10,16 @@ import { ContactEntity } from '../contact.entity';
 import { ContactReferralEntity } from '../referral/contactreferral.entity';
 import { TagContactDto } from '../tag/dto/TagContactDto';
 
-export class ContactDto extends AbstractDto {
+export class DetailContactDto {
+    @ApiPropertyOptional()
+    id: string;
+
+    @ApiPropertyOptional()
+    createdAt: Date;
+
+    @ApiPropertyOptional()
+    updatedAt: Date;
+
     @ApiPropertyOptional()
     name: string;
 
@@ -27,8 +35,8 @@ export class ContactDto extends AbstractDto {
     @ApiPropertyOptional({ type: [WebsiteDto] })
     website: string;
 
-    @ApiPropertyOptional({ type: [CompanyContactEntity] })
-    company: CompanyContactEntity[];
+    @ApiPropertyOptional({ type: [GeneralInfoDto] })
+    company: GeneralInfoDto[];
 
     @ApiPropertyOptional()
     createdBy: string;
@@ -43,16 +51,17 @@ export class ContactDto extends AbstractDto {
     tag: TagContactDto[];
 
     constructor(contact: ContactEntity) {
-        super(contact);
+        this.id = contact.id;
         this.name = contact.name;
         this.email = contact.email;
         this.phone = contact.phone;
         this.address = contact.address;
         this.website = contact.website;
-        this.company = contact.company;
         this.referral = contact.referral;
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
+        this.createdAt = contact.createdAt;
+        this.updatedAt = contact.updatedAt;
         this.tag = contact.tag;
     }
 }

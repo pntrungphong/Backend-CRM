@@ -2,15 +2,23 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { AbstractDto } from '../../../common/dto/AbstractDto';
-import { CompanyContactDto } from '../../company-contact/dto/CompanyContactDto';
+import { GeneralInfoDto } from '../../contact/dto/GeneralInfoDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { CompanyEntity } from '../company.entity';
 import { TagCompanyDto } from '../tag/dto/TagCompanyDto';
 
-export class CompanyDto extends AbstractDto {
+export class DetailCompanyDto {
+    @ApiPropertyOptional()
+    id: string;
+
+    @ApiPropertyOptional()
+    createdAt: Date;
+
+    @ApiPropertyOptional()
+    updatedAt: Date;
+
     @ApiPropertyOptional()
     name: string;
 
@@ -20,17 +28,17 @@ export class CompanyDto extends AbstractDto {
     @ApiPropertyOptional({ type: [PhoneDto] })
     phone: string;
 
-    @ApiPropertyOptional({ type: [WebsiteDto] })
-    website: string;
-
     @ApiPropertyOptional({ type: [] })
     address: string;
+
+    @ApiPropertyOptional({ type: [WebsiteDto] })
+    website: string;
 
     @ApiPropertyOptional()
     url: string;
 
-    @ApiPropertyOptional({ type: [CompanyContactDto] })
-    contact: CompanyContactDto[];
+    @ApiPropertyOptional({ type: [GeneralInfoDto] })
+    contact: GeneralInfoDto[];
 
     @ApiPropertyOptional()
     createdBy: string;
@@ -42,16 +50,17 @@ export class CompanyDto extends AbstractDto {
     tag: TagCompanyDto[];
 
     constructor(company: CompanyEntity) {
-        super(company);
+        this.id = company.id;
         this.name = company.name;
         this.email = company.email;
         this.phone = company.phone;
         this.address = company.address;
         this.website = company.website;
         this.url = company.url;
-        this.contact = company.cpt;
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
+        this.createdAt = company.createdAt;
+        this.updatedAt = company.updatedAt;
         this.tag = company.tag;
     }
 }
