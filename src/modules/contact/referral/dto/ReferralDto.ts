@@ -2,7 +2,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { ContactEntity } from '../../contact.entity';
-import { ContactReferralEntity } from '../contactreferral.entity';
+import { ContactReferralEntity } from '../referral.entity';
 
 export class ReferralDto {
     @ApiPropertyOptional()

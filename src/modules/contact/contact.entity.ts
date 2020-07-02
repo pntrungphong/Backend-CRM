@@ -3,8 +3,7 @@ import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company-contact/companyContact.entity';
 import { ContactDto } from './dto/ContactDto';
-import { ContactReferralEntity } from './referral/contactreferral.entity';
-import { TagContactEntity } from './tag/tagcontact.entity';
+import { ContactReferralEntity } from './referral/referral.entity';
 
 @Entity({ name: 'contact' })
 export class ContactEntity extends AbstractEntity<ContactDto> {
@@ -13,6 +12,9 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
 
     @Column({ unique: true, nullable: true, type: 'jsonb' })
     email: string;
+
+    @Column({ nullable: true })
+    title = '';
 
     @Column({ nullable: true, type: 'jsonb' })
     phone: string;
@@ -36,10 +38,6 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @OneToMany(() => ContactReferralEntity, (referral) => referral.contact)
     @JoinColumn()
     referral: ContactReferralEntity[];
-
-    @OneToMany(() => TagContactEntity, (tag) => tag.contact)
-    @JoinColumn()
-    tag: TagContactEntity[];
 
     dtoClass = ContactDto;
 }

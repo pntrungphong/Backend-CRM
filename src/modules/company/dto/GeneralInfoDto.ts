@@ -9,14 +9,10 @@ export class GeneralInfoDto {
     name: string;
 
     @ApiPropertyOptional()
-    title: string;
-
-    @ApiPropertyOptional()
     id: string;
 
-    constructor(company: CompanyEntity, title: string) {
+    constructor(company: CompanyEntity) {
         this.id = company.id;
         this.name = company.name;
-        this.title = title;
     }
 }

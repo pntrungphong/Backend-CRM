@@ -35,9 +35,8 @@ export class CompanyService {
         const queryBuilder = this.companyRepository
             .createQueryBuilder('company')
             .leftJoinAndSelect('company.contact', 'contact')
-            .where('1=1')
-            .andWhere('LOWER (company.name) LIKE :name', {
-                name: `%${pageOptionsDto.q.toLowerCase()}%`,
+            .where('company.name ILIKE :name', {
+                name: `%${pageOptionsDto.q}%`,
             })
             .addOrderBy('company.updatedAt', pageOptionsDto.order);
         const [companies, companiesCount] = await queryBuilder
@@ -49,7 +48,7 @@ export class CompanyService {
         for await (const iterator of listIdCompany) {
             const company = await this.companyRepository.findOne({
                 where: { id: iterator },
-                relations: ['contact', 'tag'],
+                relations: ['contact'],
             });
             const listIdContact = company.contact.map((it) => it.idContact);
             const rawDatas = await this._contactRepository.findByIds([
@@ -69,7 +68,7 @@ export class CompanyService {
     async findById(id: string): Promise<DetailCompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['contact', 'tag'],
+            relations: ['contact'],
         });
 
         if (!company) {

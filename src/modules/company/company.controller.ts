@@ -33,9 +33,6 @@ import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
-import { TagCompanyDto } from './tag/dto/TagCompanyDto';
-import { TagsPageDto } from './tag/dto/TagsPageDto';
-import { TagCompanyService } from './tag/tagcompany.service';
 
 @Controller('company')
 @ApiTags('company')
@@ -45,8 +42,7 @@ import { TagCompanyService } from './tag/tagcompany.service';
 export class CompanyController {
     constructor(
         private _companyService: CompanyService,
-        private _companyContactService: CompanyContactService,
-        private _tagCompanyService: TagCompanyService,
+        private _companyContactService: CompanyContactService, // private _tagCompanyService: TagCompanyService,
     ) {}
 
     @Get()
@@ -61,20 +57,6 @@ export class CompanyController {
         pageOptionsDto: CompaniesPageOptionsDto,
     ): Promise<CompaniesPageDetailDto> {
         return this._companyService.getList(pageOptionsDto);
-    }
-
-    @Get('/tag')
-    @HttpCode(HttpStatus.OK)
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'Get company tag list',
-        type: TagsPageDto,
-    })
-    getTags(
-        @Query()
-        tagName: TagCompanyDto,
-    ): Promise<TagsPageDto> {
-        return this._tagCompanyService.getList(tagName.tag);
     }
 
     @Get('/:id')
@@ -102,7 +84,7 @@ export class CompanyController {
                 createCompany.id,
             );
         }
-        await this._tagCompanyService.create(data.tag, createCompany.id);
+        // await this._tagCompanyService.create(data.tag, createCompany.id);
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -121,7 +103,7 @@ export class CompanyController {
             data,
             user,
         );
-        await this._tagCompanyService.update(data.tag, updatedCompany.id);
+        // await this._tagCompanyService.update(data.tag, updatedCompany.id);
 
         return updatedCompany.toDto() as UpdateCompanyDto;
     }
