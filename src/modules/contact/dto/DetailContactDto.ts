@@ -7,7 +7,6 @@ import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { ContactEntity } from '../contact.entity';
-import { TagContactDto } from '../tag/dto/TagContactDto';
 import { GeneralInfoDto as ContactData } from './GeneralInfoDto';
 
 export class DetailContactDto {
@@ -15,13 +14,10 @@ export class DetailContactDto {
     id: string;
 
     @ApiPropertyOptional()
-    createdAt: Date;
-
-    @ApiPropertyOptional()
-    updatedAt: Date;
-
-    @ApiPropertyOptional()
     name: string;
+
+    @ApiPropertyOptional()
+    title: string;
 
     @ApiPropertyOptional({ type: [EmailDto] })
     email: string;
@@ -38,21 +34,25 @@ export class DetailContactDto {
     @ApiPropertyOptional({ type: [CompnayData] })
     company: CompnayData[];
 
+    @ApiPropertyOptional({ type: [ContactData] })
+    referral: ContactData[];
+
     @ApiPropertyOptional()
     createdBy: string;
 
     @ApiPropertyOptional()
     updatedBy: string;
 
-    @ApiPropertyOptional({ type: [ContactData] })
-    referral: ContactData[];
+    @ApiPropertyOptional()
+    createdAt: Date;
 
-    @ApiPropertyOptional({ type: [TagContactDto] })
-    tag: TagContactDto[];
+    @ApiPropertyOptional()
+    updatedAt: Date;
 
     constructor(contact: ContactEntity) {
         this.id = contact.id;
         this.name = contact.name;
+        this.title = contact.title;
         this.email = contact.email;
         this.phone = contact.phone;
         this.address = contact.address;
@@ -61,6 +61,5 @@ export class DetailContactDto {
         this.updatedBy = contact.updatedBy;
         this.createdAt = contact.createdAt;
         this.updatedAt = contact.updatedAt;
-        this.tag = contact.tag;
     }
 }

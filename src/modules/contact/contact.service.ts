@@ -22,7 +22,7 @@ export class ContactService {
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
         private _companyRepository: CompanyRepository,
-    ) { }
+    ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);
@@ -50,7 +50,12 @@ export class ContactService {
             ...updateDto,
             updatedBy: user.id,
         });
-
+        if (!contact) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
         return this.contactRepository.save(updatedContact);
     }
 
@@ -62,9 +67,8 @@ export class ContactService {
             .leftJoinAndSelect('contact.company', 'company');
 
         // handle query
-        queryBuilder.where('1 = 1');
-        queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
-            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        queryBuilder.where('contact.name ILIKE :name', {
+            name: `%${pageOptionsDto.q}%`,
         });
         queryBuilder.orderBy('contact.updatedAt', pageOptionsDto.order);
         const [contacts, contactsCount] = await queryBuilder
@@ -77,7 +81,7 @@ export class ContactService {
         for await (const iterator of listIdContact) {
             const contact = await this.contactRepository.findOne({
                 where: { id: iterator },
-                relations: ['company', 'tag', 'referral'],
+                relations: ['company', 'referral'],
             });
             const listIdCompany = contact.company.map((it) => it.idCompany);
             const rawDatas = await this._companyRepository.findByIds([
@@ -97,7 +101,7 @@ export class ContactService {
     async findById(id: string): Promise<DetailContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['company', 'referral', 'tag'],
+            relations: ['company', 'referral'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);

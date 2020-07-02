@@ -17,8 +17,10 @@ export class CompanyContactEntity {
     idCompany: string;
     @Column({ name: 'contact_id' })
     idContact: string;
+    @Column({ name: 'title' })
+    title: string;
 
-    @ManyToOne(() => CompanyEntity, (company) => company.cpt, {
+    @ManyToOne(() => CompanyEntity, (company) => company.contact, {
         onDelete: 'NO ACTION',
         onUpdate: 'NO ACTION',
     })

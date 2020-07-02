@@ -3,7 +3,6 @@ import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company-contact/companyContact.entity';
 import { CompanyDto } from './dto/CompanyDto';
-import { TagCompanyEntity } from './tag/tagcompany.entity';
 
 @Entity({ name: 'company' })
 export class CompanyEntity extends AbstractEntity<CompanyDto> {
@@ -32,11 +31,7 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
 
     @OneToMany(() => CompanyContactEntity, (cpt) => cpt.company)
     @JoinColumn()
-    cpt: CompanyContactEntity[];
-
-    @OneToMany(() => TagCompanyEntity, (tag) => tag.company)
-    @JoinColumn()
-    tag: TagCompanyEntity[];
+    contact: CompanyContactEntity[];
 
     dtoClass = CompanyDto;
 }
