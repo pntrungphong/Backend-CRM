@@ -13,8 +13,8 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @Column({ unique: true, nullable: true, type: 'jsonb' })
     email: string;
 
-    @Column({ nullable: true })
-    title = '';
+    @Column({ nullable: true, default: '' })
+    title: string;
 
     @Column({ nullable: true, type: 'jsonb' })
     phone: string;
