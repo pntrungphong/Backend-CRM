@@ -4,9 +4,5 @@ import { IsString } from 'class-validator';
 export class TagDto {
     @IsString()
     @ApiPropertyOptional()
-    id: string;
-
-    @IsString()
-    @ApiPropertyOptional()
     tag: string;
 }

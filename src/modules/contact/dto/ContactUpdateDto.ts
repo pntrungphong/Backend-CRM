@@ -5,6 +5,7 @@ import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { CompanyContactDto } from '../../company-contact/dto/CompanyContactDto';
 import { LinkCompanyDto } from '../../company-contact/dto/UpdateLinkContactDto';
+import { TagDto } from '../../tag/dto/TagDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
@@ -31,6 +32,10 @@ export class ContactUpdateDto {
     @IsOptional()
     @ApiProperty({ type: [] })
     address: string;
+
+    @IsOptional()
+    @ApiProperty({ type: [TagDto] })
+    tag: TagDto[];
 
     @IsOptional()
     @ApiProperty({ type: [WebsiteDto] })

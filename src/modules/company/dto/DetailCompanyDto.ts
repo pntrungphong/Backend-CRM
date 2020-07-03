@@ -3,6 +3,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { GeneralInfoDto } from '../../contact/dto/GeneralInfoDto';
+import { TagDto } from '../../tag/dto/TagDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
@@ -39,6 +40,9 @@ export class DetailCompanyDto {
     @ApiPropertyOptional({ type: [GeneralInfoDto] })
     contact: GeneralInfoDto[];
 
+    @ApiPropertyOptional({ type: [TagDto] })
+    tag: TagDto[];
+
     @ApiPropertyOptional()
     createdBy: string;
 
@@ -53,6 +57,7 @@ export class DetailCompanyDto {
         this.address = company.address;
         this.website = company.website;
         this.url = company.url;
+        this.tag = company.tag;
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
         this.createdAt = company.createdAt;
