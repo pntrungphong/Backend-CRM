@@ -2,13 +2,20 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
+    Param,
     Post,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOkResponse,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -27,11 +34,16 @@ import { LeadService } from './lead.service';
 export class LeadController {
     constructor(private _leadService: LeadService) {}
 
-    // @Get('/:id')
-    // @HttpCode(HttpStatus.OK)
-    // async getCompanyById(@Param('id') id: string) {
-    //     return this._leadService.findById(id);
-    // }
+    @Get('/:id')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: LeadDto,
+    })
+    async getCompanyById(@Param('id') id: string): Promise<LeadDto> {
+        return this._leadService.findLeadById(id);
+    }
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: LeadUpdateDto, description: 'Successfully Created' })

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '../../modules/user/user.entity';
 import { CompanyRepository } from '../company/company.repository';
-import { LeadUpdateDto } from './dto/LeadUpdateDto';
+import { LeadDto } from './dto/LeadDto';
 import { LeadEntity } from './lead.entity';
 import { LeadRepository } from './lead.repository';
 @Injectable()
@@ -12,16 +11,8 @@ export class LeadService {
         public readonly companyRepository: CompanyRepository,
     ) {}
 
-    async create(
-        user: UserEntity,
-        createDto: LeadUpdateDto,
-    ): Promise<LeadEntity> {
-        const leadObj = Object.assign(createDto, {
-            createdBy: user.id,
-            updatedBy: user.id,
-        });
-        const lead = this.leadRepository.create({ ...leadObj });
-        return this.leadRepository.save(lead);
+    async create(user, createDto): Promise<LeadEntity> {
+        return this.leadRepository.create(user, createDto);
     }
 
     // async findById(id: string) {
@@ -33,4 +24,7 @@ export class LeadService {
     //     });
     //     console.table(nameCompany.name);
     // }
+    async findLeadById(id: string): Promise<LeadDto> {
+        return this.leadRepository.getLeadById(id);
+    }
 }
