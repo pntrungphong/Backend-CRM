@@ -7,7 +7,6 @@ import { LinkContactDto } from '../../company-contact/dto/UpdateLinkCompanyDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
-import { TagCompanyDto } from '../tag/dto/TagCompanyDto';
 
 export class UpdateCompanyDto {
     @IsString()
@@ -38,9 +37,4 @@ export class UpdateCompanyDto {
     @IsOptional()
     @ApiProperty({ type: [LinkContactDto] })
     contact: CompanyContactDto[];
-
-    @IsArray()
-    @IsOptional()
-    @ApiProperty({ type: [TagCompanyDto] })
-    tag: TagCompanyDto[];
 }

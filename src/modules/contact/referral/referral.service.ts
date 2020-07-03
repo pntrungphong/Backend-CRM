@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ContactReferralRepository } from './contactreferral.repository';
 import { ContactReferralDto } from './dto/ContactReferralDto';
+import { ContactReferralRepository } from './referral.repository';
 @Injectable()
 export class ContactReferralService {
     constructor(
@@ -9,11 +9,12 @@ export class ContactReferralService {
     ) {}
     async create(
         createContactReferralDto: ContactReferralDto[],
-        idContact: string,
+        idSource: string,
     ): Promise<void> {
         for await (const contactReferral of createContactReferralDto) {
             const contactReferralObj = Object.assign(contactReferral, {
-                idSource: idContact,
+                idSource,
+                hastag: JSON.stringify(contactReferral.hastag),
             });
             const contactReferralCompany = this.contactreferralRepository.create(
                 { ...contactReferralObj },

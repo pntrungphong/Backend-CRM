@@ -8,12 +8,14 @@ import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { ContactEntity } from '../contact.entity';
-import { ContactReferralEntity } from '../referral/contactreferral.entity';
-import { TagContactDto } from '../tag/dto/TagContactDto';
+import { ContactReferralEntity } from '../referral/referral.entity';
 
 export class ContactDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
+
+    @ApiPropertyOptional()
+    title: string;
 
     @ApiPropertyOptional({ type: [EmailDto] })
     email: string;
@@ -39,12 +41,10 @@ export class ContactDto extends AbstractDto {
     @ApiPropertyOptional({ type: [ContactReferralEntity] })
     referral: ContactReferralEntity[];
 
-    @ApiPropertyOptional({ type: [TagContactDto] })
-    tag: TagContactDto[];
-
     constructor(contact: ContactEntity) {
         super(contact);
         this.name = contact.name;
+        this.title = contact.title;
         this.email = contact.email;
         this.phone = contact.phone;
         this.address = contact.address;
@@ -53,6 +53,5 @@ export class ContactDto extends AbstractDto {
         this.referral = contact.referral;
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
-        this.tag = contact.tag;
     }
 }

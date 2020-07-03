@@ -27,12 +27,12 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { UserEntity } from '../../modules/user/user.entity';
 import { CompanyContactService } from '../company-contact/companyContact.service';
 import { CompanyService } from './company.service';
+import { CompaniesPageDetailDto } from './dto/CompaniesPageDetailDto';
 import { CompaniesPageDto } from './dto/CompaniesPageDto';
 import { CompaniesPageOptionsDto } from './dto/CompaniesPageOptionsDto';
 import { CompanyDto } from './dto/CompanyDto';
 import { DetailCompanyDto } from './dto/DetailCompanyDto';
 import { UpdateCompanyDto } from './dto/UpdateCompanyDto';
-import { TagCompanyService } from './tag/tagcompany.service';
 
 @Controller('company')
 @ApiTags('company')
@@ -42,8 +42,7 @@ import { TagCompanyService } from './tag/tagcompany.service';
 export class CompanyController {
     constructor(
         private _companyService: CompanyService,
-        private _companyContactService: CompanyContactService,
-        private _tagCompanyService: TagCompanyService,
+        private _companyContactService: CompanyContactService, // private _tagCompanyService: TagCompanyService,
     ) {}
 
     @Get()
@@ -56,7 +55,7 @@ export class CompanyController {
     getCompanies(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: CompaniesPageOptionsDto,
-    ): Promise<CompaniesPageDto> {
+    ): Promise<CompaniesPageDetailDto> {
         return this._companyService.getList(pageOptionsDto);
     }
 
@@ -85,7 +84,7 @@ export class CompanyController {
                 createCompany.id,
             );
         }
-        await this._tagCompanyService.create(data.tag, createCompany.id);
+        // await this._tagCompanyService.create(data.tag, createCompany.id);
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -104,7 +103,7 @@ export class CompanyController {
             data,
             user,
         );
-        await this._tagCompanyService.update(data.tag, updatedCompany.id);
+        // await this._tagCompanyService.update(data.tag, updatedCompany.id);
 
         return updatedCompany.toDto() as UpdateCompanyDto;
     }

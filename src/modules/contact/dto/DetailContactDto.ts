@@ -2,26 +2,22 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { GeneralInfoDto } from '../../company/dto/GeneralInfoDto';
+import { GeneralInfoDto as CompnayData } from '../../company/dto/GeneralInfoDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { ContactEntity } from '../contact.entity';
-import { ContactReferralEntity } from '../referral/contactreferral.entity';
-import { TagContactDto } from '../tag/dto/TagContactDto';
+import { GeneralInfoDto as ContactData } from './GeneralInfoDto';
 
 export class DetailContactDto {
     @ApiPropertyOptional()
     id: string;
 
     @ApiPropertyOptional()
-    createdAt: Date;
-
-    @ApiPropertyOptional()
-    updatedAt: Date;
-
-    @ApiPropertyOptional()
     name: string;
+
+    @ApiPropertyOptional()
+    title: string;
 
     @ApiPropertyOptional({ type: [EmailDto] })
     email: string;
@@ -35,8 +31,11 @@ export class DetailContactDto {
     @ApiPropertyOptional({ type: [WebsiteDto] })
     website: string;
 
-    @ApiPropertyOptional({ type: [GeneralInfoDto] })
-    company: GeneralInfoDto[];
+    @ApiPropertyOptional({ type: [CompnayData] })
+    company: CompnayData[];
+
+    @ApiPropertyOptional({ type: [ContactData] })
+    referral: ContactData[];
 
     @ApiPropertyOptional()
     createdBy: string;
@@ -44,24 +43,23 @@ export class DetailContactDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
-    @ApiPropertyOptional({ type: [ContactReferralEntity] })
-    referral: ContactReferralEntity[];
+    @ApiPropertyOptional()
+    createdAt: Date;
 
-    @ApiPropertyOptional({ type: [TagContactDto] })
-    tag: TagContactDto[];
+    @ApiPropertyOptional()
+    updatedAt: Date;
 
     constructor(contact: ContactEntity) {
         this.id = contact.id;
         this.name = contact.name;
+        this.title = contact.title;
         this.email = contact.email;
         this.phone = contact.phone;
         this.address = contact.address;
         this.website = contact.website;
-        this.referral = contact.referral;
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
         this.createdAt = contact.createdAt;
         this.updatedAt = contact.updatedAt;
-        this.tag = contact.tag;
     }
 }

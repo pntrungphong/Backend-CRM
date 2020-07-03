@@ -5,6 +5,7 @@ import {
     Controller,
     Get,
     HttpCode,
+    HttpException,
     HttpStatus,
     Param,
     Post,
@@ -33,8 +34,7 @@ import { ContactsPageDto } from './dto/ContactsPageDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
 import { DetailContactDto } from './dto/DetailContactDto';
-import { ContactReferralService } from './referral/contactreferral.service';
-import { TagContactService } from './tag/tagcontact.service';
+import { ContactReferralService } from './referral/referral.service';
 
 @Controller('contact')
 @ApiTags('contact')
@@ -45,7 +45,6 @@ export class ContactController {
     constructor(
         private _contactService: ContactService,
         private _companyContactService: CompanyContactService,
-        private _tagContactService: TagContactService,
         private _contactReferralService: ContactReferralService,
     ) {}
 
@@ -100,7 +99,6 @@ export class ContactController {
                 createdContact.id,
             );
         }
-        await this._tagContactService.create(createDto.tag, createdContact.id);
         return createdContact.toDto() as ContactUpdateDto;
     }
 
@@ -120,15 +118,24 @@ export class ContactController {
             updateDto,
             user,
         );
-        await this._companyContactService.updateCompany(
-            updateDto.company,
-            updatedContact.id,
-        );
-        await this._contactReferralService.update(
-            updateDto.referral,
-            updatedContact.id,
-        );
-        await this._tagContactService.update(updateDto.tag, updatedContact.id);
+        if (!updatedContact) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        if (updateDto.company) {
+            await this._companyContactService.updateCompany(
+                updateDto.company,
+                updatedContact.id,
+            );
+        }
+        if (updateDto.referral) {
+            await this._contactReferralService.update(
+                updateDto.referral,
+                updatedContact.id,
+            );
+        }
         return updatedContact.toDto() as ContactUpdateDto;
     }
 }

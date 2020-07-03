@@ -9,13 +9,16 @@ import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
 import { ContactReferralDto } from '../referral/dto/ContactReferralDto';
-import { TagContactDto } from '../tag/dto/TagContactDto';
 
 export class ContactUpdateDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
     name: string;
+
+    @IsOptional()
+    @ApiProperty()
+    title = '';
 
     @IsOptional()
     @ApiProperty({ type: [EmailDto] })
@@ -42,9 +45,4 @@ export class ContactUpdateDto {
     @IsOptional()
     @ApiProperty({ type: [ContactReferralDto] })
     referral: ContactReferralDto[];
-
-    @IsArray()
-    @IsOptional()
-    @ApiProperty({ type: [TagContactDto] })
-    tag: TagContactDto[];
 }

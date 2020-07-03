@@ -5,7 +5,7 @@ import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
 import { CompanyRepository } from '../company/company.repository';
-import { GeneralInfoDto } from '../company/dto/GeneralInfoDto';
+import { GeneralInfoDto as CompanyData } from '../company/dto/GeneralInfoDto';
 import { UserEntity } from '../user/user.entity';
 import { ContactEntity } from './contact.entity';
 import { ContactRepository } from './contact.repository';
@@ -13,7 +13,7 @@ import { ContactPageDetailDto } from './dto/ContactsPageDetailDto';
 import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
 import { DetailContactDto } from './dto/DetailContactDto';
-import { ContactReferralService } from './referral/contactreferral.service';
+import { ReferralDto } from './referral/dto/ReferralDto';
 
 @Injectable()
 export class ContactService {
@@ -21,7 +21,6 @@ export class ContactService {
         public readonly contactRepository: ContactRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
-        private _contactReferralService: ContactReferralService,
         private _companyRepository: CompanyRepository,
     ) {}
 
@@ -51,7 +50,12 @@ export class ContactService {
             ...updateDto,
             updatedBy: user.id,
         });
-
+        if (!contact) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
         return this.contactRepository.save(updatedContact);
     }
 
@@ -63,9 +67,8 @@ export class ContactService {
             .leftJoinAndSelect('contact.company', 'company');
 
         // handle query
-        queryBuilder.where('1 = 1');
-        queryBuilder.andWhere('LOWER (contact.name) LIKE :name', {
-            name: `%${pageOptionsDto.q.toLowerCase()}%`,
+        queryBuilder.where('contact.name ILIKE :name', {
+            name: `%${pageOptionsDto.q}%`,
         });
         queryBuilder.orderBy('contact.updatedAt', pageOptionsDto.order);
         const [contacts, contactsCount] = await queryBuilder
@@ -78,14 +81,14 @@ export class ContactService {
         for await (const iterator of listIdContact) {
             const contact = await this.contactRepository.findOne({
                 where: { id: iterator },
-                relations: ['company', 'tag', 'referral'],
+                relations: ['company', 'referral'],
             });
             const listIdCompany = contact.company.map((it) => it.idCompany);
             const rawDatas = await this._companyRepository.findByIds([
                 ...listIdCompany,
             ]);
             const result = new DetailContactDto(contact);
-            result.company = rawDatas.map((it) => new GeneralInfoDto(it));
+            result.company = rawDatas.map((it) => new CompanyData(it));
             results.push(result);
         }
         const pageMetaDto = new PageMetaDto({
@@ -98,17 +101,26 @@ export class ContactService {
     async findById(id: string): Promise<DetailContactDto> {
         const contact = await this.contactRepository.findOne({
             where: { id },
-            relations: ['company', 'referral', 'tag'],
+            relations: ['company', 'referral'],
         });
-
-        const listIdCompany = contact.company.map((it) => it.idCompany);
-        const rawDatas = await this._companyRepository.findByIds(listIdCompany);
-        const result = new DetailContactDto(contact);
-        result.company = rawDatas.map((it) => new GeneralInfoDto(it));
-
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
+        // handle company
+        const listIdCompany = contact.company.map((it) => it.idCompany);
+        const rawDatas = await this._companyRepository.findByIds(listIdCompany);
+        const result = new DetailContactDto(contact);
+        result.company = rawDatas.map((it) => new CompanyData(it));
+
+        // handle contact referral
+        const listIdReferral = contact.referral.map((it) => it.idTarget);
+        const listContacts = await this.contactRepository.findByIds(
+            listIdReferral,
+        );
+        result.referral = listContacts.map(
+            (it, index) => new ReferralDto(it, contact.referral[index]),
+        );
+
         return result;
     }
 }
