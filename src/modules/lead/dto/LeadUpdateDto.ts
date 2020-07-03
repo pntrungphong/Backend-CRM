@@ -1,23 +1,33 @@
 'use strict';
 
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
-import { CompanyLeadUpdateDto } from '../../company/dto/CompanyLeadUpdateDto';
 export class LeadUpdateDto {
     @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
+    @ApiPropertyOptional()
     name: string;
-
     @IsString()
-    @ApiProperty()
+    @ApiPropertyOptional()
     status: string;
-
     @IsString()
-    @ApiProperty()
+    @ApiPropertyOptional()
     rank: string;
+    @IsString()
+    @ApiPropertyOptional()
+    createdBy: string;
+    @IsString()
+    @ApiPropertyOptional()
+    updatedBy: string;
+    @IsString()
+    @ApiPropertyOptional()
+    idCompany: string;
 
-    @ApiProperty({ type: CompanyLeadUpdateDto })
-    company: CompanyLeadUpdateDto;
+    // constructor(lead: LeadEntity) {
+    //     this.name = lead.name;
+    //     this.createdBy = lead.createdBy;
+    //     this.updatedBy = lead.updatedBy;
+    //     this.rank=lead.rank;
+    //     this.status=lead.status
+    // }
 }
