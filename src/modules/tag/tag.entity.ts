@@ -6,8 +6,8 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { CompanyEntity } from '../company/company.entity';
-import { ContactEntity } from '../contact/contact.entity';
+import { CompanyEntity } from '../client/entity/company.entity';
+import { ContactEntity } from '../client/entity/contact.entity';
 
 @Entity({ name: 'tag' })
 export class TagEntity {
