@@ -14,6 +14,7 @@ import { ContactsPageOptionsDto } from './dto/ContactsPageOptionsDto';
 import { ContactUpdateDto } from './dto/ContactUpdateDto';
 import { DetailContactDto } from './dto/DetailContactDto';
 import { ReferralDto } from './referral/dto/ReferralDto';
+import { raw } from 'express';
 
 @Injectable()
 export class ContactService {
@@ -84,6 +85,7 @@ export class ContactService {
                 relations: ['company', 'referral'],
             });
             const listIdCompany = contact.company.map((it) => it.idCompany);
+            console.table(listIdCompany)
             const rawDatas = await this._companyRepository.findByIds([
                 ...listIdCompany,
             ]);
