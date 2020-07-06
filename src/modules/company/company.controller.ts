@@ -104,7 +104,12 @@ export class CompanyController {
             user,
         );
         // await this._tagCompanyService.update(data.tag, updatedCompany.id);
-
+        if (data.contact) {
+            await this._companyContactService.updateContact(
+                data.contact,
+                updatedCompany.id,
+            );
+        }
         return updatedCompany.toDto() as UpdateCompanyDto;
     }
 }
