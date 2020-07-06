@@ -100,12 +100,13 @@ export class ContactService {
 
     async findById(id: string): Promise<DetailContactDto> {
         const contact = await this.contactRepository.findOne({
+            relations: ['company', 'referral', 'tag'],
             where: { id },
-            relations: ['company', 'referral'],
         });
         if (!contact) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
+
         // handle company
         const listIdCompany = contact.company.map((it) => it.idCompany);
         const rawDatas = await this._companyRepository.findByIds(listIdCompany);

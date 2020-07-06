@@ -68,7 +68,7 @@ export class CompanyService {
     async findById(id: string): Promise<DetailCompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['contact'],
+            relations: ['contact', 'tag'],
         });
 
         if (!company) {
