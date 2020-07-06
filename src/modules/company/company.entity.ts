@@ -1,8 +1,16 @@
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    OneToMany,
+} from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company-contact/companyContact.entity';
 import { LeadEntity } from '../lead/lead.entity';
+import { TagEntity } from '../tag/tag.entity';
 import { CompanyDto } from './dto/CompanyDto';
 
 @Entity({ name: 'company' })
@@ -37,6 +45,13 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     @OneToMany(() => LeadEntity, (lead) => lead.company)
     @JoinColumn()
     lead: LeadEntity[];
+    @ManyToMany(() => TagEntity, { cascade: true, eager: true })
+    @JoinTable({
+        name: 'tag_source',
+        joinColumn: { name: 'source_id' },
+        inverseJoinColumn: { name: 'tag_id' },
+    })
+    tag: TagEntity[];
 
     dtoClass = CompanyDto;
 }

@@ -4,6 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/AbstractDto';
 import { CompanyContactEntity } from '../../company-contact/companyContact.entity';
+import { TagDto } from '../../tag/dto/TagDto';
 import { EmailDto } from '../../website/dto/EmailDto';
 import { PhoneDto } from '../../website/dto/PhoneDto';
 import { WebsiteDto } from '../../website/dto/WebsiteDto';
@@ -32,6 +33,9 @@ export class ContactDto extends AbstractDto {
     @ApiPropertyOptional({ type: [CompanyContactEntity] })
     company: CompanyContactEntity[];
 
+    @ApiPropertyOptional({ type: [TagDto] })
+    tag: TagDto[];
+
     @ApiPropertyOptional()
     createdBy: string;
 
@@ -51,6 +55,7 @@ export class ContactDto extends AbstractDto {
         this.website = contact.website;
         this.company = contact.company;
         this.referral = contact.referral;
+        this.tag = contact.tag;
         this.createdBy = contact.createdBy;
         this.updatedBy = contact.updatedBy;
     }

@@ -9,6 +9,7 @@ import { CompanyModule } from './modules/company/company.module';
 import { ContactModule } from './modules/contact/contact.module';
 import { LeadModule } from './modules/lead/lead.module';
 import { MathModule } from './modules/math/math.module';
+import { TagModule } from './modules/tag/tag.module';
 import { UserModule } from './modules/user/user.module';
 import { ConfigService } from './shared/services/config.service';
 import { SharedModule } from './shared/shared.module';
@@ -21,6 +22,7 @@ import { SharedModule } from './shared/shared.module';
         ContactModule,
         CompanyModule,
         LeadModule,
+        TagModule,
         TypeOrmModule.forRootAsync({
             imports: [SharedModule],
             useFactory: (configService: ConfigService) =>
