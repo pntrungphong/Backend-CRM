@@ -1,29 +1,98 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
+import { PageMetaDto } from '../../common/dto/PageMetaDto';
+import { ContactEntity } from '../contact/contact.entity';
 import { UserEntity } from '../user/user.entity';
+import { DetailLeadCompanyDto } from './dto/DetailLeadCompanyDto';
+import { InfoLeadCompanyDto } from './dto/InfoLeadCompanyDto';
+import { InfoLeadContactDto } from './dto/InfoLeadContactDto';
 import { LeadDto } from './dto/LeadDto';
+import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
+import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadEntity } from './lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
-    public async create(
-        user: UserEntity,
-        createDto: LeadUpdateDto,
-    ): Promise<LeadEntity> {
-        const leadObj = Object.assign(createDto, {
-            createdBy: user.id,
-            updatedBy: user.id,
-        });
-        const lead = this.repository.create({ ...leadObj });
-        return this.repository.save(lead);
-    }
+    // public async create(
+    //     user: UserEntity,
+    //     createDto: LeadUpdateDto,
+    // ): Promise<LeadEntity> {
+    //     const leadObj = Object.assign(createDto, {
+    //         createdBy: user.id,
+    //         updatedBy: user.id,
+    //     });
+    //     const lead = this.repository.create({ ...leadObj });
+    //     return this.repository.save(lead);
+    // }
 
-    public async getLeadById(id: string): Promise<LeadDto> {
-        const leadInfo = await this.repository.findOne({
+    public async update(
+        id: string,
+        updateDto: LeadUpdateDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        const lead = await this.repository.findOne({
             where: { id },
         });
-        console.table(leadInfo);
-        return leadInfo.toDto() as LeadDto;
+        if (!lead) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+        const updateLead = Object.assign(lead, {
+            ...updateDto,
+            updated_by: user.id,
+        });
+
+        return this.repository.save(updateLead);
+    }
+
+    public async getLeadById(id: string): Promise<DetailLeadCompanyDto> {
+        const leadInfo = await this.repository.findOne({
+            where: { id },
+            relations: ['company', 'note'],
+        });
+        const result = new DetailLeadCompanyDto(leadInfo);
+        console.table(result.company);
+        result.company = new InfoLeadCompanyDto(leadInfo.company);
+        return result;
+    }
+
+    public async getList(
+        pageOptionsDto: LeadsPageOptionsDto,
+    ): Promise<LeadsPageDetailDto> {
+        const queryBuilder = this.repository
+            .createQueryBuilder('lead')
+            .leftJoinAndSelect('lead.note', 'note')
+            .leftJoinAndSelect('lead.company', 'company')
+            .leftJoinAndSelect('lead.contact', 'contact')
+            .where('1=1')
+            .andWhere('LOWER (lead.name) LIKE :name', {
+                name: `%${pageOptionsDto.q.toLowerCase()}%`,
+            })
+            .addOrderBy('lead.updatedAt', pageOptionsDto.order);
+        const [leads, leadsCount] = await queryBuilder
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take)
+            .getManyAndCount();
+        const pageMetaDto = new PageMetaDto({
+            pageOptionsDto,
+            itemCount: leadsCount,
+        });
+        const results = [];
+        for await (const iterator of leads) {
+            const lead = new LeadDto(iterator);
+            lead.company = new InfoLeadCompanyDto(iterator.company);
+            const contact = lead.contact;
+            const listContact = [];
+            contact.forEach((item) => {
+                const infoContact = new InfoLeadContactDto(
+                    item as ContactEntity,
+                );
+                listContact.push(infoContact);
+            });
+            lead.contact = listContact;
+            results.push(lead);
+        }
+        return new LeadsPageDetailDto(results, pageMetaDto);
     }
 }

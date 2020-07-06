@@ -1,7 +1,10 @@
 'use strict';
 
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsArray, IsOptional, IsString } from 'class-validator';
+
+import { ContactLeadUpdateDto } from '../contactLead/dto/ContactUpdateDto';
+import { NoteDto } from '../note/dto/NoteDto';
 
 export class LeadUpdateDto {
     @IsString()
@@ -22,6 +25,13 @@ export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
     idCompany: string;
+    @IsOptional()
+    @ApiProperty({ type: [ContactLeadUpdateDto] })
+    contact: ContactLeadUpdateDto[];
+
+    @IsArray()
+    @ApiPropertyOptional({ type: [NoteDto] })
+    note: NoteDto[];
 
     // constructor(lead: LeadEntity) {
     //     this.name = lead.name;

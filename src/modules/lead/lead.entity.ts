@@ -1,8 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+} from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyEntity } from '../company/company.entity';
+import { ContactEntity } from '../contact/contact.entity';
 import { LeadDto } from './dto/LeadDto';
+import { NoteEntity } from './note/note.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -22,5 +32,20 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         name: 'company_id',
     })
     company: CompanyEntity;
+
+    @OneToMany(() => NoteEntity, (note) => note.lead)
+    @JoinColumn({
+        name: 'lead_id',
+    })
+    note: NoteEntity[];
+
+    @ManyToMany(() => ContactEntity)
+    @JoinTable({
+        name: 'contact_lead',
+        joinColumns: [{ name: 'lead_id' }],
+        inverseJoinColumns: [{ name: 'contact_id' }],
+    })
+    contact: ContactEntity[];
+
     dtoClass = LeadDto;
 }

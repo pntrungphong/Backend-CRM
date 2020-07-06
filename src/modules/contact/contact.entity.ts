@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { CompanyContactEntity } from '../company-contact/companyContact.entity';
+import { LeadEntity } from '../lead/lead.entity';
 import { ContactDto } from './dto/ContactDto';
 import { ContactReferralEntity } from './referral/referral.entity';
 
@@ -38,6 +39,9 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @OneToMany(() => ContactReferralEntity, (referral) => referral.contact)
     @JoinColumn()
     referral: ContactReferralEntity[];
+
+    @ManyToMany(() => LeadEntity, (lead) => lead.contact)
+    lead: LeadEntity[];
 
     dtoClass = ContactDto;
 }

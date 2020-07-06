@@ -6,14 +6,20 @@ import { CompanyRepository } from '../company/company.repository';
 import { LeadController } from './lead.controller';
 import { LeadRepository } from './lead.repository';
 import { LeadService } from './lead.service';
+import { NoteRepository } from './note/note.repository';
+import { NoteService } from './note/note.service';
 
 @Module({
     imports: [
         forwardRef(() => AuthModule),
-        TypeOrmModule.forFeature([LeadRepository, CompanyRepository]),
+        TypeOrmModule.forFeature([
+            LeadRepository,
+            CompanyRepository,
+            NoteRepository,
+        ]),
     ],
     controllers: [LeadController],
-    exports: [LeadService],
-    providers: [LeadService],
+    exports: [LeadService, NoteService],
+    providers: [LeadService, NoteService],
 })
 export class LeadModule {}

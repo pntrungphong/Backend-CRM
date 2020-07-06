@@ -2,12 +2,18 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { AbstractDto } from '../../../common/dto/AbstractDto';
 import { LeadEntity } from '../lead.entity';
 import { NoteDto } from '../note/dto/NoteDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
-import { InfoLeadContactDto } from './InfoLeadContactDto';
-export class LeadDto extends AbstractDto {
+export class DetailLeadCompanyDto {
+    @ApiPropertyOptional()
+    id: string;
+
+    @ApiPropertyOptional()
+    createdAt: Date;
+
+    @ApiPropertyOptional()
+    updatedAt: Date;
     @ApiPropertyOptional()
     name: string;
     @ApiPropertyOptional()
@@ -19,25 +25,20 @@ export class LeadDto extends AbstractDto {
 
     @ApiPropertyOptional()
     updatedBy: string;
-    @ApiPropertyOptional()
-    idCompany: string;
-    @ApiPropertyOptional({ type: [NoteDto] })
-    note: NoteDto[];
     @ApiPropertyOptional({ type: InfoLeadCompanyDto })
     company: InfoLeadCompanyDto;
-    @ApiPropertyOptional({ type: [InfoLeadContactDto] })
-    contact: InfoLeadContactDto[];
-
+    @ApiPropertyOptional({ type: [NoteDto] })
+    note: NoteDto[];
     constructor(lead: LeadEntity) {
-        super(lead);
+        this.id = lead.id;
+        this.createdAt = lead.createdAt;
+        this.updatedAt = lead.updatedAt;
         this.name = lead.name;
         this.status = lead.status;
         this.rank = lead.rank;
-        this.note = lead.note;
         this.createdBy = lead.createdBy;
         this.updatedBy = lead.updatedBy;
-        this.idCompany = lead.idCompany;
         this.company = lead.company;
-        this.contact = lead.contact;
+        this.note = lead.note;
     }
 }

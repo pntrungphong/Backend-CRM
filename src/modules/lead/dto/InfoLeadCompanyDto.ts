@@ -2,9 +2,9 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { CompanyEntity } from '../company.entity';
+import { CompanyEntity } from '../../company/company.entity';
 
-export class GeneralInfoLeadCompanyDto {
+export class InfoLeadCompanyDto {
     @ApiPropertyOptional()
     name: string;
 
