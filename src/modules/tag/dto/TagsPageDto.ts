@@ -4,7 +4,7 @@ import { TagDto } from './TagDto';
 
 export class TagsPageDto {
     @ApiProperty({
-        type: [TagDto],
+        type: TagDto,
         isArray: true,
     })
     readonly data: TagDto[];
