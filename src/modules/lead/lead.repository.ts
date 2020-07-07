@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { AbstractRepository } from 'typeorm';
+import { AbstractRepository, getConnection } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
@@ -15,17 +15,18 @@ import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadEntity } from './lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
-    // public async create(
-    //     user: UserEntity,
-    //     createDto: LeadUpdateDto,
-    // ): Promise<LeadEntity> {
-    //     const leadObj = Object.assign(createDto, {
-    //         createdBy: user.id,
-    //         updatedBy: user.id,
-    //     });
-    //     const lead = this.repository.create({ ...leadObj });
-    //     return this.repository.save(lead);
-    // }
+    public async create(
+        user: UserEntity,
+        createDto: LeadUpdateDto,
+    ): Promise<LeadEntity> {
+        const leadObj = Object.assign(createDto, {
+            createdBy: user.id,
+            updatedBy: user.id,
+        });
+        
+        const lead = this.repository.create({ ...leadObj });
+        return this.repository.save(lead);
+    }
 
     public async update(
         id: string,

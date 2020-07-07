@@ -15,9 +15,9 @@ export class LeadService {
         public readonly companyRepository: CompanyRepository,
     ) {}
 
-    // async create(user, createDto): Promise<LeadEntity> {
-    //     return this.leadRepository.create(user, createDto);
-    // }
+    async create(user, createDto): Promise<LeadEntity> {
+        return this.leadRepository.create(user, createDto);
+    }
     async update(
         id: string,
         updateDto: LeadUpdateDto,

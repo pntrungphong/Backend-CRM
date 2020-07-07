@@ -11,6 +11,7 @@ import {
     UseGuards,
     UseInterceptors,
     ValidationPipe,
+    Post,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -31,7 +32,8 @@ import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadService } from './lead.service';
 import { NoteService } from './note/note.service';
-
+import { LeadDto } from './dto/LeadDto';
+import { getConnection } from "typeorm";
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -41,7 +43,7 @@ export class LeadController {
     constructor(
         private _leadService: LeadService,
         private _noteService: NoteService,
-    ) {}
+    ) { }
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -68,19 +70,33 @@ export class LeadController {
     ): Promise<DetailLeadCompanyDto> {
         return this._leadService.findLeadById(id);
     }
-    // @Post()
-    // @HttpCode(HttpStatus.OK)
-    // @ApiOkResponse({ type: LeadUpdateDto, description: 'Successfully Created' })
-    // async createLead(
-    //     @Body() data: LeadUpdateDto,
-    //     @AuthUser() user: UserEntity,
-    // ): Promise<LeadDto> {
-    //     const createLead = await this._leadService.create(user, data);
-    //     if (data.note) {
-    //         await this._noteService.create(data.note, createLead.id);
-    //     }
-    //     return createLead.toDto() as LeadDto;
-    // }
+    @Post()
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({ type: LeadUpdateDto, description: 'Successfully Created' })
+    async createLead(
+        @Body() data: LeadUpdateDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<LeadDto> {
+        const createLead = await this._leadService.create(user, data);
+        if (data.note) {
+            await this._noteService.create(data.note, createLead.id);
+        }
+        if (data.linkContact) {
+            for await (const iterator of data.linkContact) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('contact_lead')
+                    .values([
+                        { contact_id: iterator.idContact, lead_id: createLead.id }
+                    ])
+                    .execute();
+
+            }
+
+        }
+        return createLead.toDto() as LeadDto;
+    }
     @Put(':id')
     @ApiOkResponse({
         type: LeadUpdateDto,
