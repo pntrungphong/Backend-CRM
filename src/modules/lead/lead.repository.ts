@@ -3,7 +3,6 @@ import { AbstractRepository, getConnection } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
-import { ContactEntity } from '../contact/contact.entity';
 import { UserEntity } from '../user/user.entity';
 import { DetailLeadCompanyDto } from './dto/DetailLeadCompanyDto';
 import { InfoLeadCompanyDto } from './dto/InfoLeadCompanyDto';
@@ -13,6 +12,7 @@ import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadEntity } from './lead.entity';
+import { ContactEntity } from '../client/entity/contact.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(

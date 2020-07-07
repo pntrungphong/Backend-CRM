@@ -5,9 +5,6 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 
 import { NoteDto } from '../note/dto/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
-import { ContactDto } from '../../contact/dto/ContactDto';
-import { CompanyDto } from 'modules/company/dto/CompanyDto';
-
 export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
