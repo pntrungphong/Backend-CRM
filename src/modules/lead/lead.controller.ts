@@ -12,6 +12,7 @@ import {
     UseGuards,
     UseInterceptors,
     ValidationPipe,
+    HttpException,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -43,7 +44,7 @@ export class LeadController {
     constructor(
         private _leadService: LeadService,
         private _noteService: NoteService,
-    ) {}
+    ) { }
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -104,11 +105,51 @@ export class LeadController {
     })
     async update(
         @Param('id') id: string,
-        @Body() data: LeadUpdateDto,
+        @Body() updateDto: LeadUpdateDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadUpdateDto> {
-        const updatedLead = await this._leadService.update(id, data, user);
-        await this._noteService.update(data.note, updatedLead.id);
-        return updatedLead.toDto() as LeadUpdateDto;
+        if (updateDto.tag) {
+            for await (const iterator of updateDto.tag) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .delete()
+                    .from('tag_source')
+                    .where("source_id = :id", { id: id })
+                    .execute();
+            }
+            const updatedLead = await this._leadService.update(id, updateDto, user);
+            if (!updatedLead) {
+                throw new HttpException(
+                    'Cập nhật thất bại',
+                    HttpStatus.NOT_ACCEPTABLE,
+                );
+            }
+            if (updateDto.note) {
+                await this._noteService.update(updateDto.note, updatedLead.id);
+            }
+            if (updateDto.linkContact) {
+                for await (const iterator of updateDto.linkContact) {
+                    await getConnection()
+                        .createQueryBuilder()
+                        .delete()
+                        .from('contact_lead')
+                        .where("lead_id = :id", { id: id })
+                        .execute();
+
+                    await getConnection()
+                        .createQueryBuilder()
+                        .insert()
+                        .into('contact_lead')
+                        .values([
+                            { contact_id: iterator.idContact, lead_id: updatedLead.id }
+                        ])
+                        .execute();
+
+                }
+
+
+            }
+            return updatedLead.toDto() as LeadUpdateDto;
+        }
     }
 }

@@ -52,7 +52,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note','contact'],
+            relations: ['company', 'note','contact','tag'],
         });
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
@@ -63,6 +63,14 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             );
             listContact.push(infoContact);
         });
+        const listTag = [];
+        result.tag.forEach((item)=>{
+            const infoTag=new InfoLeadTagDto(
+                item as TagEntity
+            );
+            listTag.push(infoTag)
+        })
+        result.tag=listTag;
         result.contact= listContact;
         return result;
     }

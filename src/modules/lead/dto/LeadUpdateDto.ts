@@ -6,6 +6,7 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 import { TagDto } from '../../tag/dto/TagDto';
 import { NoteDto } from '../note/dto/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
+import { TagEntity } from '../../tag/tag.entity';
 export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
@@ -38,5 +39,5 @@ export class LeadUpdateDto {
 
     @IsOptional()
     @ApiProperty({ type: [TagDto] })
-    tag: TagDto[];
+    tag: TagEntity[];
 }
