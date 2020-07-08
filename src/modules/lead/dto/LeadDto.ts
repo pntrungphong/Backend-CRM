@@ -7,6 +7,8 @@ import { LeadEntity } from '../lead.entity';
 import { NoteDto } from '../note/dto/NoteDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
+import { TagDto } from '../../tag/dto/TagDto';
+import { TagEntity } from '../../tag/tag.entity';
 export class LeadDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
@@ -16,17 +18,23 @@ export class LeadDto extends AbstractDto {
     rank: string;
     @ApiPropertyOptional()
     createdBy: string;
-
+    @ApiPropertyOptional()
+    description: string;
     @ApiPropertyOptional()
     updatedBy: string;
     @ApiPropertyOptional()
     idCompany: string;
+    @ApiPropertyOptional()
+    brif: string;
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
     @ApiPropertyOptional({ type: InfoLeadCompanyDto })
     company: InfoLeadCompanyDto;
     @ApiPropertyOptional({ type: [InfoLeadContactDto] })
     contact: InfoLeadContactDto[];
+    @ApiPropertyOptional({ type: [TagDto] })
+    tag: TagDto[];
+
 
     constructor(lead: LeadEntity) {
         super(lead);
@@ -39,5 +47,8 @@ export class LeadDto extends AbstractDto {
         this.idCompany = lead.idCompany;
         this.company = lead.company;
         this.contact = lead.contact;
+        this.description=lead.description;
+        this.tag=lead.tag,
+        this.brif=lead.brif
     }
 }

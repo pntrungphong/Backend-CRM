@@ -4,7 +4,6 @@ import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
 import { UserEntity } from '../user/user.entity';
-import { DetailLeadCompanyDto } from './dto/DetailLeadCompanyDto';
 import { InfoLeadCompanyDto } from './dto/InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './dto/InfoLeadContactDto';
 import { LeadDto } from './dto/LeadDto';
@@ -13,6 +12,7 @@ import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadEntity } from './lead.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
+import { DetailLeadDto } from './dto/DetailLeadDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -23,7 +23,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             createdBy: user.id,
             updatedBy: user.id,
         });
-        
+        for await (const iterator of leadObj.tag) {
+            console.table(iterator)
+        }
         const lead = this.repository.create({ ...leadObj });
         return this.repository.save(lead);
     }
@@ -47,14 +49,21 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         return this.repository.save(updateLead);
     }
 
-    public async getLeadById(id: string): Promise<DetailLeadCompanyDto> {
+    public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note'],
+            relations: ['company', 'note','contact'],
         });
-        const result = new DetailLeadCompanyDto(leadInfo);
-        console.table(result.company);
+        const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
+        const listContact=[];
+        result.contact.forEach((item) => {
+            const infoContact = new InfoLeadContactDto(
+                item as ContactEntity,
+            );
+            listContact.push(infoContact);
+        });
+        result.contact= listContact;
         return result;
     }
 

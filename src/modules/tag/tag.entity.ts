@@ -8,6 +8,7 @@ import {
 
 import { CompanyEntity } from '../client/entity/company.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
+import { LeadEntity } from '../lead/lead.entity';
 
 @Entity({ name: 'tag' })
 export class TagEntity {
@@ -32,4 +33,11 @@ export class TagEntity {
         inverseJoinColumn: { name: 'source_id' },
     })
     contact: ContactEntity[];
+    @ManyToMany(() => LeadEntity, { cascade: true })
+    @JoinTable({
+        name: 'tag_source',
+        joinColumn: { name: 'tag_id' },
+        inverseJoinColumn: { name: 'source_id' },
+    })
+    lead: LeadEntity[];
 }

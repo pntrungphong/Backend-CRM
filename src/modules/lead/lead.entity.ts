@@ -13,6 +13,7 @@ import { LeadDto } from './dto/LeadDto';
 import { NoteEntity } from './note/note.entity';
 import { CompanyEntity } from '../client/entity/company.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
+import { TagEntity } from '../tag/tag.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -21,10 +22,16 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     rank: string;
     @Column({ nullable: false })
     status: string;
+    @Column({ nullable: true })
+    description: string;
     @Column({ nullable: false, name: 'created_by' })
     createdBy: string;
     @Column({ nullable: false, name: 'updated_by' })
     updatedBy: string;
+
+    @Column({ nullable: true })
+    brif: string;
+
     @Column({ name: 'company_id' })
     idCompany: string;
     @ManyToOne(() => CompanyEntity, (company) => company.lead)
@@ -46,6 +53,14 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumns: [{ name: 'contact_id' }],
     })
     contact: ContactEntity[];
+
+    @ManyToMany(() => TagEntity, { cascade: true, eager: true })
+    @JoinTable({
+        name: 'tag_source',
+        joinColumn: { name: 'source_id' },
+        inverseJoinColumn: { name: 'tag_id' },
+    })
+    tag: TagEntity[];
 
     dtoClass = LeadDto;
 }

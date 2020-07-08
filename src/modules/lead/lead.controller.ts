@@ -12,12 +12,15 @@ import {
     UseInterceptors,
     ValidationPipe,
     Post,
+    UploadedFiles,
+    UploadedFile,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
     ApiOkResponse,
     ApiResponse,
     ApiTags,
+    ApiConsumes,
 } from '@nestjs/swagger';
 
 import { AuthUser } from '../../decorators/auth-user.decorator';
@@ -25,7 +28,6 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../../modules/user/user.entity';
-import { DetailLeadCompanyDto } from './dto/DetailLeadCompanyDto';
 import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
 import { LeadsPageDto } from './dto/LeadsPageDto';
 import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
@@ -34,6 +36,12 @@ import { LeadService } from './lead.service';
 import { NoteService } from './note/note.service';
 import { LeadDto } from './dto/LeadDto';
 import { getConnection } from "typeorm";
+import { DetailLeadDto } from './dto/DetailLeadDto';
+import { FileInterceptor, AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ApiFile } from '../../decorators/swagger.schema';
+import { IFile } from '../../interfaces/IFile';
+import { diskStorage } from 'multer'
+import { extname } from 'path'
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -63,16 +71,17 @@ export class LeadController {
     @ApiResponse({
         status: HttpStatus.OK,
         description: 'Get companies list',
-        type: DetailLeadCompanyDto,
+        type: LeadDto,
     })
     async getCompanyById(
         @Param('id') id: string,
-    ): Promise<DetailLeadCompanyDto> {
+    ): Promise<DetailLeadDto> {
         return this._leadService.findLeadById(id);
     }
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: LeadUpdateDto, description: 'Successfully Created' })
+
     async createLead(
         @Body() data: LeadUpdateDto,
         @AuthUser() user: UserEntity,
@@ -93,10 +102,12 @@ export class LeadController {
                     .execute();
 
             }
-
         }
         return createLead.toDto() as LeadDto;
     }
+
+
+
     @Put(':id')
     @ApiOkResponse({
         type: LeadUpdateDto,
