@@ -3,10 +3,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
+import { TagDto } from '../../tag/dto/TagDto';
 import { NoteDto } from '../note/dto/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
-import { TagDto } from '../../tag/dto/TagDto';
-import { TagEntity } from '../../tag/tag.entity';
 export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
@@ -29,9 +28,6 @@ export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
     idCompany: string;
-    @IsString()
-    @ApiPropertyOptional()
-    brif: string;
     @IsArray()
     @ApiProperty({ type: [ContactLeadDto] })
     linkContact: ContactLeadDto[];
@@ -40,9 +36,7 @@ export class LeadUpdateDto {
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
 
-
     @IsOptional()
     @ApiProperty({ type: [TagDto] })
     tag: TagDto[];
-
 }

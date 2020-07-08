@@ -11,8 +11,9 @@ export class CreateLeadTable1593586280128 implements MigrationInterface {
             "status" varchar(200),
             "created_by" varchar(200),
             "updated_by" varchar(200),
-            "created_at" timestamp,
-            "updated_at" timestamp
+            "created_at" timestamptz NOT NULL DEFAULT now(),
+            "updated_at" timestamptz NOT NULL DEFAULT now(),
+            "deleted_at" timestamptz
           );
           
           CREATE TABLE "notes" (
