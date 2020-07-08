@@ -1,17 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindConditions } from 'typeorm';
-
-import { PageMetaDto } from '../../../common/dto/PageMetaDto';
-import { UserEntity } from '../../user/user.entity';
-import { GeneralInfoDto as CompanyData } from '../dto/company/GeneralInfoDto';
-import { ReferralDto } from '../dto/contact-referral/ReferralDto';
-import { ContactPageDetailDto } from '../dto/contact/ContactsPageDetailDto';
-import { ContactsPageOptionsDto } from '../dto/contact/ContactsPageOptionsDto';
-import { ContactUpdateDto } from '../dto/contact/ContactUpdateDto';
-import { DetailContactDto } from '../dto/contact/DetailContactDto';
-import { ContactEntity } from '../entity/contact.entity';
-import { CompanyRepository } from '../repository/company.repository';
 import { ContactRepository } from '../repository/contact.repository';
+import { CompanyRepository } from '../repository/company.repository';
+import { ContactEntity } from '../entity/contact.entity';
+import { ContactUpdateDto } from '../dto/contact/ContactUpdateDto';
+import { UserEntity } from '../../user/user.entity';
+import { ContactsPageOptionsDto } from '../dto/contact/ContactsPageOptionsDto';
+import { ContactPageDetailDto } from '../dto/contact/ContactsPageDetailDto';
+import { DetailContactDto } from '../dto/contact/DetailContactDto';
+import { PageMetaDto } from '../../../common/dto/PageMetaDto';
+import { ReferralDto } from '../dto/contact-referral/ReferralDto';
+import { GeneralInfoDto as Companydata } from '../dto/company/GeneralInfoDto';
 
 @Injectable()
 export class ContactService {
@@ -80,11 +79,12 @@ export class ContactService {
                 relations: ['company', 'referral'],
             });
             const listIdCompany = contact.company.map((it) => it.idCompany);
+            console.table(listIdCompany)
             const rawDatas = await this._companyRepository.findByIds([
                 ...listIdCompany,
             ]);
             const result = new DetailContactDto(contact);
-            result.company = rawDatas.map((it) => new CompanyData(it));
+            result.company = rawDatas.map((it) => new Companydata(it));
             results.push(result);
         }
         const pageMetaDto = new PageMetaDto({
@@ -107,7 +107,7 @@ export class ContactService {
         const listIdCompany = contact.company.map((it) => it.idCompany);
         const rawDatas = await this._companyRepository.findByIds(listIdCompany);
         const result = new DetailContactDto(contact);
-        result.company = rawDatas.map((it) => new CompanyData(it));
+        result.company = rawDatas.map((it) => new Companydata(it));
 
         // handle contact referral
         const listIdReferral = contact.referral.map((it) => it.idTarget);

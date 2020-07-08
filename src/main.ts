@@ -33,7 +33,7 @@ async function bootstrap() {
     app.use(helmet());
     app.use(
         RateLimit({
-            windowMs: 1 * 60 * 1000, // 15 minutes
+            windowMs: 15 * 60 * 1000, // 15 minutes
             max: 1000, // limit each IP to 100 requests per windowMs
         }),
     );

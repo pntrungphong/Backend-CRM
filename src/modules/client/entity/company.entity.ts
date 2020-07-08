@@ -6,11 +6,13 @@ import {
     ManyToMany,
     OneToMany,
 } from 'typeorm';
-
-import { AbstractEntity } from '../../../common/abstract.entity';
-import { TagEntity } from '../../tag/tag.entity';
 import { CompanyDto } from '../dto/company/CompanyDto';
 import { CompanyContactEntity } from './companyContact.entity';
+import { LeadEntity } from '../../lead/lead.entity';
+import { TagEntity } from '../../tag/tag.entity';
+import { AbstractEntity } from '../../../common/abstract.entity';
+
+
 
 @Entity({ name: 'company' })
 export class CompanyEntity extends AbstractEntity<CompanyDto> {
@@ -41,6 +43,9 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     @JoinColumn()
     contact: CompanyContactEntity[];
 
+    @OneToMany(() => LeadEntity, (lead) => lead.company)
+    @JoinColumn()
+    lead: LeadEntity[];
     @ManyToMany(() => TagEntity, { cascade: true, eager: true })
     @JoinTable({
         name: 'tag_source',

@@ -1,17 +1,12 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    JoinTable,
-    ManyToMany,
-    OneToMany,
-} from 'typeorm';
-
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, JoinTable } from 'typeorm';
 import { AbstractEntity } from '../../../common/abstract.entity';
-import { TagEntity } from '../../tag/tag.entity';
 import { ContactDto } from '../dto/contact/ContactDto';
 import { CompanyContactEntity } from './companyContact.entity';
 import { ContactReferralEntity } from './referral.entity';
+import { LeadEntity } from '../../lead/lead.entity';
+import { TagEntity } from '../../tag/tag.entity';
+
+
 
 @Entity({ name: 'contact' })
 export class ContactEntity extends AbstractEntity<ContactDto> {
@@ -47,6 +42,9 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @JoinColumn()
     referral: ContactReferralEntity[];
 
+    @ManyToMany(() => LeadEntity, (lead) => lead.contact)
+    lead: LeadEntity[];
+    
     @ManyToMany(() => TagEntity, { cascade: true, eager: true })
     @JoinTable({
         name: 'tag_source',
