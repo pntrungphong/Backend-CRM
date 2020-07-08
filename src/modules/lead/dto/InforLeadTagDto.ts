@@ -2,17 +2,18 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { ContactEntity } from '../../client/entity/contact.entity';
+import { TagEntity } from '../../tag/tag.entity';
 
 
 export class InfoLeadTagDto {
     @ApiPropertyOptional()
-    name: string;
+    tag: string;
 
     @ApiPropertyOptional()
-    id: string;
+    id: number;
 
-    constructor(contact: ContactEntity) {
-        this.id = contact.id;
-        this.name = contact.name;
+    constructor(tag: TagEntity) {
+        this.id = tag.id;
+        this.tag=tag.tag
     }
 }

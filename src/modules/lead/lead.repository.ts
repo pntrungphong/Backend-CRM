@@ -13,6 +13,8 @@ import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadEntity } from './lead.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
 import { DetailLeadDto } from './dto/DetailLeadDto';
+import { InfoLeadTagDto } from './dto/InforLeadTagDto';
+import { TagEntity } from '../tag/tag.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -100,6 +102,14 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 );
                 listContact.push(infoContact);
             });
+            const listTag = [];
+            lead.tag.forEach((item)=>{
+                const infoTag=new InfoLeadTagDto(
+                    item as TagEntity
+                );
+                listTag.push(infoTag)
+            })
+            lead.tag=listTag;
             lead.contact = listContact;
             results.push(lead);
         }

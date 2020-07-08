@@ -9,11 +9,11 @@ import {
 } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
-import { LeadDto } from './dto/LeadDto';
-import { NoteEntity } from './note/note.entity';
 import { CompanyEntity } from '../client/entity/company.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
 import { TagEntity } from '../tag/tag.entity';
+import { LeadDto } from './dto/LeadDto';
+import { NoteEntity } from './note/note.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -28,9 +28,6 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     createdBy: string;
     @Column({ nullable: false, name: 'updated_by' })
     updatedBy: string;
-
-    @Column({ nullable: true })
-    brif: string;
 
     @Column({ name: 'company_id' })
     idCompany: string;
