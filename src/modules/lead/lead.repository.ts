@@ -23,9 +23,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             createdBy: user.id,
             updatedBy: user.id,
         });
-        for await (const iterator of leadObj.tag) {
-            console.table(iterator)
-        }
+
         const lead = this.repository.create({ ...leadObj });
         return this.repository.save(lead);
     }
@@ -75,6 +73,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('lead.note', 'note')
             .leftJoinAndSelect('lead.company', 'company')
             .leftJoinAndSelect('lead.contact', 'contact')
+            .leftJoinAndSelect('lead.tag', 'tag')
             .where('1=1')
             .andWhere('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
@@ -93,6 +92,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
             const contact = lead.contact;
+            console.table(lead.tag)
             const listContact = [];
             contact.forEach((item) => {
                 const infoContact = new InfoLeadContactDto(

@@ -46,6 +46,16 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     })
     note: NoteEntity[];
 
+
+
+
+ 
+
+
+
+
+
+
     @ManyToMany(() => ContactEntity)
     @JoinTable({
         name: 'contact_lead',
@@ -61,6 +71,15 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumn: { name: 'tag_id' },
     })
     tag: TagEntity[];
+
+
+
+
+
+
+
+
+
 
     dtoClass = LeadDto;
 }

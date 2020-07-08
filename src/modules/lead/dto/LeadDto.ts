@@ -24,8 +24,6 @@ export class LeadDto extends AbstractDto {
     updatedBy: string;
     @ApiPropertyOptional()
     idCompany: string;
-    @ApiPropertyOptional()
-    brif: string;
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
     @ApiPropertyOptional({ type: InfoLeadCompanyDto })
@@ -48,7 +46,6 @@ export class LeadDto extends AbstractDto {
         this.company = lead.company;
         this.contact = lead.contact;
         this.description=lead.description;
-        this.tag=lead.tag,
-        this.brif=lead.brif
+        this.tag=lead.tag
     }
 }
