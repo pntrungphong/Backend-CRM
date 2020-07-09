@@ -32,6 +32,7 @@ export class FileDto extends AbstractDto {
         this.originalname = fileEntity.originalname;
         this.mimetype = fileEntity.mimetype;
         this.filename = fileEntity.filename;
+        this.path = fileEntity.path;
         this.destination = fileEntity.destination;
         this.createdBy = fileEntity.createdBy;
         this.updatedBy = fileEntity.updatedBy;
