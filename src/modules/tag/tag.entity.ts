@@ -8,7 +8,7 @@ import {
 
 import { CompanyEntity } from '../client/entity/company.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
-import { LeadEntity } from '../lead/lead.entity';
+import { LeadEntity } from '../lead/entity/lead.entity';
 
 @Entity({ name: 'tag' })
 export class TagEntity {

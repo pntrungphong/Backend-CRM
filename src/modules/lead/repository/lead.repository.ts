@@ -2,17 +2,17 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
-import { PageMetaDto } from '../../common/dto/PageMetaDto';
-import { ContactEntity } from '../client/entity/contact.entity';
-import { UserEntity } from '../user/user.entity';
-import { DetailLeadDto } from './dto/DetailLeadDto';
-import { InfoLeadCompanyDto } from './dto/InfoLeadCompanyDto';
-import { InfoLeadContactDto } from './dto/InfoLeadContactDto';
-import { LeadDto } from './dto/LeadDto';
-import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
-import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
-import { LeadUpdateDto } from './dto/LeadUpdateDto';
-import { LeadEntity } from './lead.entity';
+import { PageMetaDto } from '../../../common/dto/PageMetaDto';
+import { ContactEntity } from '../../client/entity/contact.entity';
+import { UserEntity } from '../../user/user.entity';
+import { DetailLeadDto } from '../dto/DetailLeadDto';
+import { InfoLeadCompanyDto } from '../dto/InfoLeadCompanyDto';
+import { InfoLeadContactDto } from '../dto/InfoLeadContactDto';
+import { LeadDto } from '../dto/LeadDto';
+import { LeadsPageDetailDto } from '../dto/LeadsPageDetailDto';
+import { LeadsPageOptionsDto } from '../dto/LeadsPageOptionsDto';
+import { LeadUpdateDto } from '../dto/LeadUpdateDto';
+import { LeadEntity } from '../entity/lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(

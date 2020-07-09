@@ -1,7 +1,12 @@
-import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinTable,
+    ManyToMany,
+} from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
-import { LeadFileEntity } from '../lead/lead-file/lead-file.entity';
+import { LeadEntity } from '../lead/entity/lead.entity';
 import { FileDto } from './dto/fileDto';
 
 @Entity({ name: 'file' })
@@ -30,9 +35,13 @@ export class FileEntity extends AbstractEntity<FileDto> {
     @Column({ nullable: false, name: 'updated_by' })
     updatedBy: string;
 
-    @OneToMany(() => LeadFileEntity, (leadFile) => leadFile.file)
-    @JoinColumn()
-    leadFile: LeadFileEntity[];
+    @ManyToMany(() => LeadEntity, { cascade: true })
+    @JoinTable({
+        name: 'lead_file',
+        joinColumn: { name: 'file_id' },
+        inverseJoinColumn: { name: 'lead_id' },
+    })
+    file: LeadEntity[];
 
     dtoClass = FileDto;
 }

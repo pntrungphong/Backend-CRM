@@ -5,7 +5,7 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 
 import { FileData } from '../../file/dto/fileData';
 import { TagDto } from '../../tag/dto/TagDto';
-import { NoteDto } from '../note/dto/NoteDto';
+import { NoteDto } from '../dto/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
 export class LeadUpdateDto {
     @IsString()

@@ -5,8 +5,8 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { AbstractDto } from '../../../common/dto/AbstractDto';
 import { FileDto } from '../../file/dto/fileDto';
 import { TagDto } from '../../tag/dto/TagDto';
-import { LeadEntity } from '../lead.entity';
-import { NoteDto } from '../note/dto/NoteDto';
+import { NoteDto } from '../dto/NoteDto';
+import { LeadEntity } from '../entity/lead.entity';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
 export class LeadDto extends AbstractDto {

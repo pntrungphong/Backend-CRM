@@ -6,13 +6,12 @@ import {
     ManyToMany,
     OneToMany,
 } from 'typeorm';
+
+import { AbstractEntity } from '../../../common/abstract.entity';
+import { LeadEntity } from '../../lead/entity/lead.entity';
+import { TagEntity } from '../../tag/tag.entity';
 import { CompanyDto } from '../dto/company/CompanyDto';
 import { CompanyContactEntity } from './companyContact.entity';
-import { LeadEntity } from '../../lead/lead.entity';
-import { TagEntity } from '../../tag/tag.entity';
-import { AbstractEntity } from '../../../common/abstract.entity';
-
-
 
 @Entity({ name: 'company' })
 export class CompanyEntity extends AbstractEntity<CompanyDto> {
