@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { AbstractRepository, getConnection } from 'typeorm';
+import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../common/dto/PageMetaDto';
+import { ContactEntity } from '../client/entity/contact.entity';
 import { UserEntity } from '../user/user.entity';
+import { DetailLeadDto } from './dto/DetailLeadDto';
 import { InfoLeadCompanyDto } from './dto/InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './dto/InfoLeadContactDto';
 import { LeadDto } from './dto/LeadDto';
@@ -11,8 +13,6 @@ import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadEntity } from './lead.entity';
-import { ContactEntity } from '../client/entity/contact.entity';
-import { DetailLeadDto } from './dto/DetailLeadDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -23,9 +23,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             createdBy: user.id,
             updatedBy: user.id,
         });
-        for await (const iterator of leadObj.tag) {
-            console.table(iterator)
-        }
         const lead = this.repository.create({ ...leadObj });
         return this.repository.save(lead);
     }
@@ -52,18 +49,16 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note','contact'],
+            relations: ['company', 'note', 'contact'],
         });
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
-        const listContact=[];
+        const listContact = [] as InfoLeadContactDto[];
         result.contact.forEach((item) => {
-            const infoContact = new InfoLeadContactDto(
-                item as ContactEntity,
-            );
+            const infoContact = new InfoLeadContactDto(item as ContactEntity);
             listContact.push(infoContact);
         });
-        result.contact= listContact;
+        result.contact = listContact;
         return result;
     }
 
@@ -93,7 +88,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
             const contact = lead.contact;
-            const listContact = [];
+            const listContact = [] as InfoLeadContactDto[];
             contact.forEach((item) => {
                 const infoContact = new InfoLeadContactDto(
                     item as ContactEntity,

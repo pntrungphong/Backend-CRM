@@ -3,6 +3,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/AbstractDto';
+import { FileDto } from '../../file/dto/fileDto';
 import { TagDto } from '../../tag/dto/TagDto';
 import { LeadEntity } from '../lead.entity';
 import { NoteDto } from '../note/dto/NoteDto';
@@ -31,6 +32,8 @@ export class LeadDto extends AbstractDto {
     contact: InfoLeadContactDto[];
     @ApiPropertyOptional({ type: [TagDto] })
     tag: TagDto[];
+    @ApiPropertyOptional({ type: [FileDto] })
+    file: FileDto[];
 
     constructor(lead: LeadEntity) {
         super(lead);

@@ -2,12 +2,13 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
+import { FileDto } from '../../file/dto/fileDto';
+import { TagDto } from '../../tag/dto/TagDto';
+import { TagEntity } from '../../tag/tag.entity';
 import { LeadEntity } from '../lead.entity';
 import { NoteDto } from '../note/dto/NoteDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
-import { TagDto } from '../../tag/dto/TagDto';
-import { TagEntity } from '../../tag/tag.entity';
 
 export class DetailLeadDto {
     @ApiPropertyOptional()
@@ -45,6 +46,8 @@ export class DetailLeadDto {
     updatedBy: string;
     @ApiPropertyOptional({ type: [TagDto] })
     tag: TagEntity[];
+    @ApiPropertyOptional({ type: [FileDto] })
+    file: FileDto[];
     constructor(lead: LeadEntity) {
         this.id = lead.id;
         this.name = lead.name;

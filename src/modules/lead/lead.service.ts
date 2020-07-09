@@ -1,23 +1,32 @@
 import { Injectable } from '@nestjs/common';
 
 import { UserEntity } from '../../modules/user/user.entity';
+import { CompanyRepository } from '../client/repository/company.repository';
+import { FileDto } from '../file/dto/fileDto';
+import { DetailLeadDto } from './dto/DetailLeadDto';
 import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
+import { FileLeadRepository } from './lead-file/lead-file.repository';
 import { LeadEntity } from './lead.entity';
 import { LeadRepository } from './lead.repository';
-import { CompanyRepository } from '../client/repository/company.repository';
-import { LeadDto } from './dto/LeadDto';
-import { DetailLeadDto } from './dto/DetailLeadDto';
 @Injectable()
 export class LeadService {
     constructor(
         public readonly leadRepository: LeadRepository,
         public readonly companyRepository: CompanyRepository,
+        public readonly leadFileRepository: FileLeadRepository, // public readonly fileService: FileService,
     ) {}
 
-    async create(user, createDto): Promise<LeadEntity> {
-        return this.leadRepository.create(user, createDto);
+    async create(
+        user: UserEntity,
+        createDto: LeadUpdateDto,
+    ): Promise<LeadEntity> {
+        const createdLead = await this.leadRepository.create(user, createDto);
+        for await (const iterator of createDto.file) {
+            await this.leadFileRepository.create(iterator.id, createdLead.id);
+        }
+        return createdLead;
     }
     async update(
         id: string,
@@ -28,7 +37,16 @@ export class LeadService {
     }
 
     async findLeadById(id: string): Promise<DetailLeadDto> {
-        return this.leadRepository.getLeadById(id);
+        const leadEntity = await this.leadRepository.getLeadById(id);
+        const leadFileEntity = await this.leadFileRepository.getByIdLead(id);
+        const listFileData = [];
+        for await (const iterator of leadFileEntity) {
+            listFileData.push(new FileDto(await iterator.file));
+        }
+        const result = Object.assign(leadEntity, {
+            file: listFileData,
+        });
+        return result as DetailLeadDto;
     }
 
     async getList(

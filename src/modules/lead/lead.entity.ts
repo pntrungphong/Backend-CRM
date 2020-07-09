@@ -13,6 +13,7 @@ import { CompanyEntity } from '../client/entity/company.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
 import { TagEntity } from '../tag/tag.entity';
 import { LeadDto } from './dto/LeadDto';
+import { LeadFileEntity } from './lead-file/lead-file.entity';
 import { NoteEntity } from './note/note.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
@@ -58,6 +59,10 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumn: { name: 'tag_id' },
     })
     tag: TagEntity[];
+
+    @OneToMany(() => LeadFileEntity, (leadFile) => leadFile.lead)
+    @JoinColumn()
+    leadFile: LeadFileEntity[];
 
     dtoClass = LeadDto;
 }
