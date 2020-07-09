@@ -39,7 +39,7 @@ import { FileService } from './file.service';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class FileController {
-    constructor(private _service: FileService) {}
+    constructor(private _service: FileService) { }
 
     @Post()
     @HttpCode(HttpStatus.OK)
@@ -77,17 +77,7 @@ export class FileController {
         return uploadedFile.toDto() as FileDto;
     }
 
-    @Get('/name:name')
-    @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({
-        status: HttpStatus.OK,
-        description: 'Get file by name',
-    })
-    getByName(@Param('name') filename: string, @Res() res: Response) {
-        return res.sendFile(filename, { root: './uploads' });
-    }
-
-    @Get('/file:id')
+    @Get(':id')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         status: HttpStatus.OK,
@@ -96,17 +86,5 @@ export class FileController {
     async getFileById(@Param('id') id: string, @Res() res: Response) {
         const path = await this._service.getFileById(id);
         return res.sendFile(`${path}`, { root: './' });
-    }
-
-    @Get(':id')
-    @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({
-        status: HttpStatus.OK,
-        description: 'Get infomation file',
-        type: FileDto,
-    })
-    async getById(@Param('id') id: string): Promise<FileDto> {
-        const fileEntity = await this._service.getById(id);
-        return fileEntity.toDto() as FileDto;
     }
 }

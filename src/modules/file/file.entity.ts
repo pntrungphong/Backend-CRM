@@ -20,8 +20,8 @@ export class FileEntity extends AbstractEntity<FileDto> {
     @Column({ nullable: true, name: 'destination' })
     destination: string;
 
-    @Column({ nullable: true, name: 'lead_id' })
-    idLead: string;
+    @Column({ nullable: true, name: 'meta' })
+    meta: string;
 
     @Column({ nullable: false, name: 'created_by' })
     createdBy: string;

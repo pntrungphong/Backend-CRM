@@ -10,13 +10,11 @@ export class FileService {
     constructor(public readonly repository: FileRepository) {}
 
     async upload(file: FileDto, user: UserEntity): Promise<FileEntity> {
-        file.createdBy = user.id;
-        file.updatedBy = user.id;
-        return this.repository.create(file);
-    }
-
-    async getById(id: string): Promise<FileEntity> {
-        return this.repository.getById(id);
+        const fileData = Object.assign(file, {
+            createdBy: user.id,
+            updatedBy: user.id,
+        });
+        return this.repository.create(fileData);
     }
 
     async getFileById(id: string): Promise<string> {
