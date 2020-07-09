@@ -10,7 +10,6 @@ export class CreateFileTable1594182096332 implements MigrationInterface {
             "type" varchar(50),
             "file_name" varchar(200),
             "destination" varchar(200),
-            "lead_id" integer,
             "meta" jsonb,
             "created_by" varchar(200),
             "updated_by" varchar(200),
