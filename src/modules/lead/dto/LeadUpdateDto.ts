@@ -19,10 +19,10 @@ export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
     description: string;
-    @IsString()
+    @IsOptional()
     @ApiPropertyOptional()
     createdBy: string;
-    @IsString()
+    @IsOptional()
     @ApiPropertyOptional()
     updatedBy: string;
     @IsString()

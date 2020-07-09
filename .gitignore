@@ -75,3 +75,6 @@ mongo
 
 # Docker compose ganarated files
 db-data
+
+#file folder
+uploads/

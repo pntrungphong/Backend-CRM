@@ -54,8 +54,9 @@ export class DetailLeadDto {
         this.createdBy = lead.createdBy;
         this.updatedBy = lead.updatedBy;
         this.company = lead.company;
-        this.contact=lead.contact;
-        this.description=lead.description;
-        this.tag=lead.tag;
+        this.contact = lead.contact;
+        this.description = lead.description;
+        this.tag = lead.tag;
+        this.status = lead.status;
     }
 }
