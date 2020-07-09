@@ -32,8 +32,8 @@ import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
 import { LeadsPageDto } from './dto/LeadsPageDto';
 import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
-import { LeadService } from './lead.service';
-import { NoteService } from './note/note.service';
+import { LeadService } from './service/lead.service';
+import { NoteService } from './service/note.service';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)

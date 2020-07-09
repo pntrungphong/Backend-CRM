@@ -4,7 +4,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
 import { TagDto } from '../../tag/dto/TagDto';
-import { NoteDto } from '../note/dto/NoteDto';
+import { NoteDto } from '../dto/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
 export class LeadUpdateDto {
     @IsString()
@@ -37,6 +37,10 @@ export class LeadUpdateDto {
     note: NoteDto[];
 
     @IsOptional()
-    @ApiProperty({ type: [TagDto] })
+    @ApiPropertyOptional({ type: [TagDto] })
     tag: TagDto[];
+
+    @IsOptional()
+    @ApiPropertyOptional({ type: [String] })
+    file: string[];
 }

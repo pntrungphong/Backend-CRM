@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { NoteDto } from './dto/NoteDto';
-import { NoteRepository } from './note.repository';
+import { NoteDto } from '../dto/NoteDto';
+import { NoteRepository } from '../repository/note.repository';
 @Injectable()
 export class NoteService {
     constructor(public readonly noteRepository: NoteRepository) {}

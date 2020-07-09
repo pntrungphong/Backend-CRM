@@ -8,12 +8,13 @@ import {
     OneToMany,
 } from 'typeorm';
 
-import { AbstractEntity } from '../../common/abstract.entity';
-import { CompanyEntity } from '../client/entity/company.entity';
-import { ContactEntity } from '../client/entity/contact.entity';
-import { TagEntity } from '../tag/tag.entity';
-import { LeadDto } from './dto/LeadDto';
-import { NoteEntity } from './note/note.entity';
+import { AbstractEntity } from '../../../common/abstract.entity';
+import { CompanyEntity } from '../../client/entity/company.entity';
+import { ContactEntity } from '../../client/entity/contact.entity';
+import { FileEntity } from '../../file/file.entity';
+import { TagEntity } from '../../tag/tag.entity';
+import { LeadDto } from '../dto/LeadDto';
+import { NoteEntity } from './note.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -58,6 +59,14 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumn: { name: 'tag_id' },
     })
     tag: TagEntity[];
+
+    @ManyToMany(() => FileEntity, { cascade: true })
+    @JoinTable({
+        name: 'lead_file',
+        joinColumn: { name: 'lead_id' },
+        inverseJoinColumn: { name: 'file_id' },
+    })
+    file: FileEntity[];
 
     dtoClass = LeadDto;
 }
