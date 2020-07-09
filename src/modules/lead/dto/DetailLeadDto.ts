@@ -60,6 +60,7 @@ export class DetailLeadDto {
         this.contact = lead.contact;
         this.description = lead.description;
         this.tag = lead.tag;
+        this.rank = lead.rank;
         this.status = lead.status;
         this.file = lead.file.toDtos();
     }
