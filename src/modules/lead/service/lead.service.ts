@@ -13,7 +13,7 @@ export class LeadService {
     constructor(
         public readonly leadRepository: LeadRepository,
         public readonly companyRepository: CompanyRepository,
-    ) { }
+    ) {}
 
     async create(
         user: UserEntity,

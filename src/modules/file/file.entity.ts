@@ -1,9 +1,4 @@
-import {
-    Column,
-    Entity,
-    JoinTable,
-    ManyToMany,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { LeadEntity } from '../lead/entity/lead.entity';
