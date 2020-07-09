@@ -19,8 +19,7 @@ export class LeadService {
         user: UserEntity,
         createDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
-        const createdLead = await this.leadRepository.create(user, createDto);
-        return createdLead;
+        return this.leadRepository.create(user, createDto);
     }
     async update(
         id: string,
@@ -31,8 +30,7 @@ export class LeadService {
     }
 
     async findLeadById(id: string): Promise<DetailLeadDto> {
-        const leadEntity = await this.leadRepository.getLeadById(id);
-        return leadEntity;
+        return this.leadRepository.getLeadById(id);
     }
 
     async getList(

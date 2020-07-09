@@ -4,6 +4,7 @@ import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { ContactEntity } from '../../client/entity/contact.entity';
+import { FileEntity } from '../../file/file.entity';
 import { UserEntity } from '../../user/user.entity';
 import { DetailLeadDto } from '../dto/DetailLeadDto';
 import { InfoLeadCompanyDto } from '../dto/InfoLeadCompanyDto';
@@ -17,14 +18,19 @@ import { LeadEntity } from '../entity/lead.entity';
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
         user: UserEntity,
-        createDto: LeadUpdateDto,
+        leadDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
-        const leadObj = Object.assign(createDto, {
+        const listFileEntity = await this.getRepositoryFor(
+            FileEntity,
+        ).findByIds(leadDto.file);
+        let leadEntity = this.repository.create();
+        leadEntity = this.repository.merge(leadEntity, {
+            ...leadDto,
             createdBy: user.id,
             updatedBy: user.id,
+            file: listFileEntity,
         });
-        const lead = this.repository.create({ ...leadObj });
-        return this.repository.save(lead);
+        return this.repository.save(leadEntity, { reload: true });
     }
 
     public async update(
@@ -49,16 +55,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note', 'contact'],
+            relations: ['company', 'note', 'contact', 'file'],
         });
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
-        const listContact = [] as InfoLeadContactDto[];
-        result.contact.forEach((item) => {
-            const infoContact = new InfoLeadContactDto(item as ContactEntity);
-            listContact.push(infoContact);
-        });
-        result.contact = listContact;
+        result.contact = leadInfo.contact.map(
+            (it) => new InfoLeadContactDto(it),
+        );
         return result;
     }
 
