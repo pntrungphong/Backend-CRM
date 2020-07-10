@@ -14,6 +14,7 @@ import { ContactEntity } from '../client/entity/contact.entity';
 import { TagEntity } from '../tag/tag.entity';
 import { LeadDto } from './dto/LeadDto';
 import { NoteEntity } from './note/note.entity';
+import { TouchPointEntity } from '../touchPoint/touchPoint.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -42,15 +43,11 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         name: 'lead_id',
     })
     note: NoteEntity[];
-
-
-
-
- 
-
-
-
-
+    @OneToMany(() => TouchPointEntity, (touchPoint) => touchPoint.lead)
+    @JoinColumn({
+        name: 'lead_id',
+    })
+    touchPoint: TouchPointEntity[];
 
 
     @ManyToMany(() => ContactEntity)

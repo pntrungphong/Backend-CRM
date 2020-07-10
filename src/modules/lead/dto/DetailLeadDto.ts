@@ -57,5 +57,6 @@ export class DetailLeadDto {
         this.contact=lead.contact;
         this.description=lead.description;
         this.tag=lead.tag;
+        this.status=lead.status;
     }
 }

@@ -98,6 +98,7 @@ export class LeadController {
         return createLead.toDto() as LeadDto;
     }
 
+
     @Put(':id')
     @ApiOkResponse({
         type: LeadUpdateDto,
@@ -108,48 +109,39 @@ export class LeadController {
         @Body() updateDto: LeadUpdateDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadUpdateDto> {
-        if (updateDto.tag) {
-            for await (const iterator of updateDto.tag) {
+        const updatedLead = await this._leadService.update(id, updateDto, user);
+        if (!updatedLead) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        if (updateDto.note) {
+            await this._noteService.update(updateDto.note, updatedLead.id);
+        }
+        if (updateDto.linkContact) {
+            for await (const iterator of updateDto.linkContact) {
                 await getConnection()
                     .createQueryBuilder()
                     .delete()
-                    .from('tag_source')
-                    .where("source_id = :id", { id: id })
+                    .from('contact_lead')
+                    .where("lead_id = :id", { id: id })
                     .execute();
-            }
-            const updatedLead = await this._leadService.update(id, updateDto, user);
-            if (!updatedLead) {
-                throw new HttpException(
-                    'Cập nhật thất bại',
-                    HttpStatus.NOT_ACCEPTABLE,
-                );
-            }
-            if (updateDto.note) {
-                await this._noteService.update(updateDto.note, updatedLead.id);
-            }
-            if (updateDto.linkContact) {
-                for await (const iterator of updateDto.linkContact) {
-                    await getConnection()
-                        .createQueryBuilder()
-                        .delete()
-                        .from('contact_lead')
-                        .where("lead_id = :id", { id: id })
-                        .execute();
 
-                    await getConnection()
-                        .createQueryBuilder()
-                        .insert()
-                        .into('contact_lead')
-                        .values([
-                            { contact_id: iterator.idContact, lead_id: updatedLead.id }
-                        ])
-                        .execute();
-
-                }
-
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('contact_lead')
+                    .values([
+                        { contact_id: iterator.idContact, lead_id: updatedLead.id }
+                    ])
+                    .execute();
 
             }
-            return updatedLead.toDto() as LeadUpdateDto;
+
+
         }
+        return updatedLead.toDto() as LeadUpdateDto;
     }
+
 }
