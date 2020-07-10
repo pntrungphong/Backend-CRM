@@ -11,12 +11,14 @@ import { DetailContactDto } from '../dto/contact/DetailContactDto';
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { ReferralDto } from '../dto/contact-referral/ReferralDto';
 import { GeneralInfoDto as Companydata } from '../dto/company/GeneralInfoDto';
+import { TagRepository } from '../../tag/tag.repository';
 
 @Injectable()
 export class ContactService {
     constructor(
         public readonly contactRepository: ContactRepository,
         private _companyRepository: CompanyRepository,
+        private _tagRepository:TagRepository
     ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
@@ -31,6 +33,14 @@ export class ContactService {
             createdBy: user.id,
             updatedBy: user.id,
         });
+        for await (const iterator of createDto.tag) {
+            const tag= await this._tagRepository.find({
+                where:{tag:iterator.tag}
+            })
+            console.table(tag)
+        }
+
+
         const contact = this.contactRepository.create({ ...contactObj });
         return this.contactRepository.save(contact);
     }

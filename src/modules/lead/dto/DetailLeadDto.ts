@@ -38,7 +38,8 @@ export class DetailLeadDto {
     company: InfoLeadCompanyDto;
     @ApiPropertyOptional({ type: [InfoLeadContactDto] })
     contact: InfoLeadContactDto[];
-
+    @ApiPropertyOptional({ type: [InfoLeadContactDto] })
+    relatedTo: InfoLeadContactDto[];
     @ApiPropertyOptional()
     createdBy: string;
 
@@ -63,5 +64,6 @@ export class DetailLeadDto {
         this.rank = lead.rank;
         this.status = lead.status;
         this.file = lead.file.toDtos();
+        this.relatedTo = lead.relatedTo;
     }
 }

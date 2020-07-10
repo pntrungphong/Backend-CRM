@@ -12,6 +12,7 @@ import { CompanyService } from './service/company.service';
 import { CompanyContactService } from './service/companyContact.service';
 import { ContactService } from './service/contact.service';
 import { ContactReferralService } from './service/referral.service';
+import { TagRepository } from '../tag/tag.repository';
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { ContactReferralService } from './service/referral.service';
             CompanyRepository,
             CompanyContactRepository,
             ContactReferralRepository,
+            TagRepository
         ]),
     ],
     controllers: [ContactController, CompanyController],

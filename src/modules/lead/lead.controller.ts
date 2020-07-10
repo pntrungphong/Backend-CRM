@@ -4,6 +4,7 @@ import {
     Controller,
     Get,
     HttpCode,
+    HttpException,
     HttpStatus,
     Param,
     Post,
@@ -94,6 +95,21 @@ export class LeadController {
                     .execute();
             }
         }
+        if (data.relatedTo) {
+            for await (const iterator of data.relatedTo) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('relatedto_lead')
+                    .values([
+                        {
+                            relatedto_id: iterator.idContact,
+                            lead_id: createLead.id,
+                        },
+                    ])
+                    .execute();
+            }
+        }
         return createLead.toDto() as LeadDto;
     }
 
@@ -104,11 +120,63 @@ export class LeadController {
     })
     async update(
         @Param('id') id: string,
-        @Body() data: LeadUpdateDto,
+        @Body() updateDto: LeadUpdateDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadUpdateDto> {
-        const updatedLead = await this._leadService.update(id, data, user);
-        await this._noteService.update(data.note, updatedLead.id);
+        const updatedLead = await this._leadService.update(id, updateDto, user);
+        if (!updatedLead) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        if (updateDto.note) {
+            await this._noteService.update(updateDto.note, updatedLead.id);
+        }
+        if (updateDto.linkContact) {
+            for await (const iterator of updateDto.linkContact) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .delete()
+                    .from('contact_lead')
+                    .where('lead_id = :id', { id })
+                    .execute();
+
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('contact_lead')
+                    .values([
+                        {
+                            contact_id: iterator.idContact,
+                            lead_id: updatedLead.id,
+                        },
+                    ])
+                    .execute();
+            }
+        }
+        if (updateDto.relatedTo) {
+            for await (const iterator of updateDto.relatedTo) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .delete()
+                    .from('relatedto_lead')
+                    .where('lead_id = :id', { id })
+                    .execute();
+
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('relatedto_lead')
+                    .values([
+                        {
+                            relatedto_id: iterator.idContact,
+                            lead_id: updatedLead.id,
+                        },
+                    ])
+                    .execute();
+            }
+        }
         return updatedLead.toDto() as LeadUpdateDto;
     }
 }

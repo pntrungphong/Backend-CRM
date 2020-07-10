@@ -46,6 +46,14 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
 
     @ManyToMany(() => ContactEntity)
     @JoinTable({
+        name: 'relatedto_lead',
+        joinColumns: [{ name: 'lead_id' }],
+        inverseJoinColumns: [{ name: 'relatedto_id' }],
+    })
+    relatedTo: ContactEntity[];
+
+    @ManyToMany(() => ContactEntity)
+    @JoinTable({
         name: 'contact_lead',
         joinColumns: [{ name: 'lead_id' }],
         inverseJoinColumns: [{ name: 'contact_id' }],

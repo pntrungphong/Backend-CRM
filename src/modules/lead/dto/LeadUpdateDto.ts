@@ -31,7 +31,9 @@ export class LeadUpdateDto {
     @IsArray()
     @ApiProperty({ type: [ContactLeadDto] })
     linkContact: ContactLeadDto[];
-
+    @IsArray()
+    @ApiProperty({ type: [ContactLeadDto] })
+    relatedTo: ContactLeadDto[];
     @IsArray()
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];

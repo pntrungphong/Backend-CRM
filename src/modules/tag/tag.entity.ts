@@ -4,6 +4,8 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
+    OneToMany,
+    JoinColumn,
 } from 'typeorm';
 
 import { CompanyEntity } from '../client/entity/company.entity';

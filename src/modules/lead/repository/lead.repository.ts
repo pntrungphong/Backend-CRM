@@ -5,10 +5,12 @@ import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { ContactEntity } from '../../client/entity/contact.entity';
 import { FileEntity } from '../../file/file.entity';
+import { TagEntity } from '../../tag/tag.entity';
 import { UserEntity } from '../../user/user.entity';
 import { DetailLeadDto } from '../dto/DetailLeadDto';
 import { InfoLeadCompanyDto } from '../dto/InfoLeadCompanyDto';
 import { InfoLeadContactDto } from '../dto/InfoLeadContactDto';
+import { InfoLeadTagDto } from '../dto/InforLeadTagDto';
 import { LeadDto } from '../dto/LeadDto';
 import { LeadsPageDetailDto } from '../dto/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../dto/LeadsPageOptionsDto';
@@ -23,12 +25,18 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const listFileEntity = await this.getRepositoryFor(
             FileEntity,
         ).findByIds(leadDto.file);
+
+        const listRelateTO = leadDto.relatedTo.map((item) => item.idContact);
+        const listContactEntity = await this.getRepositoryFor(
+            ContactEntity,
+        ).findByIds(listRelateTO);
         let leadEntity = this.repository.create();
         leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
             createdBy: user.id,
             updatedBy: user.id,
             file: listFileEntity,
+            relatedTo: listContactEntity,
         });
         return this.repository.save(leadEntity, { reload: true });
     }
@@ -55,11 +63,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note', 'contact', 'file'],
+            relations: ['company', 'note', 'contact', 'file', 'relatedTo'],
         });
+        console.table(leadInfo.relatedTo);
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
         result.contact = leadInfo.contact.map(
+            (it) => new InfoLeadContactDto(it),
+        );
+        result.relatedTo = leadInfo.relatedTo.map(
             (it) => new InfoLeadContactDto(it),
         );
         return result;
@@ -73,6 +85,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('lead.note', 'note')
             .leftJoinAndSelect('lead.company', 'company')
             .leftJoinAndSelect('lead.contact', 'contact')
+            .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
+            .leftJoinAndSelect('lead.tag', 'tag')
             .where('1=1')
             .andWhere('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
@@ -88,6 +102,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         });
         const results = [];
         for await (const iterator of leads) {
+            console.table(iterator.relatedTo);
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
             const contact = lead.contact;
@@ -98,7 +113,24 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 );
                 listContact.push(infoContact);
             });
+
+            const relatedTo = lead.relatedTo;
+            const listRelatedTo = [] as InfoLeadContactDto[];
+            relatedTo.forEach((item) => {
+                const infoRelatedTo = new InfoLeadContactDto(
+                    item as ContactEntity,
+                );
+                listRelatedTo.push(infoRelatedTo);
+            });
+
+            const listTag = [] as InfoLeadTagDto[];
+            lead.tag.forEach((item) => {
+                const infoTag = new InfoLeadTagDto(item as TagEntity);
+                listTag.push(infoTag);
+            });
+            lead.tag = listTag;
             lead.contact = listContact;
+            lead.relatedTo = listRelatedTo;
             results.push(lead);
         }
         return new LeadsPageDetailDto(results, pageMetaDto);

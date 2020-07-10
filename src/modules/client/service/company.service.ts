@@ -25,6 +25,7 @@ export class CompanyService {
             createdBy: user.id,
             updatedBy: user.id,
         });
+
         const company = this.companyRepository.create({ ...companyObj });
         return this.companyRepository.save(company);
     }

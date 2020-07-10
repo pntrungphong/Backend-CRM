@@ -53,5 +53,15 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
     })
     tag: TagEntity[];
 
+
+
+
+
+
+
+
+
+    
+
     dtoClass = CompanyDto;
 }
