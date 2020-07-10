@@ -30,6 +30,10 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const listContactEntity = await this.getRepositoryFor(
             ContactEntity,
         ).findByIds(listRelateTO);
+        const listContact = leadDto.linkContact.map((item) => item.idContact);
+        const listContactEntity1 = await this.getRepositoryFor(
+            ContactEntity,
+        ).findByIds(listContact);
         let leadEntity = this.repository.create();
         leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
@@ -37,6 +41,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             updatedBy: user.id,
             file: listFileEntity,
             relatedTo: listContactEntity,
+            contact:listContactEntity1,
         });
         return this.repository.save(leadEntity, { reload: true });
     }

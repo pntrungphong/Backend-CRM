@@ -50,6 +50,6 @@ export class LeadDto extends AbstractDto {
         this.description = lead.description;
         this.tag = lead.tag;
         this.status = lead.status;
-        this.relatedTo = lead.relatedTo;
+        this.relatedTo = lead.relatedTo.toDtos();
     }
 }

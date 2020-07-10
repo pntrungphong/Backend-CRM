@@ -50,7 +50,6 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
 
     @ManyToMany(() => LeadEntity, (lead) => lead.contact)
     lead: LeadEntity[];
-
     @ManyToMany(() => TagEntity, { cascade: true, eager: true })
     @JoinTable({
         name: 'tag_source',
