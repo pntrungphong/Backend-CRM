@@ -30,6 +30,8 @@ export class LeadDto extends AbstractDto {
     company: InfoLeadCompanyDto;
     @ApiPropertyOptional({ type: [InfoLeadContactDto] })
     contact: InfoLeadContactDto[];
+    @ApiPropertyOptional({ type: [InfoLeadContactDto] })
+    relatedTo: InfoLeadContactDto[];
     @ApiPropertyOptional({ type: [TagDto] })
     tag: TagDto[];
     @ApiPropertyOptional({ type: [FileDto] })
@@ -48,5 +50,6 @@ export class LeadDto extends AbstractDto {
         this.description = lead.description;
         this.tag = lead.tag;
         this.status = lead.status;
+        this.relatedTo = lead.relatedTo;
     }
 }

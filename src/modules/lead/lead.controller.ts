@@ -4,6 +4,7 @@ import {
     Controller,
     Get,
     HttpCode,
+    HttpException,
     HttpStatus,
     Param,
     Post,
@@ -12,7 +13,6 @@ import {
     UseGuards,
     UseInterceptors,
     ValidationPipe,
-    HttpException,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -95,6 +95,21 @@ export class LeadController {
                     .execute();
             }
         }
+        if (data.relatedTo) {
+            for await (const iterator of data.relatedTo) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('relatedto_lead')
+                    .values([
+                        {
+                            relatedto_id: iterator.idContact,
+                            lead_id: createLead.id,
+                        },
+                    ])
+                    .execute();
+            }
+        }
         return createLead.toDto() as LeadDto;
     }
 
@@ -124,7 +139,7 @@ export class LeadController {
                     .createQueryBuilder()
                     .delete()
                     .from('contact_lead')
-                    .where("lead_id = :id", { id: id })
+                    .where('lead_id = :id', { id })
                     .execute();
 
                 await getConnection()
@@ -132,15 +147,36 @@ export class LeadController {
                     .insert()
                     .into('contact_lead')
                     .values([
-                        { contact_id: iterator.idContact, lead_id: updatedLead.id }
+                        {
+                            contact_id: iterator.idContact,
+                            lead_id: updatedLead.id,
+                        },
                     ])
                     .execute();
-
             }
+        }
+        if (updateDto.relatedTo) {
+            for await (const iterator of updateDto.relatedTo) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .delete()
+                    .from('relatedto_lead')
+                    .where('lead_id = :id', { id })
+                    .execute();
 
-
+                await getConnection()
+                    .createQueryBuilder()
+                    .insert()
+                    .into('relatedto_lead')
+                    .values([
+                        {
+                            relatedto_id: iterator.idContact,
+                            lead_id: updatedLead.id,
+                        },
+                    ])
+                    .execute();
+            }
         }
         return updatedLead.toDto() as LeadUpdateDto;
     }
-
 }

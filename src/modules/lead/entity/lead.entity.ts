@@ -13,9 +13,9 @@ import { CompanyEntity } from '../../client/entity/company.entity';
 import { ContactEntity } from '../../client/entity/contact.entity';
 import { FileEntity } from '../../file/file.entity';
 import { TagEntity } from '../../tag/tag.entity';
+import { TouchPointEntity } from '../../touchPoint/touchPoint.entity';
 import { LeadDto } from '../dto/LeadDto';
 import { NoteEntity } from './note.entity';
-import { TouchPointEntity } from '../../touchPoint/touchPoint.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -50,6 +50,13 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     })
     touchPoint: TouchPointEntity[];
 
+    @ManyToMany(() => ContactEntity)
+    @JoinTable({
+        name: 'relatedto_lead',
+        joinColumns: [{ name: 'lead_id' }],
+        inverseJoinColumns: [{ name: 'relatedto_id' }],
+    })
+    relatedTo: ContactEntity[];
 
     @ManyToMany(() => ContactEntity)
     @JoinTable({
@@ -58,15 +65,6 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumns: [{ name: 'contact_id' }],
     })
     contact: ContactEntity[];
-
-    
-
-
-
-
-
-
-
 
     @ManyToMany(() => TagEntity, { cascade: true, eager: true })
     @JoinTable({
