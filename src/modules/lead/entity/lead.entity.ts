@@ -44,13 +44,6 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     })
     note: NoteEntity[];
 
-    @ManyToMany(() => ContactEntity)
-    @JoinTable({
-        name: 'relatedto_lead',
-        joinColumns: [{ name: 'lead_id' }],
-        inverseJoinColumns: [{ name: 'relatedto_id' }],
-    })
-    relatedTo: ContactEntity[];
 
     @ManyToMany(() => ContactEntity)
     @JoinTable({
@@ -59,6 +52,20 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumns: [{ name: 'contact_id' }],
     })
     contact: ContactEntity[];
+
+
+
+    
+
+    @ManyToMany(() => ContactEntity)
+    @JoinTable({
+        name: 'relatedto_lead',
+        joinColumns: [{ name: 'lead_id' }],
+        inverseJoinColumns: [{ name: 'relatedto_id' }],
+    })
+    relatedTo: ContactEntity[];
+
+
 
     @ManyToMany(() => TagEntity, { cascade: true, eager: true })
     @JoinTable({

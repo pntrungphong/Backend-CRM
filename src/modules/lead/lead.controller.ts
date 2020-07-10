@@ -35,6 +35,7 @@ import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
 import { LeadUpdateDto } from './dto/LeadUpdateDto';
 import { LeadService } from './service/lead.service';
 import { NoteService } from './service/note.service';
+import { LeadEntity } from './entity/lead.entity';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -75,42 +76,12 @@ export class LeadController {
     async createLead(
         @Body() data: LeadUpdateDto,
         @AuthUser() user: UserEntity,
-    ): Promise<LeadDto> {
+    ): Promise<any> {
         const createLead = await this._leadService.create(user, data);
         if (data.note) {
             await this._noteService.create(data.note, createLead.id);
-        }
-        if (data.linkContact) {
-            for await (const iterator of data.linkContact) {
-                await getConnection()
-                    .createQueryBuilder()
-                    .insert()
-                    .into('contact_lead')
-                    .values([
-                        {
-                            contact_id: iterator.idContact,
-                            lead_id: createLead.id,
-                        },
-                    ])
-                    .execute();
-            }
-        }
-        if (data.relatedTo) {
-            for await (const iterator of data.relatedTo) {
-                await getConnection()
-                    .createQueryBuilder()
-                    .insert()
-                    .into('relatedto_lead')
-                    .values([
-                        {
-                            relatedto_id: iterator.idContact,
-                            lead_id: createLead.id,
-                        },
-                    ])
-                    .execute();
-            }
-        }
-        return createLead.toDto() as LeadDto;
+        }        
+        return;
     }
 
     @Put(':id')
