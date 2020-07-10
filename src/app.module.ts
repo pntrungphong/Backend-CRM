@@ -12,7 +12,6 @@ import { TagModule } from './modules/tag/tag.module';
 import { UserModule } from './modules/user/user.module';
 import { ConfigService } from './shared/services/config.service';
 import { SharedModule } from './shared/shared.module';
-import { TouchPointModule } from './modules/touchPoint/touchPoint.module';
 
 @Module({
     imports: [
@@ -23,7 +22,6 @@ import { TouchPointModule } from './modules/touchPoint/touchPoint.module';
         FileModule,
         UserModule,
         TagModule,
-        TouchPointModule,
         TypeOrmModule.forRootAsync({
             imports: [SharedModule],
             useFactory: (configService: ConfigService) =>
