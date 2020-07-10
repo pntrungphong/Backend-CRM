@@ -1,8 +1,8 @@
 'use strict';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { LeadEntity } from '../../lead/entity/lead.entity';
 
-import { LeadEntity } from '../../lead/lead.entity';
 
 
 export class InfoLeadTouchPointDto {

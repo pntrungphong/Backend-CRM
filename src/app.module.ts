@@ -6,8 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { contextMiddleware } from './middlewares';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClientModule } from './modules/client/client.module';
+import { FileModule } from './modules/file/file.module';
 import { LeadModule } from './modules/lead/lead.module';
-import { MathModule } from './modules/math/math.module';
 import { TagModule } from './modules/tag/tag.module';
 import { UserModule } from './modules/user/user.module';
 import { ConfigService } from './shared/services/config.service';
@@ -20,8 +20,8 @@ import { TouchPointModule } from './modules/touchPoint/touchPoint.module';
         ClientModule,
         TagModule,
         LeadModule,
+        FileModule,
         UserModule,
-        MathModule,
         TagModule,
         TouchPointModule,
         TypeOrmModule.forRootAsync({

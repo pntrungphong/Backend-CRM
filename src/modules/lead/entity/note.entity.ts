@@ -6,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { LeadEntity } from '../lead.entity';
+import { LeadEntity } from './lead.entity';
 
 @Entity({ name: 'notes' })
 export class NoteEntity {

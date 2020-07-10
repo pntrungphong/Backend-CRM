@@ -2,12 +2,12 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
-import { LeadController } from './lead.controller';
-import { LeadRepository } from './lead.repository';
-import { LeadService } from './lead.service';
-import { NoteRepository } from './note/note.repository';
-import { NoteService } from './note/note.service';
 import { CompanyRepository } from '../client/repository/company.repository';
+import { LeadController } from './lead.controller';
+import { LeadRepository } from './repository/lead.repository';
+import { NoteRepository } from './repository/note.repository';
+import { LeadService } from './service/lead.service';
+import { NoteService } from './service/note.service';
 
 @Module({
     imports: [

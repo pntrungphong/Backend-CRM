@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '../../modules/user/user.entity';
-import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
-import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
-import { LeadUpdateDto } from './dto/LeadUpdateDto';
-import { LeadEntity } from './lead.entity';
-import { LeadRepository } from './lead.repository';
-import { CompanyRepository } from '../client/repository/company.repository';
-import { LeadDto } from './dto/LeadDto';
-import { DetailLeadDto } from './dto/DetailLeadDto';
+import { UserEntity } from '../../../modules/user/user.entity';
+import { CompanyRepository } from '../../client/repository/company.repository';
+import { DetailLeadDto } from '../dto/DetailLeadDto';
+import { LeadsPageDetailDto } from '../dto/LeadsPageDetailDto';
+import { LeadsPageOptionsDto } from '../dto/LeadsPageOptionsDto';
+import { LeadUpdateDto } from '../dto/LeadUpdateDto';
+import { LeadEntity } from '../entity/lead.entity';
+import { LeadRepository } from '../repository/lead.repository';
 @Injectable()
 export class LeadService {
     constructor(
@@ -16,7 +15,10 @@ export class LeadService {
         public readonly companyRepository: CompanyRepository,
     ) {}
 
-    async create(user, createDto): Promise<LeadEntity> {
+    async create(
+        user: UserEntity,
+        createDto: LeadUpdateDto,
+    ): Promise<LeadEntity> {
         return this.leadRepository.create(user, createDto);
     }
     async update(

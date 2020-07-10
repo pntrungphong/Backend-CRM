@@ -1,33 +1,38 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { AbstractRepository, getConnection } from 'typeorm';
+import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
-import { PageMetaDto } from '../../common/dto/PageMetaDto';
-import { UserEntity } from '../user/user.entity';
-import { InfoLeadCompanyDto } from './dto/InfoLeadCompanyDto';
-import { InfoLeadContactDto } from './dto/InfoLeadContactDto';
-import { LeadDto } from './dto/LeadDto';
-import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
-import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
-import { LeadUpdateDto } from './dto/LeadUpdateDto';
-import { LeadEntity } from './lead.entity';
-import { ContactEntity } from '../client/entity/contact.entity';
-import { DetailLeadDto } from './dto/DetailLeadDto';
-import { InfoLeadTagDto } from './dto/InforLeadTagDto';
-import { TagEntity } from '../tag/tag.entity';
+import { PageMetaDto } from '../../../common/dto/PageMetaDto';
+import { ContactEntity } from '../../client/entity/contact.entity';
+import { FileEntity } from '../../file/file.entity';
+import { UserEntity } from '../../user/user.entity';
+import { DetailLeadDto } from '../dto/DetailLeadDto';
+import { InfoLeadCompanyDto } from '../dto/InfoLeadCompanyDto';
+import { InfoLeadContactDto } from '../dto/InfoLeadContactDto';
+import { LeadDto } from '../dto/LeadDto';
+import { LeadsPageDetailDto } from '../dto/LeadsPageDetailDto';
+import { LeadsPageOptionsDto } from '../dto/LeadsPageOptionsDto';
+import { LeadUpdateDto } from '../dto/LeadUpdateDto';
+import { LeadEntity } from '../entity/lead.entity';
+import { InfoLeadTagDto } from '../dto/InforLeadTagDto';
+import { TagEntity } from '../../tag/tag.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
         user: UserEntity,
-        createDto: LeadUpdateDto,
+        leadDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
-        const leadObj = Object.assign(createDto, {
+        const listFileEntity = await this.getRepositoryFor(
+            FileEntity,
+        ).findByIds(leadDto.file);
+        let leadEntity = this.repository.create();
+        leadEntity = this.repository.merge(leadEntity, {
+            ...leadDto,
             createdBy: user.id,
             updatedBy: user.id,
+            file: listFileEntity,
         });
-
-        const lead = this.repository.create({ ...leadObj });
-        return this.repository.save(lead);
+        return this.repository.save(leadEntity, { reload: true });
     }
 
     public async update(
@@ -52,26 +57,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note','contact','tag'],
+            relations: ['company', 'note', 'contact', 'file'],
         });
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
-        const listContact=[];
-        result.contact.forEach((item) => {
-            const infoContact = new InfoLeadContactDto(
-                item as ContactEntity,
-            );
-            listContact.push(infoContact);
-        });
-        const listTag = [];
-        result.tag.forEach((item)=>{
-            const infoTag=new InfoLeadTagDto(
-                item as TagEntity
-            );
-            listTag.push(infoTag)
-        })
-        result.tag=listTag;
-        result.contact= listContact;
+        result.contact = leadInfo.contact.map(
+            (it) => new InfoLeadContactDto(it),
+        );
         return result;
     }
 
@@ -102,8 +94,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
             const contact = lead.contact;
-            console.table(lead.tag)
-            const listContact = [];
+            const listContact = [] as InfoLeadContactDto[];
             contact.forEach((item) => {
                 const infoContact = new InfoLeadContactDto(
                     item as ContactEntity,

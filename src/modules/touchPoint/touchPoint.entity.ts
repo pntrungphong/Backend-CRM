@@ -9,9 +9,8 @@ import {
 } from 'typeorm';
 import { TouchPointDto } from './dto/TouchPointDto';
 import { AbstractEntity } from '../../common/abstract.entity';
-import { LeadEntity } from '../lead/lead.entity';
 import { NoteTouchPointEntity } from './NoteTouchPoint/noteTouchPoint.entity';
-import { NoteEntity } from 'modules/lead/note/note.entity';
+import { LeadEntity } from '../lead/entity/lead.entity';
 
 
 @Entity({ name: 'touchPoint' })

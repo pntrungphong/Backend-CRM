@@ -3,9 +3,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/AbstractDto';
+import { FileDto } from '../../file/dto/fileDto';
 import { TagDto } from '../../tag/dto/TagDto';
-import { LeadEntity } from '../lead.entity';
-import { NoteDto } from '../note/dto/NoteDto';
+import { NoteDto } from '../dto/NoteDto';
+import { LeadEntity } from '../entity/lead.entity';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
 export class LeadDto extends AbstractDto {
@@ -21,6 +22,8 @@ export class LeadDto extends AbstractDto {
     description: string;
     @ApiPropertyOptional()
     updatedBy: string;
+    @ApiPropertyOptional()
+    idCompany: string;
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
     @ApiPropertyOptional({ type: InfoLeadCompanyDto })
@@ -29,6 +32,8 @@ export class LeadDto extends AbstractDto {
     contact: InfoLeadContactDto[];
     @ApiPropertyOptional({ type: [TagDto] })
     tag: TagDto[];
+    @ApiPropertyOptional({ type: [FileDto] })
+    file: FileDto[];
 
     constructor(lead: LeadEntity) {
         super(lead);
@@ -40,7 +45,8 @@ export class LeadDto extends AbstractDto {
         this.updatedBy = lead.updatedBy;
         this.company = lead.company;
         this.contact = lead.contact;
-        this.description=lead.description;
-        this.tag=lead.tag
+        this.description = lead.description;
+        this.tag = lead.tag;
+        this.status = lead.status;
     }
 }
