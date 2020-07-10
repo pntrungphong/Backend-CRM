@@ -64,6 +64,6 @@ export class DetailLeadDto {
         this.rank = lead.rank;
         this.status = lead.status;
         this.file = lead.file.toDtos();
-        this.relatedTo = lead.relatedTo;
+        this.relatedTo = lead.relatedTo.toDtos();
     }
 }
