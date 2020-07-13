@@ -7,7 +7,7 @@ export class CreateTableTouchpoint1594631866950 implements MigrationInterface {
             "id" SERIAL PRIMARY KEY,
             "lead_id" integer,
             "status" varchar(50),
-            "orders" integer,
+            "order" integer,
             "goal" text,
             "note" text,
             "meeting_date" timestamptz,
