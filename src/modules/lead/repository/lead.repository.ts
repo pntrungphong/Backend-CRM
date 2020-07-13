@@ -41,7 +41,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             updatedBy: user.id,
             file: listFileEntity,
             relatedTo: listContactEntity,
-            contact:listContactEntity1,
+            contact: listContactEntity1,
         });
         return this.repository.save(leadEntity, { reload: true });
     }
@@ -113,12 +113,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             const contact = lead.contact;
             const listContact = [] as InfoLeadContactDto[];
             contact.forEach((item) => {
-                const infoContact = new InfoLeadContactDto(
-                    item as ContactEntity,
-                );
+                const infoContact = new InfoLeadContactDto(<ContactEntity>item);
                 listContact.push(infoContact);
             });
-
             const relatedTo = lead.relatedTo;
             const listRelatedTo = [] as InfoLeadContactDto[];
             relatedTo.forEach((item) => {
