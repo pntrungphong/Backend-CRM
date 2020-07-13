@@ -13,8 +13,8 @@ export class CreateTableTouchpoint1594631866950 implements MigrationInterface {
             "meeting_date" timestamptz,
             "created_by" varchar(200),
             "updated_by" varchar(200),
-            "created_at" timestamptz,
-            "updated_at" timestamptz
+            "created_at" timestamptz NOT NULL DEFAULT now(),
+            "updated_at" timestamptz NOT NULL DEFAULT now(),
           );
           CREATE TABLE "task" (
             "id" SERIAL PRIMARY KEY,
@@ -25,8 +25,8 @@ export class CreateTableTouchpoint1594631866950 implements MigrationInterface {
             "due_date" timestamptz,
             "created_by" varchar(200),
             "updated_by" varchar(200),
-            "created_at" timestamptz,
-            "updated_at" timestamptz
+            "created_at" timestamptz NOT NULL DEFAULT now(),
+            "updated_at" timestamptz NOT NULL DEFAULT now(),
           );
           
           CREATE TABLE "touchpoint_file" (
@@ -36,19 +36,12 @@ export class CreateTableTouchpoint1594631866950 implements MigrationInterface {
             "lead_id" integer,
             "type" varchar(50),
             "note" text,
-            "created_by" varchar(200),
-            "updated_by" varchar(200),
-            "created_at" timestamptz,
-            "updated_at" timestamptz
           );
           ALTER TABLE "task" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
           ALTER TABLE "touchpoint" ADD FOREIGN KEY ("lead_id") REFERENCES "lead" ("id");
-
-ALTER TABLE "task" ADD FOREIGN KEY ("touchpoint_id") REFERENCES "touchpoint" ("id");
-
-ALTER TABLE "touchpoint_file" ADD FOREIGN KEY ("touchpoint_id") REFERENCES "touchpoint" ("id");
-
-ALTER TABLE "touchpoint_file" ADD FOREIGN KEY ("file_id") REFERENCES "file" ("id");
+          ALTER TABLE "task" ADD FOREIGN KEY ("touchpoint_id") REFERENCES "touchpoint" ("id");
+          ALTER TABLE "touchpoint_file" ADD FOREIGN KEY ("touchpoint_id") REFERENCES "touchpoint" ("id");
+          ALTER TABLE "touchpoint_file" ADD FOREIGN KEY ("file_id") REFERENCES "file" ("id");
         `);
     }
 
