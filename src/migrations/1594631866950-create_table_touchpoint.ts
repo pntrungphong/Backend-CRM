@@ -16,13 +16,12 @@ export class CreateTableTouchpoint1594631866950 implements MigrationInterface {
             "created_at" timestamptz,
             "updated_at" timestamptz
           );
-          
           CREATE TABLE "task" (
             "id" SERIAL PRIMARY KEY,
             "touchpoint_id" integer,
             "taskname" varchar(100),
-            "type" varhchar(100),
-            "pic" varchar(100),
+            "type" varchar(100),
+            "user_id" integer,
             "due_date" timestamptz,
             "created_by" varchar(200),
             "updated_by" varchar(200),
@@ -42,6 +41,7 @@ export class CreateTableTouchpoint1594631866950 implements MigrationInterface {
             "created_at" timestamptz,
             "updated_at" timestamptz
           );
+          ALTER TABLE "task" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
           ALTER TABLE "touchpoint" ADD FOREIGN KEY ("lead_id") REFERENCES "lead" ("id");
 
 ALTER TABLE "task" ADD FOREIGN KEY ("touchpoint_id") REFERENCES "touchpoint" ("id");
