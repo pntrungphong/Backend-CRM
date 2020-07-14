@@ -15,6 +15,7 @@ import { FileEntity } from '../../../file/file.entity';
 import { TagEntity } from '../../../tag/tag.entity';
 import { LeadDto } from '../../dto/lead/LeadDto';
 import { NoteEntity } from '../Note/note.entity';
+import { TaskEntity } from '../Task/task.entity';
 import { TouchPointEntity } from '../Touchpoint/touchpoint.entity';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
@@ -82,6 +83,12 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
         inverseJoinColumn: { name: 'file_id' },
     })
     file: FileEntity[];
+
+    @OneToMany(() => TaskEntity, (task) => task.lead)
+    @JoinColumn({
+        name: 'touchpoint_id',
+    })
+    task: TaskEntity[];
 
     dtoClass = LeadDto;
 }
