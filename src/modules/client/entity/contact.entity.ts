@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { AbstractEntity } from '../../../common/abstract.entity';
-import { LeadEntity } from '../../lead/entity/lead.entity';
+import { LeadEntity } from '../../lead/entity/Lead/lead.entity';
 import { TagEntity } from '../../tag/tag.entity';
 import { ContactDto } from '../dto/contact/ContactDto';
 import { CompanyContactEntity } from './companyContact.entity';

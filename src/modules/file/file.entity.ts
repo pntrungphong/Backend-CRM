@@ -8,9 +8,9 @@ import {
 } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
-import { LeadEntity } from '../lead/entity/lead.entity';
+import { LeadEntity } from '../lead/entity/Lead/lead.entity';
+import { TouchPointFileEntity } from '../lead/entity/Touchpoint_file/fileTouchPoint.entity';
 import { FileDto } from './dto/fileDto';
-import { TouchPointFileEntity } from './fileTouchPoint/fileTouchPoint.entity';
 
 @Entity({ name: 'file' })
 export class FileEntity extends AbstractEntity<FileDto> {

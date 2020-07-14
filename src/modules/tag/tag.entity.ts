@@ -4,13 +4,11 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
-    OneToMany,
-    JoinColumn,
 } from 'typeorm';
 
 import { CompanyEntity } from '../client/entity/company.entity';
 import { ContactEntity } from '../client/entity/contact.entity';
-import { LeadEntity } from '../lead/entity/lead.entity';
+import { LeadEntity } from '../lead/entity/Lead/lead.entity';
 
 @Entity({ name: 'tag' })
 export class TagEntity {

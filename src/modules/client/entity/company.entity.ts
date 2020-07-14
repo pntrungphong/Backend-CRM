@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { AbstractEntity } from '../../../common/abstract.entity';
-import { LeadEntity } from '../../lead/entity/lead.entity';
+import { LeadEntity } from '../../lead/entity/Lead/lead.entity';
 import { TagEntity } from '../../tag/tag.entity';
 import { CompanyDto } from '../dto/company/CompanyDto';
 import { CompanyContactEntity } from './companyContact.entity';
@@ -52,16 +52,6 @@ export class CompanyEntity extends AbstractEntity<CompanyDto> {
         inverseJoinColumn: { name: 'tag_id' },
     })
     tag: TagEntity[];
-
-
-
-
-
-
-
-
-
-    
 
     dtoClass = CompanyDto;
 }
