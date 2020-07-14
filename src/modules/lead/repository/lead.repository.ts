@@ -26,12 +26,12 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             FileEntity,
         ).findByIds(leadDto.file);
 
-        const listRelateTO = leadDto.relatedTo.map((item) => item.idContact);
-        const listContactEntity = await this.getRepositoryFor(
+        const listRelateTo = leadDto.relatedTo.map((item) => item.idContact);
+        const listRelatedToEntity = await this.getRepositoryFor(
             ContactEntity,
-        ).findByIds(listRelateTO);
+        ).findByIds(listRelateTo);
         const listContact = leadDto.linkContact.map((item) => item.idContact);
-        const listContactEntity1 = await this.getRepositoryFor(
+        const listContactEntity = await this.getRepositoryFor(
             ContactEntity,
         ).findByIds(listContact);
         let leadEntity = this.repository.create();
@@ -40,8 +40,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             createdBy: user.id,
             updatedBy: user.id,
             file: listFileEntity,
-            relatedTo: listContactEntity,
-            contact: listContactEntity1,
+            relatedTo: listRelatedToEntity,
+            contact: listContactEntity,
         });
         return this.repository.save(leadEntity, { reload: true });
     }
@@ -92,8 +92,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('lead.contact', 'contact')
             .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
             .leftJoinAndSelect('lead.tag', 'tag')
-            .where('1=1')
-            .andWhere('LOWER (lead.name) LIKE :name', {
+            .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
             .addOrderBy('lead.updatedAt', pageOptionsDto.order);

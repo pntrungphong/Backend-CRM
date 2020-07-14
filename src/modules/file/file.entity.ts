@@ -1,8 +1,16 @@
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    JoinTable,
+    ManyToMany,
+    OneToMany,
+} from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { LeadEntity } from '../lead/entity/lead.entity';
 import { FileDto } from './dto/fileDto';
+import { TouchPointFileEntity } from './fileTouchPoint/fileTouchPoint.entity';
 
 @Entity({ name: 'file' })
 export class FileEntity extends AbstractEntity<FileDto> {
@@ -37,6 +45,12 @@ export class FileEntity extends AbstractEntity<FileDto> {
         inverseJoinColumn: { name: 'lead_id' },
     })
     file: LeadEntity[];
+    @OneToMany(
+        () => TouchPointFileEntity,
+        (fileTouchPoint) => fileTouchPoint.touchpoint,
+    )
+    @JoinColumn()
+    fileTouchPoint: TouchPointFileEntity[];
 
     dtoClass = FileDto;
 }
