@@ -106,7 +106,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         });
         const results = [];
         for await (const iterator of leads) {
-            console.table(iterator.relatedTo);
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
             const contact = lead.contact;

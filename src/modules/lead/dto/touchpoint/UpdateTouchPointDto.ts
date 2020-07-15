@@ -2,8 +2,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
-import { TouchPointFileDto } from '../fileTouchPoint/fileTouchPointDto';
 import { LinkTouchPointFileDto } from '../fileTouchPoint/LinkFileDto';
+import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
 
 export class UpdateTouchPointDto {
     @IsOptional()

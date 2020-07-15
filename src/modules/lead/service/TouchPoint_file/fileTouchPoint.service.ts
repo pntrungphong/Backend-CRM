@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { TouchPointFileDto } from '../../dto/fileTouchPoint/fileTouchPointDto';
-import { TouchPointFileRepository } from '../../repository/Touchpoint_file/fileTouchPoint.repository';
+import { TouchPointFileDto } from '../../dto/fileTouchPoint/TouchPointFileDto';
+import { TouchPointFileRepository } from '../../repository/TouchpointFile/fileTouchPoint.repository';
 
 @Injectable()
 export class TouchPointFileService {
