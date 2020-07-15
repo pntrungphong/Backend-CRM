@@ -92,7 +92,7 @@ export class LeadController {
         @Param('id') id: string,
         @Body() updateDto: LeadUpdateDto,
         @AuthUser() user: UserEntity,
-    ): Promise<LeadUpdateDto> {
+    ): Promise<any> {
         const updatedLead = await this._leadService.update(id, updateDto, user);
         if (!updatedLead) {
             throw new HttpException(
@@ -104,14 +104,14 @@ export class LeadController {
             await this._noteService.update(updateDto.note, updatedLead.id);
         }
         if (updateDto.linkContact) {
-            for await (const iterator of updateDto.linkContact) {
-                await getConnection()
-                    .createQueryBuilder()
-                    .delete()
-                    .from('contact_lead')
-                    .where('lead_id = :id', { id })
-                    .execute();
+            await getConnection()
+                .createQueryBuilder()
+                .delete()
+                .from('contact_lead')
+                .where('lead_id = :id', { id })
+                .execute();
 
+            for await (const iterator of updateDto.linkContact) {
                 await getConnection()
                     .createQueryBuilder()
                     .insert()
@@ -126,14 +126,14 @@ export class LeadController {
             }
         }
         if (updateDto.relatedTo) {
-            for await (const iterator of updateDto.relatedTo) {
-                await getConnection()
-                    .createQueryBuilder()
-                    .delete()
-                    .from('relatedto_lead')
-                    .where('lead_id = :id', { id })
-                    .execute();
+            await getConnection()
+                .createQueryBuilder()
+                .delete()
+                .from('relatedto_lead')
+                .where('lead_id = :id', { id })
+                .execute();
 
+            for await (const iterator of updateDto.relatedTo) {
                 await getConnection()
                     .createQueryBuilder()
                     .insert()
@@ -147,6 +147,6 @@ export class LeadController {
                     .execute();
             }
         }
-        return updatedLead.toDto() as LeadUpdateDto;
+        return;
     }
 }

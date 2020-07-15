@@ -1,3 +1,4 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -26,7 +27,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
             ...touchPointDto,
         });
-        return this.repository.save(touchPointDto, { reload: true });
+        return this.repository.save(touchPointEntity, { reload: true });
     }
     public async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
@@ -37,7 +38,6 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             .leftJoinAndSelect('touchpoint.fileTouchPoint', 'fileTouchPoint')
             .leftJoinAndSelect('fileTouchPoint.file', 'file')
             .addOrderBy('touchpoint.createdAt', pageOptionsDto.order);
-
         const [touchPoints, touchPointsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -52,7 +52,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             touchpoint.lead = new InfoLeadTouchPointDto(element.lead);
             const file = touchpoint.fileTouchPoint;
             const listFile = [] as InfoFileTouchPointDto[];
-            file.forEach(async (item) => {
+            file.forEach((item) => {
                 const infoFile = new InfoFileTouchPointDto(
                     item as TouchPointFileEntity,
                 );
@@ -64,5 +64,45 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             result.push(touchpoint);
         });
         return new TouchPointsPageDto(result, pageMetaDto);
+    }
+
+    public async getLeadById(id: string): Promise<TouchPointDto> {
+        const touchPointInfo = await this.repository.findOne({
+            where: { id },
+            relations: ['fileTouchPoint.file', 'fileTouchPoint', 'lead'],
+        });
+        const touchpoint = new TouchPointDto(touchPointInfo);
+        touchpoint.lead = new InfoLeadTouchPointDto(touchPointInfo.lead);
+        const file = touchpoint.fileTouchPoint;
+        const listFile = [] as InfoFileTouchPointDto[];
+        file.forEach((item) => {
+            const infoFile = new InfoFileTouchPointDto(
+                item as TouchPointFileEntity,
+            );
+            const infoDetailFile = new FileDto(infoFile.file as FileEntity);
+            infoFile.file = infoDetailFile;
+            listFile.push(infoFile);
+            touchpoint.fileTouchPoint = listFile;
+        });
+        return touchpoint;
+    }
+
+    async update(
+        id: string,
+        updateDto: UpdateTouchPointDto,
+        user: UserEntity,
+    ): Promise<TouchPointEntity> {
+        const touchpoint = await this.repository.findOne({ id });
+        if (!touchpoint) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        const updatedTouchPoint = Object.assign(touchpoint, {
+            ...updateDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(updatedTouchPoint);
     }
 }

@@ -5,7 +5,9 @@ import {
     Get,
     HttpCode,
     HttpStatus,
+    Param,
     Post,
+    Put,
     Query,
     UseGuards,
     UseInterceptors,
@@ -27,7 +29,6 @@ import { TouchPointDto } from '../dto/touchpoint/TouchPointDto';
 import { TouchPointsPageDto } from '../dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../dto/touchpoint/TouchPointsPagesOptionsDto';
 import { UpdateTouchPointDto } from '../dto/touchpoint/UpdateTouchPointDto';
-import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
 import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
 
 @Controller('touchpoint')
@@ -36,10 +37,7 @@ import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class TouchPointController {
-    constructor(
-        private _touchPointService: TouchPointService,
-        private _fileTouchPointService: TouchPointFileService,
-    ) {}
+    constructor(private _touchPointService: TouchPointService) {}
 
     @Get()
     @HttpCode(HttpStatus.OK)
@@ -65,18 +63,34 @@ export class TouchPointController {
         @Body() data: UpdateTouchPointDto,
         @AuthUser() user: UserEntity,
     ): Promise<TouchPointDto> {
-        const createTouchPoint = await this._touchPointService.create(
+        return this._touchPointService.create(user, data);
+    }
+
+    @Get('/:id')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get companies list',
+        type: TouchPointDto,
+    })
+    async getCompanyById(@Param('id') id: string): Promise<TouchPointDto> {
+        return this._touchPointService.findLeadById(id);
+    }
+    @Put(':id')
+    @ApiOkResponse({
+        type: UpdateTouchPointDto,
+        description: 'Successfully Updated',
+    })
+    async update(
+        @Param('id') id: string,
+        @Body() updateDto: UpdateTouchPointDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<UpdateTouchPointDto> {
+        const updatedLead = await this._touchPointService.update(
+            id,
+            updateDto,
             user,
-            data,
         );
-        const idTouchPoint = parseInt(createTouchPoint.id);
-        if (data.file) {
-            await this._fileTouchPointService.createFileTouchPoint(
-                data.file,
-                idTouchPoint,
-                createTouchPoint.leadId,
-            );
-        }
-        return createTouchPoint;
+        return updatedLead.toDto() as UpdateTouchPointDto;
     }
 }
