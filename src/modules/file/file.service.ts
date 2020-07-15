@@ -7,7 +7,7 @@ import { FileRepository } from './file.repository';
 
 @Injectable()
 export class FileService {
-    constructor(public readonly repository: FileRepository) { }
+    constructor(public readonly repository: FileRepository) {}
 
     async upload(file: FileDto, user: UserEntity): Promise<FileEntity> {
         const fileData = Object.assign(file, {

@@ -39,7 +39,7 @@ import { FileService } from './file.service';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class FileController {
-    constructor(private _service: FileService) { }
+    constructor(private _service: FileService) {}
 
     @Post()
     @HttpCode(HttpStatus.OK)

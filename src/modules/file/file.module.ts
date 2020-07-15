@@ -15,4 +15,4 @@ import { FileService } from './file.service';
     exports: [FileService],
     providers: [FileService],
 })
-export class FileModule { }
+export class FileModule {}
