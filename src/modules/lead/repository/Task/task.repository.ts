@@ -1,25 +1,36 @@
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
+import { UpdateTaskDto } from '../../../lead/dto/task/UpdateTaskDto';
 import { UserEntity } from '../../../user/user.entity';
-import { TaskDto } from '../../dto/task/TaskDto';
 import { TaskEntity } from '../../entity/Task/task.entity';
+
 @EntityRepository(TaskEntity)
 export class TaskRepository extends AbstractRepository<TaskEntity> {
     public async create(
         user: UserEntity,
-        createTaskDto: TaskDto[],
+        createTaskDto: UpdateTaskDto,
         touchPointId: string,
-    ): Promise<void> {
-        for await (const task of createTaskDto) {
-            const taskObj = { ...task, touchPointId };
-            const newtask = this.repository.create({
-                ...taskObj,
-                createdBy: user.id,
-                updatedBy: user.id,
-            });
+    ): Promise<TaskEntity> {
+        const taskEntity = this.repository.create({
+            touchPointId,
+            ...createTaskDto,
+            createdBy: user.id,
+            updatedBy: user.id,
+        });
+        const newTask = await this.repository.save(taskEntity);
+        return newTask.toDto() as TaskEntity;
+    }
 
-            await this.repository.save(newtask);
-        }
+    public async update(
+        user: UserEntity,
+        updateTaskDto: UpdateTaskDto,
+        touchPointId: string,
+        taskId: string,
+    ): Promise<TaskEntity> {
+        const updateTasks = await this.repository.find({ id: taskId });
+        await this.repository.remove(updateTasks);
+
+        return this.create(user, updateTaskDto, touchPointId);
     }
 }

@@ -15,10 +15,8 @@ import { AuthGuard } from '../../../guards/auth.guard';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../../../modules/user/user.entity';
-import { TouchPointDto } from '../dto/touchpoint/TouchPointDto';
 import { UpdateTouchPointDto } from '../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointService } from '../service/Note/touchpoint.service';
-import { TaskService } from '../service/Task/task.service';
 import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
 
 @Controller('touchpoint')
@@ -30,7 +28,6 @@ export class TouchPointController {
     constructor(
         private _touchPointService: TouchPointService,
         private _fileTouchPointService: TouchPointFileService,
-        private _taskTouchPointService: TaskService,
     ) {}
 
     @Post()
@@ -42,11 +39,12 @@ export class TouchPointController {
     async createLead(
         @Body() data: UpdateTouchPointDto,
         @AuthUser() user: UserEntity,
-    ): Promise<TouchPointDto> {
+    ): Promise<any> {
         const createTouchPoint = await this._touchPointService.create(
             user,
             data,
         );
+
         const touchPointId = parseInt(createTouchPoint.id, 10);
         if (data.file) {
             await this._fileTouchPointService.createFileTouchPoint(
@@ -55,13 +53,7 @@ export class TouchPointController {
                 createTouchPoint.leadId,
             );
         }
-        if (data.task) {
-            await this._taskTouchPointService.create(
-                user,
-                data.task,
-                createTouchPoint.id,
-            );
-        }
+
         return createTouchPoint;
     }
 }

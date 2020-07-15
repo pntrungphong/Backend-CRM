@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { CompanyRepository } from '../client/repository/company.repository';
 import { LeadController } from './controller/lead.controller';
+import { TaskController } from './controller/task.controller';
 import { TouchPointController } from './controller/touchpoint.controller';
 import { LeadRepository } from './repository/Lead/lead.repository';
 import { NoteRepository } from './repository/Note/note.repository';
@@ -28,7 +29,7 @@ import { TouchPointFileService } from './service/TouchPoint_file/fileTouchPoint.
             TaskRepository,
         ]),
     ],
-    controllers: [LeadController, TouchPointController],
+    controllers: [LeadController, TouchPointController, TaskController],
     exports: [
         LeadService,
         NoteService,

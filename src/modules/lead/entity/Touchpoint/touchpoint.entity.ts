@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { AbstractEntity } from '../../../../common/abstract.entity';
 import { TouchPointDto } from '../../dto/touchpoint/TouchPointDto';
 import { LeadEntity } from '../Lead/lead.entity';
+import { TaskEntity } from '../Task/task.entity';
 import { TouchPointFileEntity } from '../Touchpoint_file/fileTouchPoint.entity';
 
 @Entity({ name: 'touchpoint' })
@@ -42,6 +43,10 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     )
     @JoinColumn()
     fileTouchPoint: TouchPointFileEntity[];
+
+    @OneToMany(() => TaskEntity, (task) => task.touchPoint)
+    @JoinColumn()
+    task: TaskEntity[];
 
     dtoClass = TouchPointDto;
 }
