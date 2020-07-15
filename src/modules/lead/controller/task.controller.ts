@@ -7,7 +7,6 @@ import {
     Param,
     Post,
     Put,
-    Query,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
@@ -23,15 +22,15 @@ import { UpdateTaskDto } from '../dto/task/UpdateTaskDto';
 import { TaskEntity } from '../entity/Task/task.entity';
 import { TaskService } from '../service/Task/task.service';
 
-@Controller('task')
-@ApiTags('task')
+@Controller('touchpoint')
+@ApiTags('touchpoint')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class TaskController {
     constructor(private _taskService: TaskService) {}
 
-    @Post(':touchpointId')
+    @Post(':touchpointId/task')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         type: TaskDto,
@@ -45,13 +44,13 @@ export class TaskController {
         return this._taskService.create(user, data, touchpointId);
     }
 
-    @Put(':taskId')
+    @Put(':touchPointId/task/:taskId')
     @ApiOkResponse({
         type: TaskDto,
         description: 'Successfully Updated',
     })
     async update(
-        @Query('touchPointId') touchPointId: string,
+        @Param('touchPointId') touchPointId: string,
         @Param('taskId') taskId: string,
         @Body() updateDto: UpdateTaskDto,
         @AuthUser() user: UserEntity,

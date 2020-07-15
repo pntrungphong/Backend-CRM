@@ -9,7 +9,6 @@ import {
 import { AbstractEntity } from '../../../../common/abstract.entity';
 import { UserEntity } from '../../../user/user.entity';
 import { TaskDto } from '../../dto/task/TaskDto';
-import { LeadEntity } from '../Lead/lead.entity';
 import { TouchPointEntity } from '../Touchpoint/touchpoint.entity';
 
 @Entity({ name: 'task' })
@@ -42,7 +41,7 @@ export class TaskEntity extends AbstractEntity<TaskDto> {
     @JoinColumn({
         name: 'touchpoint_id',
     })
-    touchPoint: LeadEntity;
+    touchPoint: TouchPointEntity;
 
     @ManyToOne(() => UserEntity, (user) => user.task)
     @JoinColumn({
