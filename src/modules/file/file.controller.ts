@@ -84,7 +84,18 @@ export class FileController {
         description: 'Get file by id',
     })
     async getFileById(@Param('id') id: string, @Res() res: Response) {
-        const path = await this._service.getFileById(id);
-        return res.sendFile(`${path}`, { root: './' });
+        const fileEntity = await this._service.getFileById(id);
+        return res.sendFile(`${fileEntity.path}`, { root: './' });
+    }
+
+    @Get(':id/download')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        status: HttpStatus.OK,
+        description: 'Get file by id',
+    })
+    async downloadFile(@Param('id') id: string, @Res() res: Response) {
+        const fileEntity = await this._service.getFileById(id);
+        return res.download(`./${fileEntity.path}`, fileEntity.originalname);
     }
 }
