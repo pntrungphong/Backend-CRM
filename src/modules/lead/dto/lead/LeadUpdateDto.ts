@@ -3,8 +3,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
-import { TagDto } from '../../tag/dto/TagDto';
-import { NoteDto } from '../dto/NoteDto';
+import { TagDto } from '../../../tag/dto/TagDto';
+import { NoteDto } from '../note/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
 export class LeadUpdateDto {
     @IsString()

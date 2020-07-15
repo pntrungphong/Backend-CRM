@@ -22,19 +22,19 @@ import {
 } from '@nestjs/swagger';
 import { getConnection } from 'typeorm';
 
-import { AuthUser } from '../../decorators/auth-user.decorator';
-import { AuthGuard } from '../../guards/auth.guard';
-import { RolesGuard } from '../../guards/roles.guard';
-import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
-import { UserEntity } from '../../modules/user/user.entity';
-import { DetailLeadDto } from './dto/DetailLeadDto';
-import { LeadDto } from './dto/LeadDto';
-import { LeadsPageDetailDto } from './dto/LeadsPageDetailDto';
-import { LeadsPageDto } from './dto/LeadsPageDto';
-import { LeadsPageOptionsDto } from './dto/LeadsPageOptionsDto';
-import { LeadUpdateDto } from './dto/LeadUpdateDto';
-import { LeadService } from './service/lead.service';
-import { NoteService } from './service/note.service';
+import { AuthUser } from '../../../decorators/auth-user.decorator';
+import { AuthGuard } from '../../../guards/auth.guard';
+import { RolesGuard } from '../../../guards/roles.guard';
+import { AuthUserInterceptor } from '../../../interceptors/auth-user-interceptor.service';
+import { UserEntity } from '../../../modules/user/user.entity';
+import { DetailLeadDto } from '../dto/lead/DetailLeadDto';
+import { LeadDto } from '../dto/lead/LeadDto';
+import { LeadsPageDetailDto } from '../dto/lead/LeadsPageDetailDto';
+import { LeadsPageDto } from '../dto/lead/LeadsPageDto';
+import { LeadsPageOptionsDto } from '../dto/lead/LeadsPageOptionsDto';
+import { LeadUpdateDto } from '../dto/lead/LeadUpdateDto';
+import { LeadService } from '../service/Lead/lead.service';
+import { NoteService } from '../service/Note/note.service';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)

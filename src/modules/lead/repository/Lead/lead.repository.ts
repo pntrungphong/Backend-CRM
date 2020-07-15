@@ -2,20 +2,20 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
-import { PageMetaDto } from '../../../common/dto/PageMetaDto';
-import { ContactEntity } from '../../client/entity/contact.entity';
-import { FileEntity } from '../../file/file.entity';
-import { TagEntity } from '../../tag/tag.entity';
-import { UserEntity } from '../../user/user.entity';
-import { DetailLeadDto } from '../dto/DetailLeadDto';
-import { InfoLeadCompanyDto } from '../dto/InfoLeadCompanyDto';
-import { InfoLeadContactDto } from '../dto/InfoLeadContactDto';
-import { InfoLeadTagDto } from '../dto/InforLeadTagDto';
-import { LeadDto } from '../dto/LeadDto';
-import { LeadsPageDetailDto } from '../dto/LeadsPageDetailDto';
-import { LeadsPageOptionsDto } from '../dto/LeadsPageOptionsDto';
-import { LeadUpdateDto } from '../dto/LeadUpdateDto';
-import { LeadEntity } from '../entity/lead.entity';
+import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
+import { ContactEntity } from '../../../client/entity/contact.entity';
+import { FileEntity } from '../../../file/file.entity';
+import { InfoLeadContactDto } from '../../../lead/dto/lead/InfoLeadContactDto';
+import { TagEntity } from '../../../tag/tag.entity';
+import { UserEntity } from '../../../user/user.entity';
+import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
+import { InfoLeadCompanyDto } from '../../dto/lead/InfoLeadCompanyDto';
+import { InfoLeadTagDto } from '../../dto/lead/InforLeadTagDto';
+import { LeadDto } from '../../dto/lead/LeadDto';
+import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
+import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
+import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
+import { LeadEntity } from '../../entity/Lead/lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -26,12 +26,12 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             FileEntity,
         ).findByIds(leadDto.file);
 
-        const listRelateTO = leadDto.relatedTo.map((item) => item.idContact);
-        const listContactEntity = await this.getRepositoryFor(
+        const listRelateTo = leadDto.relatedTo.map((item) => item.idContact);
+        const listRelatedToEntity = await this.getRepositoryFor(
             ContactEntity,
-        ).findByIds(listRelateTO);
+        ).findByIds(listRelateTo);
         const listContact = leadDto.linkContact.map((item) => item.idContact);
-        const listContactEntity1 = await this.getRepositoryFor(
+        const listContactEntity = await this.getRepositoryFor(
             ContactEntity,
         ).findByIds(listContact);
         let leadEntity = this.repository.create();
@@ -40,8 +40,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             createdBy: user.id,
             updatedBy: user.id,
             file: listFileEntity,
-            relatedTo: listContactEntity,
-            contact: listContactEntity1,
+            relatedTo: listRelatedToEntity,
+            contact: listContactEntity,
         });
         return this.repository.save(leadEntity, { reload: true });
     }
@@ -92,8 +92,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('lead.contact', 'contact')
             .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
             .leftJoinAndSelect('lead.tag', 'tag')
-            .where('1=1')
-            .andWhere('LOWER (lead.name) LIKE :name', {
+            .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
             .addOrderBy('lead.updatedAt', pageOptionsDto.order);

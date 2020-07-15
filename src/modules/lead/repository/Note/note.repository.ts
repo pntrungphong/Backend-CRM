@@ -1,8 +1,8 @@
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
-import { NoteDto } from '../dto/NoteDto';
-import { NoteEntity } from '../entity/note.entity';
+import { NoteDto } from '../../dto/note/NoteDto';
+import { NoteEntity } from '../../entity/Note/note.entity';
 @EntityRepository(NoteEntity)
 export class NoteRepository extends AbstractRepository<NoteEntity> {
     public async create(

@@ -1,8 +1,8 @@
 'use strict';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { CompanyEntity } from '../../client/entity/company.entity';
 
+import { CompanyEntity } from '../../../client/entity/company.entity';
 
 export class InfoLeadCompanyDto {
     @ApiPropertyOptional()
