@@ -17,6 +17,6 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
             ...touchPointDto,
         });
-        return this.repository.save(touchPointDto, { reload: true });
+        return this.repository.save(touchPointEntity, { reload: true });
     }
 }

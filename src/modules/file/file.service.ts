@@ -17,7 +17,7 @@ export class FileService {
         return this.repository.create(fileData);
     }
 
-    async getFileById(id: string): Promise<string> {
-        return (await this.repository.getById(id)).path;
+    async getFileById(id: string): Promise<FileEntity> {
+        return this.repository.getById(id);
     }
 }
