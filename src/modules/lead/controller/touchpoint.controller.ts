@@ -46,7 +46,7 @@ export class TouchPointController {
         description: 'Get touchpoint list',
         type: TouchPointsPageDto,
     })
-    getLeads(
+    getTouchPoints(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
@@ -59,7 +59,7 @@ export class TouchPointController {
         type: UpdateTouchPointDto,
         description: 'Successfully Created',
     })
-    async createLead(
+    async createTouchPoint(
         @Body() data: UpdateTouchPointDto,
         @AuthUser() user: UserEntity,
     ): Promise<TouchPointDto> {
@@ -73,7 +73,7 @@ export class TouchPointController {
         description: 'Get companies list',
         type: TouchPointDto,
     })
-    async getCompanyById(@Param('id') id: string): Promise<TouchPointDto> {
+    async getTouchPointById(@Param('id') id: string): Promise<TouchPointDto> {
         return this._touchPointService.findLeadById(id);
     }
     @Put(':id')

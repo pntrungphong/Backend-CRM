@@ -21,13 +21,13 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        let touchPointEntity = this.repository.create();
-        touchPointEntity = this.repository.merge(touchPointEntity, {
+        const touchPointEntity = this.repository.create({
+            ...touchPointDto,
             createdBy: user.id,
             updatedBy: user.id,
-            ...touchPointDto,
         });
-        return this.repository.save(touchPointEntity, { reload: true });
+        const newTpuchPoint = await this.repository.save(touchPointEntity);
+        return newTpuchPoint.toDto() as TouchPointEntity;
     }
     public async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,

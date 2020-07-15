@@ -28,7 +28,7 @@ export class TouchPointService {
             await this._touchPointFilePointService.createFileTouchPoint(
                 createDto.file,
                 idTouchPoint,
-                createTouchPoint.leadId,
+                createDto.leadId,
             );
         }
         return createTouchPoint;
