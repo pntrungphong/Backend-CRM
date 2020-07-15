@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { PageMetaDto } from '../../../common/dto/PageMetaDto';
+import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { LeadDto } from './LeadDto';
 
 export class LeadsPageDetailDto {

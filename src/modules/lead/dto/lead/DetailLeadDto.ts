@@ -2,46 +2,57 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { AbstractDto } from '../../../common/dto/AbstractDto';
-import { FileDto } from '../../file/dto/fileDto';
-import { TagDto } from '../../tag/dto/TagDto';
-import { NoteDto } from '../dto/NoteDto';
-import { LeadEntity } from '../entity/lead.entity';
+import { FileDto } from '../../../file/dto/fileDto';
+import { TagDto } from '../../../tag/dto/TagDto';
+import { TagEntity } from '../../../tag/tag.entity';
+import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { NoteDto } from '../note/NoteDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
-export class LeadDto extends AbstractDto {
+export class DetailLeadDto {
+    @ApiPropertyOptional()
+    id: string;
+
+    @ApiPropertyOptional()
+    createdAt: Date;
+
+    @ApiPropertyOptional()
+    updatedAt: Date;
+
     @ApiPropertyOptional()
     name: string;
+
+    @ApiPropertyOptional()
+    rank: string;
+
     @ApiPropertyOptional()
     status: string;
     @ApiPropertyOptional()
-    rank: string;
-    @ApiPropertyOptional()
-    createdBy: string;
-    @ApiPropertyOptional()
     description: string;
-    @ApiPropertyOptional()
-    updatedBy: string;
-    @ApiPropertyOptional()
-    idCompany: string;
+
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
-    @ApiPropertyOptional({ type: InfoLeadCompanyDto })
+
+    @ApiPropertyOptional({ type: [InfoLeadCompanyDto] })
     company: InfoLeadCompanyDto;
     @ApiPropertyOptional({ type: [InfoLeadContactDto] })
     contact: InfoLeadContactDto[];
     @ApiPropertyOptional({ type: [InfoLeadContactDto] })
     relatedTo: InfoLeadContactDto[];
+    @ApiPropertyOptional()
+    createdBy: string;
+
+    @ApiPropertyOptional()
+    updatedBy: string;
     @ApiPropertyOptional({ type: [TagDto] })
-    tag: TagDto[];
+    tag: TagEntity[];
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto[];
-
     constructor(lead: LeadEntity) {
-        super(lead);
+        this.id = lead.id;
         this.name = lead.name;
-        this.status = lead.status;
-        this.rank = lead.rank;
+        this.createdAt = lead.createdAt;
+        this.updatedAt = lead.updatedAt;
         this.note = lead.note;
         this.createdBy = lead.createdBy;
         this.updatedBy = lead.updatedBy;
@@ -49,7 +60,9 @@ export class LeadDto extends AbstractDto {
         this.contact = lead.contact;
         this.description = lead.description;
         this.tag = lead.tag;
+        this.rank = lead.rank;
         this.status = lead.status;
+        this.file = lead.file.toDtos();
         this.relatedTo = lead.relatedTo.toDtos();
     }
 }

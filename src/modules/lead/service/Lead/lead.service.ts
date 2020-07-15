@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserEntity } from '../../../modules/user/user.entity';
-import { CompanyRepository } from '../../client/repository/company.repository';
-import { DetailLeadDto } from '../dto/DetailLeadDto';
-import { LeadsPageDetailDto } from '../dto/LeadsPageDetailDto';
-import { LeadsPageOptionsDto } from '../dto/LeadsPageOptionsDto';
-import { LeadUpdateDto } from '../dto/LeadUpdateDto';
-import { LeadEntity } from '../entity/lead.entity';
-import { LeadRepository } from '../repository/lead.repository';
+import { CompanyRepository } from '../../../client/repository/company.repository';
+import { UserEntity } from '../../../user/user.entity';
+import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
+import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
+import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
+import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
+import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { LeadRepository } from '../../repository/Lead/lead.repository';
 @Injectable()
 export class LeadService {
     constructor(

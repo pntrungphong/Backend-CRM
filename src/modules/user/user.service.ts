@@ -20,7 +20,7 @@ export class UserService {
         public readonly userRepository: UserRepository,
         public readonly validatorService: ValidatorService,
         public readonly awsS3Service: AwsS3Service,
-    ) { }
+    ) {}
 
     /**
      * Find single user
@@ -67,10 +67,10 @@ export class UserService {
 
     async changePassword(
         updateUserDto: UpdateUserDto,
-        userid: UserEntity,
+        user: UserEntity,
     ): Promise<UserEntity> {
         const currentUser = await this.userRepository.findOne({
-            where: { id: userid.id },
+            where: { id: user.id },
         });
         const isPasswordValid = await UtilsService.validateHash(
             updateUserDto.oldPass,
