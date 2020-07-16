@@ -4,7 +4,6 @@ import {
     Controller,
     Get,
     HttpCode,
-    HttpException,
     HttpStatus,
     Param,
     Post,
@@ -20,7 +19,6 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
-import { getConnection } from 'typeorm';
 
 import { AuthUser } from '../../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../../guards/auth.guard';
@@ -33,6 +31,7 @@ import { LeadsPageDetailDto } from '../dto/lead/LeadsPageDetailDto';
 import { LeadsPageDto } from '../dto/lead/LeadsPageDto';
 import { LeadsPageOptionsDto } from '../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../dto/lead/LeadUpdateDto';
+import { LeadEntity } from '../entity/Lead/lead.entity';
 import { LeadService } from '../service/Lead/lead.service';
 import { NoteService } from '../service/Note/note.service';
 @Controller('lead')
@@ -75,12 +74,8 @@ export class LeadController {
     async createLead(
         @Body() data: LeadUpdateDto,
         @AuthUser() user: UserEntity,
-    ): Promise<any> {
-        const createLead = await this._leadService.create(user, data);
-        if (data.note) {
-            await this._noteService.create(data.note, createLead.id);
-        }
-        return;
+    ): Promise<LeadEntity> {
+        return this._leadService.create(user, data);
     }
 
     @Put(':id')
@@ -92,61 +87,7 @@ export class LeadController {
         @Param('id') id: string,
         @Body() updateDto: LeadUpdateDto,
         @AuthUser() user: UserEntity,
-    ): Promise<any> {
-        const updatedLead = await this._leadService.update(id, updateDto, user);
-        if (!updatedLead) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
-        }
-        if (updateDto.note) {
-            await this._noteService.update(updateDto.note, updatedLead.id);
-        }
-        if (updateDto.linkContact) {
-            await getConnection()
-                .createQueryBuilder()
-                .delete()
-                .from('contact_lead')
-                .where('lead_id = :id', { id })
-                .execute();
-
-            for await (const iterator of updateDto.linkContact) {
-                await getConnection()
-                    .createQueryBuilder()
-                    .insert()
-                    .into('contact_lead')
-                    .values([
-                        {
-                            contact_id: iterator.idContact,
-                            lead_id: updatedLead.id,
-                        },
-                    ])
-                    .execute();
-            }
-        }
-        if (updateDto.relatedTo) {
-            await getConnection()
-                .createQueryBuilder()
-                .delete()
-                .from('relatedto_lead')
-                .where('lead_id = :id', { id })
-                .execute();
-
-            for await (const iterator of updateDto.relatedTo) {
-                await getConnection()
-                    .createQueryBuilder()
-                    .insert()
-                    .into('relatedto_lead')
-                    .values([
-                        {
-                            relatedto_id: iterator.idContact,
-                            lead_id: updatedLead.id,
-                        },
-                    ])
-                    .execute();
-            }
-        }
-        return;
+    ): Promise<LeadEntity> {
+        return this._leadService.update(id, updateDto, user);
     }
 }
