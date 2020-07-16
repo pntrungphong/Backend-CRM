@@ -44,7 +44,7 @@ export class FileEntity extends AbstractEntity<FileDto> {
         joinColumn: { name: 'file_id' },
         inverseJoinColumn: { name: 'lead_id' },
     })
-    file: LeadEntity[];
+    lead: LeadEntity[];
     @OneToMany(
         () => TouchPointFileEntity,
         (fileTouchPoint) => fileTouchPoint.touchpoint,
