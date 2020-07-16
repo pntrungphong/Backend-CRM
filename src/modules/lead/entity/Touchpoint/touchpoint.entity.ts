@@ -16,6 +16,9 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     status: string;
     @Column({ name: 'note' })
     note: string;
+    @Column({ name: 'review' })
+    review: string;
+
     @Column({ name: 'meeting_date' })
     meetingDate: Date;
     @Column({

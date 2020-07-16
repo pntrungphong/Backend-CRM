@@ -93,4 +93,21 @@ export class TouchPointController {
         );
         return updatedLead.toDto() as UpdateTouchPointDto;
     }
+    // @Put(':id/markdone')
+    // @ApiOkResponse({
+    //     type: UpdateTouchPointMarkDoneDto,
+    //     description: 'Successfully Updated',
+    // })
+    // async updateMarkDone(
+    //     @Param('id') id: string,
+    //     @Body() updateDto: UpdateTouchPointMarkDoneDto,
+    //     @AuthUser() user: UserEntity,
+    // ): Promise<UpdateTouchPointMarkDoneDto> {
+    //     const updatedLead = await this._touchPointService.update(
+    //         id,
+    //         updateDto,
+    //         user,
+    //     );
+    //     return updatedLead.toDto() as UpdateTouchPointDto;
+    // }x
 }

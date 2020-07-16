@@ -11,6 +11,7 @@ import { FileEntity } from '../../../file/file.entity';
 import { InfoFileTouchPointDto } from '../../../lead/dto/touchpoint/infoFileTouchPointDto';
 import { InfoLeadTouchPointDto } from '../../../lead/dto/touchpoint/InfoLeadTouchPointDto';
 import { TouchPointDto } from '../../../lead/dto/touchpoint/TouchPointDto';
+import { UpdateTouchPointMarkDoneDto } from '../../../lead/dto/touchpoint/TouchPointMarkDone';
 import { TouchPointsPagesOptionsDto } from '../../../lead/dto/touchpoint/TouchPointsPagesOptionsDto';
 import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileTouchPoint.entity';
 import { UserEntity } from '../../../user/user.entity';
@@ -24,12 +25,12 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
         const lastEntity = await this.repository.findOne({
-            select: ["order"],
+            select: ['order'],
             where: { leadId: touchPointDto.leadId },
             order: {
-                id: "DESC"
+                id: 'DESC',
             },
-        })
+        });
         let order = 1;
         if (lastEntity) {
             order = lastEntity.order + 1;
@@ -39,7 +40,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             ...touchPointDto,
             createdBy: user.id,
             updatedBy: user.id,
-            order: order
+            order,
         });
 
         const newTouchPoint = await this.repository.save(touchPointEntity);
@@ -140,5 +141,24 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         return this.repository.save(updatedTouchPoint);
+    }
+
+    async updateStatus(
+        id: string,
+        updateDto: UpdateTouchPointMarkDoneDto,
+        user: UserEntity,
+    ): Promise<TouchPointEntity> {
+        const touchpoint = await this.repository.findOne({ id });
+        if (!touchpoint) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        const updatedTouchPointMarkDone = Object.assign(touchpoint, {
+            ...updateDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(updatedTouchPointMarkDone);
     }
 }

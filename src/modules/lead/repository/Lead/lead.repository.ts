@@ -3,10 +3,15 @@ import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
+import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
+import { TouchPointEntity } from '../../../../modules/lead/entity/Touchpoint/touchpoint.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
 import { InfoLeadContactDto } from '../../../lead/dto/lead/InfoLeadContactDto';
+import { TaskDto } from '../../../lead/dto/task/TaskDto';
+import { TaskEntity } from '../../../lead/entity/Task/task.entity';
 import { TagEntity } from '../../../tag/tag.entity';
+import { UserDto } from '../../../user/dto/UserDto';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
 import { InfoLeadCompanyDto } from '../../dto/lead/InfoLeadCompanyDto';
@@ -68,9 +73,17 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
-            relations: ['company', 'note', 'contact', 'file', 'relatedTo'],
+            relations: [
+                'company',
+                'note',
+                'contact',
+                'file',
+                'relatedTo',
+                'touchpoint',
+                'touchpoint.task',
+                'touchpoint.task.user',
+            ],
         });
-        console.table(leadInfo.relatedTo);
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
         result.contact = leadInfo.contact.map(
@@ -79,6 +92,24 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         result.relatedTo = leadInfo.relatedTo.map(
             (it) => new InfoLeadContactDto(it),
         );
+        const listTouchPoint = [] as TouchPointDto[];
+        result.touchpoint.forEach((item) => {
+            const infoTouchPoint = new TouchPointDto(item as TouchPointEntity);
+            const listTask = [] as TaskDto[];
+            infoTouchPoint.task.map((it) => {
+                const infoTask = new TaskDto(it as TaskEntity);
+                const inforUser = new UserDto(infoTask.user as UserEntity);
+                infoTask.user = inforUser;
+                listTask.push(infoTask);
+            });
+            infoTouchPoint.task = listTask;
+            listTouchPoint.push(infoTouchPoint);
+        });
+        listTouchPoint.sort(
+            (a, b) =>
+                parseInt(a.order.toString()) - parseFloat(b.order.toString()),
+        )
+        result.touchpoint = listTouchPoint;
         return result;
     }
 
@@ -92,6 +123,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('lead.contact', 'contact')
             .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
             .leftJoinAndSelect('lead.tag', 'tag')
+            .leftJoinAndSelect('lead.touchpoint', 'touchpoint')
+            .leftJoinAndSelect('touchpoint.task', 'task')
+            .leftJoinAndSelect('task.user', 'user')
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
@@ -128,6 +162,27 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 const infoTag = new InfoLeadTagDto(item as TagEntity);
                 listTag.push(infoTag);
             });
+            const listTouchPoint = [] as TouchPointDto[];
+            lead.touchpoint.forEach((item) => {
+                const infoTouchPoint = new TouchPointDto(
+                    item as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.task.map((it) => {
+                    const infoTask = new TaskDto(it as TaskEntity);
+                    const inforUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = inforUser;
+                    listTask.push(infoTask);
+                });
+                infoTouchPoint.task = listTask;
+                listTouchPoint.push(infoTouchPoint);
+            });
+            listTouchPoint.sort(
+                (a, b) =>
+                    parseInt(a.order.toString()) -
+                    parseFloat(b.order.toString()),
+            );
+            lead.touchpoint = listTouchPoint;
             lead.tag = listTag;
             lead.contact = listContact;
             lead.relatedTo = listRelatedTo;

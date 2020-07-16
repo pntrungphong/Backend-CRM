@@ -22,6 +22,9 @@ export class TouchPointDto extends AbstractDto {
     note: string;
 
     @ApiPropertyOptional()
+    review: string;
+
+    @ApiPropertyOptional()
     meetingDate: Date;
 
     @ApiPropertyOptional()
@@ -51,5 +54,6 @@ export class TouchPointDto extends AbstractDto {
         this.lead = touchPoint.lead;
         this.fileTouchPoint = touchPoint.fileTouchPoint;
         this.task = touchPoint.task;
+        this.review = touchPoint.review;
     }
 }

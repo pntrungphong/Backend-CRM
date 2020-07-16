@@ -7,6 +7,7 @@ import { FileDto } from '../../../file/dto/fileDto';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { NoteDto } from '../note/NoteDto';
+import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
 export class LeadDto extends AbstractDto {
@@ -21,6 +22,8 @@ export class LeadDto extends AbstractDto {
     @ApiPropertyOptional()
     description: string;
     @ApiPropertyOptional()
+    review: string;
+    @ApiPropertyOptional()
     updatedBy: string;
     @ApiPropertyOptional()
     idCompany: string;
@@ -34,6 +37,8 @@ export class LeadDto extends AbstractDto {
     relatedTo: InfoLeadContactDto[];
     @ApiPropertyOptional({ type: [TagDto] })
     tag: TagDto[];
+    @ApiPropertyOptional({ type: [TouchPointDto] })
+    touchpoint: TouchPointDto[];
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto[];
 
@@ -50,6 +55,8 @@ export class LeadDto extends AbstractDto {
         this.description = lead.description;
         this.tag = lead.tag;
         this.status = lead.status;
+        this.review = lead.review;
+        this.touchpoint = lead.touchpoint.toDtos();
         this.relatedTo = lead.relatedTo.toDtos();
     }
 }

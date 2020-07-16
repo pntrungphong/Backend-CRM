@@ -24,6 +24,8 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     rank: string;
     @Column({ nullable: false })
     status: string;
+    @Column({ nullable: true, name: 'review' })
+    review: string;
     @Column({ nullable: true })
     description: string;
     @Column({ nullable: false, name: 'created_by' })

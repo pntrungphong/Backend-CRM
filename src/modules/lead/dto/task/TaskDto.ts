@@ -5,6 +5,7 @@ import { IsOptional } from 'class-validator';
 
 import { AbstractDto } from '../../../../common/dto/AbstractDto';
 import { TaskEntity } from '../../../lead/entity/Task/task.entity';
+import { UserDto } from '../../../user/dto/UserDto';
 export class TaskDto extends AbstractDto {
     @IsOptional()
     @ApiPropertyOptional()
@@ -22,11 +23,14 @@ export class TaskDto extends AbstractDto {
     @ApiPropertyOptional()
     dueDate: Date;
 
+    @ApiPropertyOptional({ type: [UserDto] })
+    user: UserDto;
     constructor(task: TaskEntity) {
         super(task);
         this.taskname = task.taskname;
         this.type = task.type;
         this.userId = task.userId;
         this.dueDate = task.dueDate;
+        this.user = task.user;
     }
 }

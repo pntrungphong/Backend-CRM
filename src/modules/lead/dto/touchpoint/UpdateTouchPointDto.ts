@@ -20,6 +20,10 @@ export class UpdateTouchPointDto {
 
     @IsOptional()
     @ApiProperty()
+    review: string;
+
+    @IsOptional()
+    @ApiProperty()
     meetingDate: Date;
 
     @IsNumber()
