@@ -108,7 +108,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         listTouchPoint.sort(
             (a, b) =>
                 parseInt(a.order.toString()) - parseFloat(b.order.toString()),
-        )
+        );
         result.touchpoint = listTouchPoint;
         return result;
     }
