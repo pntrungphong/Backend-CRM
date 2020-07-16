@@ -23,24 +23,23 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        const queryBuilder = await this.repository.findOne({
+        const lastEntity = await this.repository.findOne({
             select: ["order"],
             where: { leadId: touchPointDto.leadId },
             order: {
                 id: "DESC"
             },
         })
-        var number=0;
-        if(!queryBuilder){
-            number=1;
-        }else{
-            number=queryBuilder.order+1
+        let order = 1;
+        if (lastEntity) {
+            order = lastEntity.order + 1;
         }
+
         const touchPointEntity = this.repository.create({
             ...touchPointDto,
             createdBy: user.id,
             updatedBy: user.id,
-            order: number
+            order: order
         });
 
         const newTouchPoint = await this.repository.save(touchPointEntity);
