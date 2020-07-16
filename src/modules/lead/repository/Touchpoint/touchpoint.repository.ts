@@ -23,35 +23,28 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        try {
-            const queryBuilder = await this.repository
-                .createQueryBuilder('touchpoint')
-                .select('touchpoint.order')
-                .where('touchpoint.leadId = :id', { id: touchPointDto.leadId })
-                .addOrderBy('touchpoint.id', 'DESC')
-                .limit(1)
-                .execute();
-            const touchPointEntity = this.repository.create({
-                ...touchPointDto,
-                createdBy: user.id,
-                updatedBy: user.id,
-                order: parseInt(queryBuilder[0].touchpoint_order + 1),
-            });
-
-            const newTouchPoint = await this.repository.save(touchPointEntity);
-            return newTouchPoint.toDto() as TouchPointEntity;
-        } catch (error) {
-            const touchPointEntity = this.repository.create({
-                ...touchPointDto,
-                createdBy: user.id,
-                updatedBy: user.id,
-                order: 1,
-            });
-
-            const newTouchPoint = await this.repository.save(touchPointEntity);
-
-            return newTouchPoint.toDto() as TouchPointEntity;
+        const queryBuilder = await this.repository.findOne({
+            select: ["order"],
+            where: { leadId: touchPointDto.leadId },
+            order: {
+                id: "DESC"
+            },
+        })
+        var number=0;
+        if(!queryBuilder){
+            number=1;
+        }else{
+            number=queryBuilder.order+1
         }
+        const touchPointEntity = this.repository.create({
+            ...touchPointDto,
+            createdBy: user.id,
+            updatedBy: user.id,
+            order: number
+        });
+
+        const newTouchPoint = await this.repository.save(touchPointEntity);
+        return newTouchPoint.toDto() as TouchPointEntity;
     }
     public async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
