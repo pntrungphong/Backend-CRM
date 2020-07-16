@@ -3,6 +3,7 @@ import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
+import { CompanyEntity } from '../../../client/entity/company.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
 import { InfoLeadContactDto } from '../../../lead/dto/lead/InfoLeadContactDto';
@@ -30,10 +31,16 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const listRelatedToEntity = await this.getRepositoryFor(
             ContactEntity,
         ).findByIds(listRelateTo);
+
+        const companyEntity = await this.getRepositoryFor(
+            CompanyEntity,
+        ).findOne(leadDto.idCompany);
+
         const listContact = leadDto.linkContact.map((item) => item.idContact);
         const listContactEntity = await this.getRepositoryFor(
             ContactEntity,
         ).findByIds(listContact);
+
         let leadEntity = this.repository.create();
         leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
@@ -42,8 +49,14 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             file: listFileEntity,
             relatedTo: listRelatedToEntity,
             contact: listContactEntity,
+            company: companyEntity,
         });
-        return this.repository.save(leadEntity, { reload: true });
+
+        const newLead = await this.repository.save(leadEntity, {
+            reload: true,
+        });
+
+        return newLead.toDto() as LeadEntity;
     }
 
     public async update(
@@ -51,18 +64,46 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         updateDto: LeadUpdateDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
-        const lead = await this.repository.findOne({
+        let leadCurrent = await this.repository.findOne({
             where: { id },
         });
-        if (!lead) {
+
+        if (!leadCurrent) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
-        const updateLead = Object.assign(lead, {
+
+        const listFileEntity = await this.getRepositoryFor(
+            FileEntity,
+        ).findByIds(updateDto.file);
+
+        const listRelateTo = updateDto.relatedTo.map((item) => item.idContact);
+        const listRelatedToEntity = await this.getRepositoryFor(
+            ContactEntity,
+        ).findByIds(listRelateTo);
+
+        const companyEntity = await this.getRepositoryFor(
+            CompanyEntity,
+        ).findOne(updateDto.idCompany);
+
+        const listContact = updateDto.linkContact.map((item) => item.idContact);
+        const listContactEntity = await this.getRepositoryFor(
+            ContactEntity,
+        ).findByIds(listContact);
+
+        leadCurrent = this.repository.merge(leadCurrent, {
             ...updateDto,
-            updated_by: user.id,
+            updatedBy: user.id,
+            file: listFileEntity,
+            relatedTo: listRelatedToEntity,
+            contact: listContactEntity,
+            company: companyEntity,
         });
 
-        return this.repository.save(updateLead);
+        const updatedLead = await this.repository.save(leadCurrent, {
+            reload: true,
+        });
+
+        return updatedLead.toDto() as LeadEntity;
     }
 
     public async getLeadById(id: string): Promise<DetailLeadDto> {
@@ -70,7 +111,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             where: { id },
             relations: ['company', 'note', 'contact', 'file', 'relatedTo'],
         });
-        console.table(leadInfo.relatedTo);
+
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
         result.contact = leadInfo.contact.map(
