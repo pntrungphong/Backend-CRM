@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   postgres:
     image: postgres
@@ -20,6 +20,8 @@ services:
       - .testing.env
     restart: always
     build: .
+    volumes:
+      - ./uploads:/usr/src/app/uploads
     ports:
       - 3000:3000
     links:
