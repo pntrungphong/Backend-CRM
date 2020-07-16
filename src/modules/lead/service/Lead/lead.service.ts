@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { CompanyRepository } from '../../../client/repository/company.repository';
+import { NoteRepository } from '../../../lead/repository/Note/note.repository';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
 import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
@@ -11,31 +12,50 @@ import { LeadRepository } from '../../repository/Lead/lead.repository';
 @Injectable()
 export class LeadService {
     constructor(
-        public readonly leadRepository: LeadRepository,
-        public readonly companyRepository: CompanyRepository,
+        private readonly _leadRepository: LeadRepository,
+        private readonly _companyRepository: CompanyRepository,
+        private readonly _noteRepository: NoteRepository,
     ) {}
 
     async create(
         user: UserEntity,
         createDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
-        return this.leadRepository.create(user, createDto);
+        const createLead = await this._leadRepository.create(user, createDto);
+        if (createDto.note) {
+            await this._noteRepository.create(createDto.note, createLead.id);
+        }
+        return createLead;
     }
     async update(
         id: string,
         updateDto: LeadUpdateDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
-        return this.leadRepository.update(id, updateDto, user);
+        const updatedLead = await this._leadRepository.update(
+            id,
+            updateDto,
+            user,
+        );
+        if (updateDto.note) {
+            await this._noteRepository.update(updateDto.note, updatedLead.id);
+        }
+        if (!updatedLead) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        return updatedLead;
     }
 
     async findLeadById(id: string): Promise<DetailLeadDto> {
-        return this.leadRepository.getLeadById(id);
+        return this._leadRepository.getLeadById(id);
     }
 
     async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
-        return this.leadRepository.getList(pageOptionsDto);
+        return this._leadRepository.getList(pageOptionsDto);
     }
 }

@@ -50,13 +50,13 @@ export class LeadDto extends AbstractDto {
         this.note = lead.note;
         this.createdBy = lead.createdBy;
         this.updatedBy = lead.updatedBy;
-        this.company = lead.company;
-        this.contact = lead.contact;
+        this.company = lead.company.toDto() as InfoLeadCompanyDto;
+        this.contact = lead.contact.toDtos();
         this.description = lead.description;
         this.tag = lead.tag;
         this.status = lead.status;
         this.review = lead.review;
-        this.touchpoint = lead.touchpoint.toDtos();
+        this.touchpoint = lead.touchpoint;
         this.relatedTo = lead.relatedTo.toDtos();
     }
 }
