@@ -5,6 +5,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { AbstractDto } from '../../../../common/dto/AbstractDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { InfoFileDetailDto } from '../fileTouchPoint/infoFileDetailDto';
+import { TaskDto } from '../task/TaskDto';
 import { InfoLeadTouchPointDto } from './InfoLeadTouchPointDto';
 
 export class TouchPointDto extends AbstractDto {
@@ -35,6 +36,9 @@ export class TouchPointDto extends AbstractDto {
     @ApiPropertyOptional({ type: [InfoFileDetailDto] })
     fileTouchPoint: InfoFileDetailDto[];
 
+    @ApiPropertyOptional({ type: [TaskDto] })
+    task: TaskDto[];
+
     constructor(touchPoint: TouchPointEntity) {
         super(touchPoint);
         this.order = touchPoint.order;
@@ -46,5 +50,6 @@ export class TouchPointDto extends AbstractDto {
         this.updatedBy = touchPoint.updatedBy;
         this.lead = touchPoint.lead;
         this.fileTouchPoint = touchPoint.fileTouchPoint;
+        this.task = touchPoint.task;
     }
 }

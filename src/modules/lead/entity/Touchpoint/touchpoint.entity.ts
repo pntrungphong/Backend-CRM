@@ -10,7 +10,7 @@ import { TouchPointFileEntity } from '../Touchpoint_file/fileTouchPoint.entity';
 export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     @Column({ nullable: false, name: 'order' })
     order: number;
-    @Column({ nullable: false, name: 'goal' })
+    @Column({ name: 'goal' })
     goal: string;
     @Column({ nullable: false, name: 'status' })
     status: string;

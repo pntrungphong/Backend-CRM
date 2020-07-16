@@ -19,6 +19,7 @@ export class InfoFileDetailDto {
 
     @ApiProperty()
     note: string;
+
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto;
 }
