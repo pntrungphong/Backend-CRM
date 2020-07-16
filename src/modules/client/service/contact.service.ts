@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { FindConditions } from 'typeorm';
 
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
-import { TagRepository } from '../../tag/tag.repository';
 import { UserEntity } from '../../user/user.entity';
 import { GeneralInfoDto as Companydata } from '../dto/company/GeneralInfoDto';
 import { ReferralDto } from '../dto/contact-referral/ReferralDto';
@@ -19,7 +18,6 @@ export class ContactService {
     constructor(
         public readonly contactRepository: ContactRepository,
         private _companyRepository: CompanyRepository,
-        private _tagRepository: TagRepository,
     ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {

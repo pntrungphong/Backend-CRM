@@ -2,15 +2,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
-import { TouchPointFileDto } from '../fileTouchPoint/fileTouchPointDto';
 import { LinkTouchPointFileDto } from '../fileTouchPoint/LinkFileDto';
-import { TaskDto } from '../task/TaskDto';
+import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
 
 export class UpdateTouchPointDto {
-    @IsOptional()
-    @ApiProperty()
-    order: number;
-
     @IsOptional()
     @ApiProperty()
     goal: string;
@@ -35,9 +30,4 @@ export class UpdateTouchPointDto {
     @IsOptional()
     @ApiProperty({ type: [LinkTouchPointFileDto] })
     file: TouchPointFileDto[];
-
-    @IsArray()
-    @IsOptional()
-    @ApiProperty({ type: [TaskDto] })
-    task: TaskDto[];
 }

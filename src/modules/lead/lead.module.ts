@@ -9,13 +9,13 @@ import { TouchPointController } from './controller/touchpoint.controller';
 import { LeadRepository } from './repository/Lead/lead.repository';
 import { NoteRepository } from './repository/Note/note.repository';
 import { TaskRepository } from './repository/Task/task.repository';
-import { TouchPointFileRepository } from './repository/Touchpoint_file/fileTouchPoint.repository';
 import { TouchPointRepository } from './repository/Touchpoint/touchpoint.repository';
+import { TouchPointFileRepository } from './repository/TouchpointFile/fileTouchPoint.repository';
 import { LeadService } from './service/Lead/lead.service';
 import { NoteService } from './service/Note/note.service';
-import { TouchPointService } from './service/Note/touchpoint.service';
 import { TaskService } from './service/Task/task.service';
 import { TouchPointFileService } from './service/TouchPoint_file/fileTouchPoint.service';
+import { TouchPointService } from './service/TouchPoint/touchpoint.service';
 
 @Module({
     imports: [
