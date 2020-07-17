@@ -63,16 +63,5 @@ export class TouchPointService {
         }
         return updateTouchPoint;
     }
-    // async updateMarkDone(
-    //     id: string,
-    //     updateDto: UpdateTouchPointMarkDoneDto,
-    //     user: UserEntity,
-    // ): Promise<TouchPointEntity> {
-    //     const updateTouchPoint = await this._touchPointRepository.update(
-    //         id,
-    //         updateDto,
-    //         user,
-    //     );
-    //     return updateTouchPoint;
-    // }
+  
 }
