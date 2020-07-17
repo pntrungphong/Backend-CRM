@@ -10,6 +10,7 @@ import { NoteDto } from '../note/NoteDto';
 import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
+import { RankRevisionDto } from '../../../lead/field/RankRevisionDto';
 export class DetailLeadDto {
     @ApiPropertyOptional()
     id: string;
@@ -33,7 +34,8 @@ export class DetailLeadDto {
 
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
-
+    @ApiPropertyOptional({ type: [RankRevisionDto] })
+    rankRevision: RankRevisionDto[];
     @ApiPropertyOptional({ type: [InfoLeadCompanyDto] })
     company: InfoLeadCompanyDto;
     @ApiPropertyOptional({ type: [InfoLeadContactDto] })
@@ -68,5 +70,6 @@ export class DetailLeadDto {
         this.file = lead.file.toDtos();
         this.relatedTo = lead.relatedTo.toDtos();
         this.touchpoint = lead.touchpoint;
+        this.rankRevision=lead.rankRevision
     }
 }

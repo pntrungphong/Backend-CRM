@@ -22,6 +22,7 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -47,7 +48,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         ).findByIds(listContact);
 
         let leadEntity = this.repository.create();
-        leadEntity = this.repository.merge(leadEntity, {
+        const rankRevision=new RankRevisionDto();
+          rankRevision.rank= parseInt(leadDto.rank,10);
+          rankRevision.reason= leadDto.rankRevision.reason;
+          rankRevision.touchpoint=0;
+          rankRevision.updatedBy=user.id;
+          rankRevision.updatedAt=Date()
+           leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
             createdBy: user.id,
             updatedBy: user.id,
@@ -55,7 +62,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             relatedTo: listRelatedToEntity,
             contact: listContactEntity,
             company: companyEntity,
-        });
+            rankRevision:[rankRevision]
+            });
 
         const newLead = await this.repository.save(leadEntity, {
             reload: true,
@@ -95,6 +103,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             ContactEntity,
         ).findByIds(listContact);
 
+        const rankRevision=new RankRevisionDto();
+        rankRevision.rank= parseInt(updateDto.rank,10);
+        rankRevision.reason= updateDto.rankRevision[0].reason;
+        rankRevision.touchpoint=0;
+        rankRevision.updatedBy=user.id;
+        rankRevision.updatedAt=Date()
+        leadCurrent.rankRevision.push(rankRevision)
         leadCurrent = this.repository.merge(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
@@ -102,6 +117,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             relatedTo: listRelatedToEntity,
             contact: listContactEntity,
             company: companyEntity,
+            rankRevision:leadCurrent.rankRevision
         });
 
         const updatedLead = await this.repository.save(leadCurrent, {

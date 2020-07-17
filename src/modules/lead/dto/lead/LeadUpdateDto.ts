@@ -6,6 +6,7 @@ import { IsArray, IsOptional, IsString } from 'class-validator';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { NoteDto } from '../note/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
@@ -22,6 +23,9 @@ export class LeadUpdateDto {
     @IsOptional()
     @ApiPropertyOptional()
     review: string;
+    @IsOptional()
+    @ApiProperty({ type: [RankRevisionDto] })
+    rankRevision: RankRevisionDto;
     @IsString()
     @ApiPropertyOptional()
     idCompany: string;

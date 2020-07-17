@@ -16,6 +16,7 @@ import { TagEntity } from '../../../tag/tag.entity';
 import { LeadDto } from '../../dto/lead/LeadDto';
 import { NoteEntity } from '../Note/note.entity';
 import { TouchPointEntity } from '../Touchpoint/touchpoint.entity';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -26,6 +27,16 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     status: string;
     @Column({ nullable: true, name: 'review' })
     review: string;
+    @Column({ nullable: true,type:'jsonb' ,default:()=>"'[]"})
+    rankRevision!: Array<
+        // rank: number,
+        // reason:string,
+        // touchpoint:number,
+        // updateBy:string,
+        // updateAt:Date
+        RankRevisionDto
+     >;
+
     @Column({ nullable: true })
     description: string;
     @Column({ nullable: false, name: 'created_by' })
