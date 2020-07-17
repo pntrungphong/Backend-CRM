@@ -19,6 +19,9 @@ export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
     description: string;
+    @IsOptional()
+    @ApiPropertyOptional()
+    review: string;
     @IsString()
     @ApiPropertyOptional()
     idCompany: string;

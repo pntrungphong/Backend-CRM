@@ -7,6 +7,7 @@ import { TagDto } from '../../../tag/dto/TagDto';
 import { TagEntity } from '../../../tag/tag.entity';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { NoteDto } from '../note/NoteDto';
+import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
 export class DetailLeadDto {
@@ -48,6 +49,8 @@ export class DetailLeadDto {
     tag: TagEntity[];
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto[];
+    @ApiPropertyOptional({ type: [TouchPointDto] })
+    touchpoint: TouchPointDto[];
     constructor(lead: LeadEntity) {
         this.id = lead.id;
         this.name = lead.name;
@@ -64,5 +67,6 @@ export class DetailLeadDto {
         this.status = lead.status;
         this.file = lead.file.toDtos();
         this.relatedTo = lead.relatedTo.toDtos();
+        this.touchpoint = lead.touchpoint;
     }
 }
