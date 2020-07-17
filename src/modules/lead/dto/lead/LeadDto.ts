@@ -10,6 +10,7 @@ import { NoteDto } from '../note/NoteDto';
 import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 export class LeadDto extends AbstractDto {
     @ApiPropertyOptional()
     name: string;
@@ -23,6 +24,8 @@ export class LeadDto extends AbstractDto {
     description: string;
     @ApiPropertyOptional()
     review: string;
+    @ApiPropertyOptional({ type: [RankRevisionDto] })
+    rankRevision: RankRevisionDto[];
     @ApiPropertyOptional()
     updatedBy: string;
     @ApiPropertyOptional()
@@ -57,6 +60,7 @@ export class LeadDto extends AbstractDto {
         this.status = lead.status;
         this.review = lead.review;
         this.touchpoint = lead.touchpoint;
+        this.rankRevision=lead.rankRevision;
         this.relatedTo = lead.relatedTo.toDtos();
     }
 }
