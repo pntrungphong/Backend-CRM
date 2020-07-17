@@ -11,7 +11,6 @@ import { FileEntity } from '../../../file/file.entity';
 import { InfoFileTouchPointDto } from '../../../lead/dto/touchpoint/infoFileTouchPointDto';
 import { InfoLeadTouchPointDto } from '../../../lead/dto/touchpoint/InfoLeadTouchPointDto';
 import { TouchPointDto } from '../../../lead/dto/touchpoint/TouchPointDto';
-import { UpdateTouchPointMarkDoneDto } from '../../../lead/dto/touchpoint/TouchPointMarkDone';
 import { TouchPointsPagesOptionsDto } from '../../../lead/dto/touchpoint/TouchPointsPagesOptionsDto';
 import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileTouchPoint.entity';
 import { UserEntity } from '../../../user/user.entity';
@@ -105,15 +104,15 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         touchpoint.lead = new InfoLeadTouchPointDto(touchPointInfo.lead);
         const file = touchpoint.fileTouchPoint;
         const listFile = [] as InfoFileTouchPointDto[];
-        file.map((item) => {
-            const infoFile = new InfoFileTouchPointDto(
-                item as TouchPointFileEntity,
-            );
-            const infoDetailFile = new FileDto(infoFile.file as FileEntity);
-            infoFile.file = infoDetailFile;
-            listFile.push(infoFile);
-            touchpoint.fileTouchPoint = listFile;
-        });
+            file.map((item) => {
+                const infoFile = new InfoFileTouchPointDto(
+                    item as TouchPointFileEntity,
+                );
+                const infoDetailFile = new FileDto(infoFile.file as FileEntity);
+                infoFile.file = infoDetailFile;
+                listFile.push(infoFile);
+                touchpoint.fileTouchPoint = listFile;
+            });
         const task = touchpoint.task;
         const listTask = [] as TaskDto[];
         task.map((item) => {
@@ -141,24 +140,5 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         return this.repository.save(updatedTouchPoint);
-    }
-
-    async updateStatus(
-        id: string,
-        updateDto: UpdateTouchPointMarkDoneDto,
-        user: UserEntity,
-    ): Promise<TouchPointEntity> {
-        const touchpoint = await this.repository.findOne({ id });
-        if (!touchpoint) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
-        }
-        const updatedTouchPointMarkDone = Object.assign(touchpoint, {
-            ...updateDto,
-            updatedBy: user.id,
-        });
-        return this.repository.save(updatedTouchPointMarkDone);
     }
 }
