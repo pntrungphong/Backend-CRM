@@ -185,7 +185,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             lead.company = new InfoLeadCompanyDto(iterator.company);
             const contact = lead.contact;
             const listContact = [] as InfoLeadContactDto[];
-            contact.forEach((item) => {
+            contact.map((item) => {
                 const infoContact = new InfoLeadContactDto(<ContactEntity>item);
                 listContact.push(infoContact);
             });
@@ -199,12 +199,12 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             });
 
             const listTag = [] as InfoLeadTagDto[];
-            lead.tag.forEach((item) => {
+            lead.tag.map((item) => {
                 const infoTag = new InfoLeadTagDto(item as TagEntity);
                 listTag.push(infoTag);
             });
             const listTouchPoint = [] as TouchPointDto[];
-            lead.touchpoint.forEach((item) => {
+            lead.touchpoint.map((item) => {
                 const infoTouchPoint = new TouchPointDto(
                     item as TouchPointEntity,
                 );
