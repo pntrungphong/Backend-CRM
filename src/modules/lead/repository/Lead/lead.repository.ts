@@ -148,7 +148,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         });
         listTouchPoint.sort(
             (a, b) =>
-                parseInt(a.order.toString(), 10) - parseFloat(b.order.toString(), 10),
+                parseInt(a.order.toString(), 10) -
+                parseInt(b.order.toString(), 10),
         );
         result.touchpoint = listTouchPoint;
         return result;
@@ -220,8 +221,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             });
             listTouchPoint.sort(
                 (a, b) =>
-                    parseInt(a.order.toString()) -
-                    parseInt(b.order.toString()),
+                    parseInt(a.order.toString(), 10) -
+                    parseInt(b.order.toString(), 10),
             );
             lead.touchpoint = listTouchPoint;
             lead.tag = listTag;
