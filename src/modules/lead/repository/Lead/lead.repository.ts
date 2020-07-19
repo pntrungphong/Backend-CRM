@@ -5,6 +5,7 @@ import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
 import { TouchPointEntity } from '../../../../modules/lead/entity/Touchpoint/touchpoint.entity';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 import { CompanyEntity } from '../../../client/entity/company.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
@@ -22,7 +23,6 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
-import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -48,13 +48,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         ).findByIds(listContact);
 
         let leadEntity = this.repository.create();
-        const rankRevision=new RankRevisionDto();
-          rankRevision.rank= parseInt(leadDto.rank,10);
-          rankRevision.reason= leadDto.rankRevision.reason;
-          rankRevision.touchpoint=0;
-          rankRevision.updatedBy=user.id;
-          rankRevision.updatedAt=Date()
-           leadEntity = this.repository.merge(leadEntity, {
+        const rankRevision = new RankRevisionDto();
+        rankRevision.rank = parseInt(leadDto.rank, 10);
+        rankRevision.reason = leadDto.rankRevision.reason;
+        rankRevision.touchpoint = 0;
+        rankRevision.updatedBy = user.id;
+        rankRevision.updatedAt = Date();
+        leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
             createdBy: user.id,
             updatedBy: user.id,
@@ -62,8 +62,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             relatedTo: listRelatedToEntity,
             contact: listContactEntity,
             company: companyEntity,
-            rankRevision:[rankRevision]
-            });
+            rankRevision: [rankRevision],
+        });
 
         const newLead = await this.repository.save(leadEntity, {
             reload: true,
@@ -103,23 +103,23 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             ContactEntity,
         ).findByIds(listContact);
 
-        const rankRevision=new RankRevisionDto();
-        rankRevision.rank= parseInt(updateDto.rank,10);
-        rankRevision.reason= updateDto.rankRevision[0].reason;
-        rankRevision.touchpoint=0;
-        rankRevision.updatedBy=user.id;
-        rankRevision.updatedAt=Date()
-        leadCurrent.rankRevision.push(rankRevision)
-        leadCurrent = this.repository.merge(leadCurrent, {
+        const rankRevision = new RankRevisionDto();
+        rankRevision.rank = parseInt(updateDto.rank, 10);
+        rankRevision.reason = updateDto.rankRevision[0].reason;
+        rankRevision.touchpoint = 0;
+        rankRevision.updatedBy = user.id;
+        rankRevision.updatedAt = Date();
+        leadCurrent.rankRevision.push(rankRevision);
+        leadCurrent = Object.assign(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
             file: listFileEntity,
             relatedTo: listRelatedToEntity,
             contact: listContactEntity,
             company: companyEntity,
-            rankRevision:leadCurrent.rankRevision
+            rankRevision: leadCurrent.rankRevision,
         });
-
+        console.table(leadCurrent.tag);
         const updatedLead = await this.repository.save(leadCurrent, {
             reload: true,
         });

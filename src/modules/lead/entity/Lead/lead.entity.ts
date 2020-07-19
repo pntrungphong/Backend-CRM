@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { AbstractEntity } from '../../../../common/abstract.entity';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 import { CompanyEntity } from '../../../client/entity/company.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
@@ -16,7 +17,6 @@ import { TagEntity } from '../../../tag/tag.entity';
 import { LeadDto } from '../../dto/lead/LeadDto';
 import { NoteEntity } from '../Note/note.entity';
 import { TouchPointEntity } from '../Touchpoint/touchpoint.entity';
-import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 @Entity({ name: 'lead' })
 export class LeadEntity extends AbstractEntity<LeadDto> {
     @Column({ nullable: false })
@@ -27,15 +27,8 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     status: string;
     @Column({ nullable: true, name: 'review' })
     review: string;
-    @Column({ nullable: true,type:'jsonb' ,default:()=>"'[]"})
-    rankRevision!: Array<
-        // rank: number,
-        // reason:string,
-        // touchpoint:number,
-        // updateBy:string,
-        // updateAt:Date
-        RankRevisionDto
-     >;
+    @Column({ nullable: true, type: 'jsonb', default: () => "'[]" })
+    rankRevision!: RankRevisionDto[];
 
     @Column({ nullable: true })
     description: string;
