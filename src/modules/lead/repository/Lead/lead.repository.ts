@@ -119,7 +119,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             company: companyEntity,
             rankRevision: leadCurrent.rankRevision,
         });
-        console.table(leadCurrent.tag);
         const updatedLead = await this.repository.save(leadCurrent, {
             reload: true,
         });
@@ -244,6 +243,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             lead.tag = listTag;
             lead.contact = listContact;
             lead.relatedTo = listRelatedTo;
+            lead.rankRevision=iterator.rankRevision;
             results.push(lead);
         }
         return new LeadsPageDetailDto(results, pageMetaDto);
