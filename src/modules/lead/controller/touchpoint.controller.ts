@@ -30,6 +30,7 @@ import { TouchPointsPageDto } from '../dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../dto/touchpoint/TouchPointsPagesOptionsDto';
 import { UpdateTouchPointDto } from '../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
+import { UpdateTouchPointMarkDoneDto } from '../dto/touchpoint/UpdateTouchPointMarkDoneDto';
 
 @Controller('touchpoint')
 @ApiTags('touchpoint')
@@ -92,5 +93,22 @@ export class TouchPointController {
             user,
         );
         return updatedLead.toDto() as UpdateTouchPointDto;
+    }
+    @Put(':id/markdone')
+    @ApiOkResponse({
+        type: UpdateTouchPointMarkDoneDto,
+        description: 'Successfully Updated',
+    })
+    async updateMarDone(
+        @Param('id') id: string,
+        @Body() updateDto: UpdateTouchPointMarkDoneDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<UpdateTouchPointMarkDoneDto> {
+        const updatedLead = await this._touchPointService.updateMarkDone(
+            id,
+            updateDto,
+            user,
+        );
+        return updatedLead.toDto() as UpdateTouchPointMarkDoneDto;
     }
 }
