@@ -23,6 +23,7 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -126,6 +127,35 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         return updatedLead.toDto() as LeadEntity;
     }
 
+    public async changeRank(
+        id: string,
+        updateDto: LeadChangeRankDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        let leadCurrent = await this.repository.findOne({
+            where: { id },
+        });
+
+        if (!leadCurrent) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+        const rankRevision = new RankRevisionDto();
+        rankRevision.rank = parseInt(updateDto.rank, 10);
+        rankRevision.reason = updateDto.rankRevision[0].reason;
+        rankRevision.touchpoint = 0;
+        rankRevision.updatedBy = user.id;
+        rankRevision.updatedAt = Date();
+        leadCurrent.rankRevision.push(rankRevision);
+        const changerank = this.repository.merge(leadCurrent, {
+            ...updateDto,
+            updatedBy: user.id,
+            rankRevision: leadCurrent.rankRevision,
+        });
+        return this.repository.save(changerank);
+    }
+
+
+
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
             where: { id },
@@ -186,7 +216,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
-            .addOrderBy('lead.updatedAt', pageOptionsDto.order);
+            .addOrderBy('lead.rank', pageOptionsDto.order);
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)

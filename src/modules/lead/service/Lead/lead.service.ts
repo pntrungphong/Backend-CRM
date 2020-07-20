@@ -9,6 +9,7 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
+import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 @Injectable()
 export class LeadService {
     constructor(
@@ -49,6 +50,24 @@ export class LeadService {
         return updatedLead;
     }
 
+    async changeRank(
+        id: string,
+        updateDto: LeadChangeRankDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        const changeRank = await this._leadRepository.changeRank(
+            id,
+            updateDto,
+            user,
+        );
+        if (!changeRank) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        return changeRank;
+    }
     async findLeadById(id: string): Promise<DetailLeadDto> {
         return this._leadRepository.getLeadById(id);
     }
