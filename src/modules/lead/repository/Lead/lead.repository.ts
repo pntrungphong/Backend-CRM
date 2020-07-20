@@ -146,9 +146,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.touchpoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
-        if(!rankRevision){
-            console.log('nill')
-        }
+        leadCurrent.rankRevision=leadCurrent.rankRevision || [];
         leadCurrent.rankRevision.push(rankRevision);
         const changerank = this.repository.merge(leadCurrent, {
             ...updateDto,
