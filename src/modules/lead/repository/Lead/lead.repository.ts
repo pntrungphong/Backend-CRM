@@ -110,8 +110,10 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.touchpoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
-        leadCurrent.rankRevision.push(rankRevision);
-        leadCurrent = Object.assign(leadCurrent, {
+        leadCurrent.rankRevision=leadCurrent.rankRevision || [];
+        leadCurrent.rankRevision.push(rankRevision);    
+        console.table(leadCurrent.rankRevision)
+        const updateLeadCurrent = Object.assign(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
             file: listFileEntity,
@@ -120,10 +122,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             company: companyEntity,
             rankRevision: leadCurrent.rankRevision,
         });
-        const updatedLead = await this.repository.save(leadCurrent, {
+        const updatedLead = await this.repository.save(updateLeadCurrent, {
             reload: true,
         });
-
         return updatedLead.toDto() as LeadEntity;
     }
 
@@ -145,6 +146,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.touchpoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
+        if(!rankRevision){
+            console.log('nill')
+        }
         leadCurrent.rankRevision.push(rankRevision);
         const changerank = this.repository.merge(leadCurrent, {
             ...updateDto,

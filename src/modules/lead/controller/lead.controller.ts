@@ -101,11 +101,10 @@ export class LeadController {
         @Body() updateDto: LeadChangeRankDto,
         @AuthUser() user: UserEntity,
     ): Promise<any> {
-        const changeRank = await this._leadService.changeRank(
+        await this._leadService.changeRank(
             id,
             updateDto,
             user,
         );
-        return ;
     }
 }
