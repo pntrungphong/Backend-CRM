@@ -14,7 +14,7 @@ export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
     status: string;
-    @IsString()
+    @IsOptional()
     @ApiPropertyOptional()
     rank: string;
     @IsString()
