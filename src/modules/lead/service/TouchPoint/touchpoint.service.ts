@@ -8,6 +8,7 @@ import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { TouchPointRepository } from '../../repository/Touchpoint/touchpoint.repository';
 import { TouchPointFileService } from '../TouchPoint_file/fileTouchPoint.service';
+import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 @Injectable()
 export class TouchPointService {
     constructor(
@@ -61,6 +62,18 @@ export class TouchPointService {
                 updateDto.leadId,
             );
         }
+        return updateTouchPoint;
+    }
+    async updateMarkDone(
+        id: string,
+        updateDto: UpdateTouchPointMarkDoneDto,
+        user: UserEntity,
+    ): Promise<TouchPointEntity> {
+        const updateTouchPoint = await this._touchPointRepository.updateMarkDone(
+            id,
+            updateDto,
+            user,
+        );
         return updateTouchPoint;
     }
   

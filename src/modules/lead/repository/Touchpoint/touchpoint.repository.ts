@@ -16,6 +16,7 @@ import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileT
 import { UserEntity } from '../../../user/user.entity';
 import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
+import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 
 @EntityRepository(TouchPointEntity)
 export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
@@ -136,6 +137,24 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             );
         }
         const updatedTouchPoint = Object.assign(touchpoint, {
+            ...updateDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(updatedTouchPoint);
+    }
+    async updateMarkDone(
+        id: string,
+        updateDto: UpdateTouchPointMarkDoneDto,
+        user: UserEntity,
+    ): Promise<TouchPointEntity> {
+        const touchpoint = await this.repository.findOne({ id });
+        if (!touchpoint) {
+            throw new HttpException(
+                'Cập nhật thất bại',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        const updatedTouchPoint = this.repository.merge(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
         });
