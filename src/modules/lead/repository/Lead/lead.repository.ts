@@ -109,6 +109,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(updateDto.rank, 10);
         rankRevision.reason = updateDto.rankRevision[0].reason;
+        if(!rankRevision.reason){
+            rankRevision.reason=""
+        }
         rankRevision.touchpoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
