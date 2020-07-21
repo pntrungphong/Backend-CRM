@@ -9,6 +9,7 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
+import { LeadChangeStatusDto } from 'modules/lead/dto/lead/LeadChangeStatusDto';
 @Injectable()
 export class LeadService {
     constructor(
@@ -74,5 +75,24 @@ export class LeadService {
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
         return this._leadRepository.getList(pageOptionsDto);
+    }
+
+    async changeStatus(
+        id: string,
+        updateDto: LeadChangeStatusDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        const changeStatus = await this._leadRepository.changeStatus(
+            id,
+            updateDto,
+            user,
+        );
+        if (!changeStatus) {
+            throw new HttpException(
+                'Update failed',
+                HttpStatus.NOT_ACCEPTABLE,
+            );
+        }
+        return changeStatus;
     }
 }
