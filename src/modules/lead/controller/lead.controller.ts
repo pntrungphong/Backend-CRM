@@ -109,7 +109,7 @@ export class LeadController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
-        description: 'Get companies list',
+        description: 'Get files list',
         type: InfoFileDetailDto,
     })
     async getFileByIdLead(
