@@ -94,7 +94,7 @@ export class TouchPointController {
         );
         return updatedLead.toDto() as UpdateTouchPointDto;
     }
-    @Put(':id/markdone')
+    @Put(':id/markDone')
     @ApiOkResponse({
         type: UpdateTouchPointMarkDoneDto,
         description: 'Successfully Updated',

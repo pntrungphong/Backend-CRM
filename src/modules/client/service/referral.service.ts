@@ -5,7 +5,7 @@ import { ContactReferralRepository } from '../repository/referral.repository';
 @Injectable()
 export class ContactReferralService {
     constructor(
-        public readonly contactreferralRepository: ContactReferralRepository,
+        public readonly contactReferralRepository: ContactReferralRepository,
     ) {}
     async create(
         createContactReferralDto: ContactReferralDto[],
@@ -14,12 +14,12 @@ export class ContactReferralService {
         for await (const contactReferral of createContactReferralDto) {
             const contactReferralObj = Object.assign(contactReferral, {
                 idSource,
-                hastag: JSON.stringify(contactReferral.hastag),
+                hashtag: JSON.stringify(contactReferral.hashtag),
             });
-            const contactReferralCompany = this.contactreferralRepository.create(
+            const contactReferralCompany = this.contactReferralRepository.create(
                 { ...contactReferralObj },
             );
-            await this.contactreferralRepository.save(contactReferralCompany);
+            await this.contactReferralRepository.save(contactReferralCompany);
         }
     }
 
@@ -27,13 +27,13 @@ export class ContactReferralService {
         updateDto: ContactReferralDto[],
         idContact: string,
     ): Promise<void> {
-        const relations = await this.contactreferralRepository.find({
+        const relations = await this.contactReferralRepository.find({
             idSource: idContact,
         });
-        await this.contactreferralRepository.remove(relations);
+        await this.contactReferralRepository.remove(relations);
         const contactClean = updateDto.map((it) => ({
             idTarget: it.idTarget,
-            hastag: it.hastag,
+            hashtag: it.hashtag,
         }));
         await this.create(contactClean, idContact);
     }

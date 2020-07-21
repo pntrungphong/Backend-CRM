@@ -105,7 +105,7 @@ export class ContactController {
     @Put(':id')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
-        description: 'Update infomation contact',
+        description: 'Update information contact',
         type: ContactUpdateDto,
     })
     async update(
@@ -120,7 +120,7 @@ export class ContactController {
         );
         if (!updatedContact) {
             throw new HttpException(
-                'Cập nhật thất bại',
+                'Update failed',
                 HttpStatus.NOT_ACCEPTABLE,
             );
         }

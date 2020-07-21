@@ -94,12 +94,12 @@ export class LeadController {
     ): Promise<LeadEntity> {
         return this._leadService.update(id, updateDto, user);
     }
-    @Put(':id/changerank')
+    @Put(':id/rank')
     @ApiOkResponse({
         type: LeadChangeRankDto,
         description: 'Successfully Updated',
     })
-    async changerank(
+    async changeRank(
         @Param('id') id: string,
         @Body() updateDto: LeadChangeRankDto,
         @AuthUser() user: UserEntity,

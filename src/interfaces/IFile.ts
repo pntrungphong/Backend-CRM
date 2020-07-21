@@ -3,8 +3,8 @@
 export interface IFile {
     encoding: string;
     buffer: Buffer;
-    fieldname: string;
-    mimetype: string;
-    originalname: string;
+    fieldName: string;
+    mimeType: string;
+    originalName: string;
     size: number;
 }

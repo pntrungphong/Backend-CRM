@@ -4,7 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { TagDto } from '../../../tag/dto/TagDto';
 import { TagEntity } from '../../../tag/tag.entity';
-import { GeneralInfoDto as CompnayData } from '../../dto/company/GeneralInfoDto';
+import { GeneralInfoDto as CompanyData } from '../../dto/company/GeneralInfoDto';
 import { ContactEntity } from '../../entity/contact.entity';
 import { EmailDto } from '../field/EmailDto';
 import { PhoneDto } from '../field/PhoneDto';
@@ -33,8 +33,8 @@ export class DetailContactDto {
     @ApiPropertyOptional({ type: [WebsiteDto] })
     website: string;
 
-    @ApiPropertyOptional({ type: [CompnayData] })
-    company: CompnayData[];
+    @ApiPropertyOptional({ type: [CompanyData] })
+    company: CompanyData[];
 
     @ApiPropertyOptional({ type: [ContactData] })
     referral: ContactData[];

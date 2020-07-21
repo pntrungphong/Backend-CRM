@@ -55,12 +55,12 @@ export class FileController {
                         const fileName = uuid();
                         return cb(
                             null,
-                            `${fileName}${extname(file.originalname)}`,
+                            `${fileName}${extname(file.originalName)}`,
                         );
                     } catch (err) {
                         return cb(
                             new HttpException(
-                                'Errored at upload',
+                                'Error at upload',
                                 HttpStatus.BAD_REQUEST,
                             ),
                         );
@@ -96,6 +96,6 @@ export class FileController {
     })
     async downloadFile(@Param('id') id: string, @Res() res: Response) {
         const fileEntity = await this._service.getFileById(id);
-        return res.download(`./${fileEntity.path}`, fileEntity.originalname);
+        return res.download(`./${fileEntity.path}`, fileEntity.originalName);
     }
 }
