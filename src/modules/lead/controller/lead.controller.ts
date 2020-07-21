@@ -37,6 +37,7 @@ import { LeadEntity } from '../entity/Lead/lead.entity';
 import { LeadService } from '../service/Lead/lead.service';
 import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
 import { LeadChangeStatusDto } from '../dto/lead/LeadChangeStatusDto';
+import { LeadUpdateByIdDto } from '../dto/lead/LeadUpdateByIdDto';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -83,12 +84,12 @@ export class LeadController {
 
     @Put(':id')
     @ApiOkResponse({
-        type: LeadUpdateDto,
+        type: LeadUpdateByIdDto,
         description: 'Successfully Updated',
     })
     async update(
         @Param('id') id: string,
-        @Body() updateDto: LeadUpdateDto,
+        @Body() updateDto: LeadUpdateByIdDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadEntity> {
         return this._leadService.update(id, updateDto, user);

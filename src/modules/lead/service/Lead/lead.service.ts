@@ -9,7 +9,8 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
-import { LeadChangeStatusDto } from 'modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 @Injectable()
 export class LeadService {
     constructor(
@@ -29,7 +30,7 @@ export class LeadService {
     }
     async update(
         id: string,
-        updateDto: LeadUpdateDto,
+        updateDto: LeadUpdateByIdDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
         const updatedLead = await this._leadRepository.update(

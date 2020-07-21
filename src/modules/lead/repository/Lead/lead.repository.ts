@@ -24,7 +24,8 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
-import { LeadChangeStatusDto } from 'modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -76,7 +77,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
 
     public async update(
         id: string,
-        updateDto: LeadUpdateDto,
+        updateDto: LeadUpdateByIdDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
         let leadCurrent = await this.repository.findOne({
@@ -98,7 +99,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
 
         const companyEntity = await this.getRepositoryFor(
             CompanyEntity,
-        ).findOne(updateDto.idCompany);
+        ).findOne(leadCurrent.idCompany);
 
         const listContact = updateDto.linkContact.map((item) => item.idContact);
         const listContactEntity = await this.getRepositoryFor(
@@ -108,6 +109,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(updateDto.rank, 10);
         rankRevision.reason = updateDto.rankRevision[0].reason;
+        if(!rankRevision.reason){
+            rankRevision.reason=""
+        }
         rankRevision.touchpoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
