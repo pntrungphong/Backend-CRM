@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
-import { CompanyRepository } from '../../../client/repository/company.repository';
+import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { NoteRepository } from '../../../lead/repository/Note/note.repository';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
@@ -9,12 +9,10 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
-import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 @Injectable()
 export class LeadService {
     constructor(
         private readonly _leadRepository: LeadRepository,
-        private readonly _companyRepository: CompanyRepository,
         private readonly _noteRepository: NoteRepository,
     ) {}
 

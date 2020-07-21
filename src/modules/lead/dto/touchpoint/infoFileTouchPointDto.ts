@@ -4,6 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { FileDto } from '../../../../modules/file/dto/fileDto';
 import { TouchPointFileEntity } from '../../../../modules/lead/entity/Touchpoint_file/fileTouchPoint.entity';
+import { OrderTouchPointDto } from '../fileTouchPoint/OrderTouchPointDto';
 
 export class InfoFileTouchPointDto {
     @ApiPropertyOptional()
@@ -21,7 +22,8 @@ export class InfoFileTouchPointDto {
 
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto;
-
+    @ApiPropertyOptional({ type: [OrderTouchPointDto] })
+    touchpoint: OrderTouchPointDto;
     constructor(touchpointFile: TouchPointFileEntity) {
         this.fileId = touchpointFile.fileId;
         this.touchPointId = touchpointFile.touchPointId;
@@ -29,5 +31,6 @@ export class InfoFileTouchPointDto {
         this.type = touchpointFile.type;
         this.note = touchpointFile.note;
         this.file = touchpointFile.file;
+        this.touchpoint = touchpointFile.touchpoint;
     }
 }

@@ -3,6 +3,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { FileDto } from '../../../../modules/file/dto/fileDto';
+import { OrderTouchPointDto } from './OrderTouchPointDto';
 
 export class InfoFileDetailDto {
     @ApiProperty()
@@ -22,4 +23,6 @@ export class InfoFileDetailDto {
 
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto;
+    @ApiPropertyOptional({ type: [OrderTouchPointDto] })
+    touchpoint: OrderTouchPointDto;
 }

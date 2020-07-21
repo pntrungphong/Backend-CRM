@@ -4,7 +4,9 @@ import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { FileDto } from '../../../../modules/file/dto/fileDto';
+import { OrderTouchPointDto } from '../../../../modules/lead/dto/fileTouchPoint/OrderTouchPointDto';
 import { TaskDto } from '../../../../modules/lead/dto/task/TaskDto';
+import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 import { TaskEntity } from '../../../../modules/lead/entity/Task/task.entity';
 import { TouchPointsPageDto } from '../../..//lead/dto/touchpoint/TouchPointsPageDto';
 import { FileEntity } from '../../../file/file.entity';
@@ -16,7 +18,6 @@ import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileT
 import { UserEntity } from '../../../user/user.entity';
 import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
-import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 
 @EntityRepository(TouchPointEntity)
 export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
@@ -96,6 +97,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             where: { id },
             relations: [
                 'fileTouchPoint.file',
+                'fileTouchPoint.touchpoint',
                 'fileTouchPoint',
                 'lead',
                 'task',
@@ -105,15 +107,19 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         touchpoint.lead = new InfoLeadTouchPointDto(touchPointInfo.lead);
         const file = touchpoint.fileTouchPoint;
         const listFile = [] as InfoFileTouchPointDto[];
-            file.map((item) => {
-                const infoFile = new InfoFileTouchPointDto(
-                    item as TouchPointFileEntity,
-                );
-                const infoDetailFile = new FileDto(infoFile.file as FileEntity);
-                infoFile.file = infoDetailFile;
-                listFile.push(infoFile);
-                touchpoint.fileTouchPoint = listFile;
-            });
+        file.map((item) => {
+            const infoFile = new InfoFileTouchPointDto(
+                item as TouchPointFileEntity,
+            );
+            const infoDetailFile = new FileDto(infoFile.file as FileEntity);
+            infoFile.file = infoDetailFile;
+            const orderTouchPoint = new OrderTouchPointDto(
+                infoFile.touchpoint as TouchPointEntity,
+            );
+            infoFile.touchpoint = orderTouchPoint;
+            listFile.push(infoFile);
+            touchpoint.fileTouchPoint = listFile;
+        });
         const task = touchpoint.task;
         const listTask = [] as TaskDto[];
         task.map((item) => {
