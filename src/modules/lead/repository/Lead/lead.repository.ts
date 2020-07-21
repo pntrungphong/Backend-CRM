@@ -218,6 +218,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
+            .andWhere('lead.status LIKE :status',{
+                status: `%In-progress%`,
+            })
             .addOrderBy('lead.rank', pageOptionsDto.order);
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
