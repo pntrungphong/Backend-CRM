@@ -35,6 +35,7 @@ import { LeadEntity } from '../entity/Lead/lead.entity';
 import { LeadService } from '../service/Lead/lead.service';
 import { NoteService } from '../service/Note/note.service';
 import { LeadChangeRankDto } from '../dto/lead/LeadChangeRankDto';
+import { LeadChangeStatusDto } from '../dto/lead/LeadChangeStatusDto';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -102,6 +103,22 @@ export class LeadController {
         @AuthUser() user: UserEntity,
     ): Promise<any> {
         await this._leadService.changeRank(
+            id,
+            updateDto,
+            user,
+        );
+    }
+    @Put(':id/status')
+    @ApiOkResponse({
+        type: LeadChangeStatusDto,
+        description: 'Successfully Updated',
+    })
+    async changeStatus(
+        @Param('id') id: string,
+        @Body() updateDto: LeadChangeStatusDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<any> {
+        await this._leadService.changeStatus(
             id,
             updateDto,
             user,

@@ -24,6 +24,7 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
+import { LeadChangeStatusDto } from 'modules/lead/dto/lead/LeadChangeStatusDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -282,5 +283,24 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             results.push(lead);
         }
         return new LeadsPageDetailDto(results, pageMetaDto);
+    }
+
+    public async changeStatus(
+        id: string,
+        updateDto: LeadChangeStatusDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        let leadCurrent = await this.repository.findOne({
+            where: { id },
+        });
+
+        if (!leadCurrent) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+        const changStatus = this.repository.merge(leadCurrent, {
+            ...updateDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(changStatus);
     }
 }
