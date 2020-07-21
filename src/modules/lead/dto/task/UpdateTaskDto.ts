@@ -5,7 +5,7 @@ import { IsOptional } from 'class-validator';
 export class UpdateTaskDto {
     @IsOptional()
     @ApiPropertyOptional()
-    taskname: string;
+    taskName: string;
 
     @IsOptional()
     @ApiPropertyOptional()

@@ -29,8 +29,8 @@ import { TouchPointDto } from '../dto/touchpoint/TouchPointDto';
 import { TouchPointsPageDto } from '../dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../dto/touchpoint/TouchPointsPagesOptionsDto';
 import { UpdateTouchPointDto } from '../dto/touchpoint/UpdateTouchPointDto';
-import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
 import { UpdateTouchPointMarkDoneDto } from '../dto/touchpoint/UpdateTouchPointMarkDoneDto';
+import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
 
 @Controller('touchpoint')
 @ApiTags('touchpoint')
@@ -75,7 +75,7 @@ export class TouchPointController {
         type: TouchPointDto,
     })
     async getTouchPointById(@Param('id') id: string): Promise<TouchPointDto> {
-        return this._touchPointService.findLeadById(id);
+        return this._touchPointService.getTouchPointById(id);
     }
     @Put(':id')
     @ApiOkResponse({

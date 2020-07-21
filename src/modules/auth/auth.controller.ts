@@ -8,7 +8,7 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { AuthGuard } from '../../guards/auth.guard';
@@ -26,7 +26,7 @@ export class AuthController {
     constructor(
         public readonly userService: UserService,
         public readonly authService: AuthService,
-    ) { }
+    ) {}
 
     @Post('login')
     @HttpCode(HttpStatus.OK)

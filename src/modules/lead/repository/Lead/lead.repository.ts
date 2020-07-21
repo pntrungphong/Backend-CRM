@@ -1,8 +1,11 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
+import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
+import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
 import { TouchPointEntity } from '../../../../modules/lead/entity/Touchpoint/touchpoint.entity';
 import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
@@ -17,15 +20,12 @@ import { UserDto } from '../../../user/dto/UserDto';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
 import { InfoLeadCompanyDto } from '../../dto/lead/InfoLeadCompanyDto';
-import { InfoLeadTagDto } from '../../dto/lead/InforLeadTagDto';
+import { InfoLeadTagDto } from '../../dto/lead/InfoLeadTagDto';
 import { LeadDto } from '../../dto/lead/LeadDto';
 import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
-import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
-import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
-import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -54,7 +54,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(leadDto.rank, 10);
         rankRevision.reason = leadDto.rankRevision.reason;
-        rankRevision.touchpoint = 0;
+        rankRevision.touchPoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
         leadEntity = this.repository.merge(leadEntity, {
@@ -80,7 +80,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         updateDto: LeadUpdateByIdDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
-        let leadCurrent = await this.repository.findOne({
+        const leadCurrent = await this.repository.findOne({
             where: { id },
         });
 
@@ -109,15 +109,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(updateDto.rank, 10);
         rankRevision.reason = updateDto.rankRevision[0].reason;
-        if(!rankRevision.reason){
-            rankRevision.reason=""
+        if (!rankRevision.reason) {
+            rankRevision.reason = '';
         }
-        rankRevision.touchpoint = 0;
+        rankRevision.touchPoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
-        leadCurrent.rankRevision=leadCurrent.rankRevision || [];
-        leadCurrent.rankRevision.push(rankRevision);    
-        console.table(leadCurrent.rankRevision)
+        leadCurrent.rankRevision = leadCurrent.rankRevision || [];
+        leadCurrent.rankRevision.push(rankRevision);
+
         const updateLeadCurrent = Object.assign(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
@@ -130,6 +130,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const updatedLead = await this.repository.save(updateLeadCurrent, {
             reload: true,
         });
+        Logger.log('lead.repo');
         return updatedLead.toDto() as LeadEntity;
     }
 
@@ -138,7 +139,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         updateDto: LeadChangeRankDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
-        let leadCurrent = await this.repository.findOne({
+        const leadCurrent = await this.repository.findOne({
             where: { id },
         });
 
@@ -148,20 +149,18 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(updateDto.rank, 10);
         rankRevision.reason = updateDto.rankRevision[0].reason;
-        rankRevision.touchpoint = 0;
+        rankRevision.touchPoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
-        leadCurrent.rankRevision=leadCurrent.rankRevision || [];
+        leadCurrent.rankRevision = leadCurrent.rankRevision || [];
         leadCurrent.rankRevision.push(rankRevision);
-        const changerank = this.repository.merge(leadCurrent, {
+        const changeRank = this.repository.merge(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
             rankRevision: leadCurrent.rankRevision,
         });
-        return this.repository.save(changerank);
+        return this.repository.save(changeRank);
     }
-
-
 
     public async getLeadById(id: string): Promise<DetailLeadDto> {
         const leadInfo = await this.repository.findOne({
@@ -172,9 +171,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 'contact',
                 'file',
                 'relatedTo',
-                'touchpoint',
-                'touchpoint.task',
-                'touchpoint.task.user',
+                'touchPoint',
+                'touchPoint.task',
+                'touchPoint.task.user',
             ],
         });
         const result = new DetailLeadDto(leadInfo);
@@ -186,13 +185,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             (it) => new InfoLeadContactDto(it),
         );
         const listTouchPoint = [] as TouchPointDto[];
-        result.touchpoint.forEach((item) => {
+        result.touchPoint.forEach((item) => {
             const infoTouchPoint = new TouchPointDto(item as TouchPointEntity);
             const listTask = [] as TaskDto[];
             infoTouchPoint.task.map((it) => {
                 const infoTask = new TaskDto(it as TaskEntity);
-                const inforUser = new UserDto(infoTask.user as UserEntity);
-                infoTask.user = inforUser;
+                const infoUser = new UserDto(infoTask.user as UserEntity);
+                infoTask.user = infoUser;
                 listTask.push(infoTask);
             });
             infoTouchPoint.task = listTask;
@@ -203,13 +202,14 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 parseInt(a.order.toString(), 10) -
                 parseInt(b.order.toString(), 10),
         );
-        result.touchpoint = listTouchPoint;
+        result.touchPoint = listTouchPoint;
         return result;
     }
 
     public async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        Logger.log('lead.repo');
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
@@ -217,16 +217,18 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('lead.contact', 'contact')
             .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
             .leftJoinAndSelect('lead.tag', 'tag')
-            .leftJoinAndSelect('lead.touchpoint', 'touchpoint')
+            .leftJoinAndSelect('lead.touchPoint', 'touchpoint')
             .leftJoinAndSelect('touchpoint.task', 'task')
             .leftJoinAndSelect('task.user', 'user')
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
-            .andWhere('lead.status LIKE :status',{
-                status: `%In-progress%`,
+            .andWhere('lead.status LIKE :status', {
+                status: '%In-progress%',
             })
             .addOrderBy('lead.rank', pageOptionsDto.order);
+
+        Logger.log('lead.repo 1');
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -236,6 +238,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             itemCount: leadsCount,
         });
         const results = [];
+        Logger.log('lead.repo 2');
         for await (const iterator of leads) {
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
@@ -260,15 +263,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 listTag.push(infoTag);
             });
             const listTouchPoint = [] as TouchPointDto[];
-            lead.touchpoint.map((item) => {
+            lead.touchPoint.map((item) => {
                 const infoTouchPoint = new TouchPointDto(
                     item as TouchPointEntity,
                 );
                 const listTask = [] as TaskDto[];
                 infoTouchPoint.task.map((it) => {
                     const infoTask = new TaskDto(it as TaskEntity);
-                    const inforUser = new UserDto(infoTask.user as UserEntity);
-                    infoTask.user = inforUser;
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
                     listTask.push(infoTask);
                 });
                 infoTouchPoint.task = listTask;
@@ -279,13 +282,14 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                     parseInt(a.order.toString(), 10) -
                     parseInt(b.order.toString(), 10),
             );
-            lead.touchpoint = listTouchPoint;
+            lead.touchPoint = listTouchPoint;
             lead.tag = listTag;
             lead.contact = listContact;
             lead.relatedTo = listRelatedTo;
-            lead.rankRevision=iterator.rankRevision;
+            lead.rankRevision = iterator.rankRevision;
             results.push(lead);
         }
+        Logger.log('lead.repo 3');
         return new LeadsPageDetailDto(results, pageMetaDto);
     }
 
@@ -294,7 +298,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         updateDto: LeadChangeStatusDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
-        let leadCurrent = await this.repository.findOne({
+        const leadCurrent = await this.repository.findOne({
             where: { id },
         });
 
