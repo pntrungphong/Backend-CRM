@@ -18,6 +18,7 @@ import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileT
 import { UserEntity } from '../../../user/user.entity';
 import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
+import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 
 @EntityRepository(TouchPointEntity)
 export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
@@ -138,7 +139,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
 
     async update(
         id: string,
-        updateDto: UpdateTouchPointDto,
+        updateDto: UpdateDetailTouchPointDto,
         user: UserEntity,
     ): Promise<TouchPointEntity> {
         const touchpoint = await this.repository.findOne({ id });
