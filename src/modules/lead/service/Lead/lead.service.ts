@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
+import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 import { NoteRepository } from '../../../lead/repository/Note/note.repository';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
@@ -9,16 +12,11 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
-import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
-import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
-import { Connection } from 'typeorm';
-import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 @Injectable()
 export class LeadService {
     constructor(
         private readonly _leadRepository: LeadRepository,
         private readonly _noteRepository: NoteRepository,
-        private readonly _connection :Connection
     ) {}
     @Transactional()
     async create(
@@ -65,10 +63,7 @@ export class LeadService {
             user,
         );
         if (!changeRank) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return changeRank;
     }
@@ -93,10 +88,7 @@ export class LeadService {
             user,
         );
         if (!changeStatus) {
-            throw new HttpException(
-                'Update failed',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return changeStatus;
     }

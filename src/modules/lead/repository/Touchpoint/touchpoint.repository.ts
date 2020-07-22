@@ -2,10 +2,12 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
+import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { FileDto } from '../../../../modules/file/dto/fileDto';
 import { OrderTouchPointDto } from '../../../../modules/lead/dto/fileTouchPoint/OrderTouchPointDto';
 import { TaskDto } from '../../../../modules/lead/dto/task/TaskDto';
+import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 import { TaskEntity } from '../../../../modules/lead/entity/Task/task.entity';
 import { TouchPointsPageDto } from '../../..//lead/dto/touchpoint/TouchPointsPageDto';
@@ -18,7 +20,6 @@ import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileT
 import { UserEntity } from '../../../user/user.entity';
 import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
-import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 
 @EntityRepository(TouchPointEntity)
 export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
@@ -27,7 +28,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
         const lastEntity = await this.repository.findOne({
-            select: ['order','status'],
+            select: ['order', 'status'],
             where: { leadId: touchPointDto.leadId },
             order: {
                 id: 'DESC',
@@ -36,22 +37,21 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         let order = 1;
         if (lastEntity) {
             order = lastEntity.order + 1;
-            if(lastEntity.status!='Done'){
-                touchPointDto.status='Draft'
-            }else{
-                touchPointDto.status='In-progress'
+            if (lastEntity.status !== StatusTouchPoint.DONE) {
+                touchPointDto.status = StatusTouchPoint.DRAFT;
+            } else {
+                touchPointDto.status = StatusTouchPoint.INPROGRESS;
             }
+        } else {
+            touchPointDto.status = StatusTouchPoint.INPROGRESS;
         }
-        else{touchPointDto.status='In-progress'}
         const touchPointEntity = this.repository.create({
             ...touchPointDto,
             createdBy: user.id,
-            updatedBy: user.id, 
+            updatedBy: user.id,
             order,
         });
-
         const newTouchPoint = await this.repository.save(touchPointEntity);
-        console.table(newTouchPoint)
         return newTouchPoint.toDto() as TouchPointEntity;
     }
     public async getList(
@@ -161,10 +161,13 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
     ): Promise<TouchPointEntity> {
         const touchpoint = await this.repository.findOne({ id });
-        const lateTouchPoint=await this.repository.findOne({order:touchpoint.order+1,leadId:touchpoint.leadId})
-        if(lateTouchPoint){
-            if(updateDto.status=='Done'){
-                lateTouchPoint.status='In-progress'
+        const lateTouchPoint = await this.repository.findOne({
+            order: touchpoint.order + 1,
+            leadId: touchpoint.leadId,
+        });
+        if (lateTouchPoint) {
+            if (updateDto.status === StatusTouchPoint.DONE) {
+                lateTouchPoint.status = StatusTouchPoint.INPROGRESS;
             }
         }
         if (!touchpoint) {
@@ -173,7 +176,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
                 HttpStatus.NOT_ACCEPTABLE,
             );
         }
-        this.repository.save(lateTouchPoint)
+        this.repository.save(lateTouchPoint);
         const updatedTouchPoint = this.repository.merge(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
