@@ -50,7 +50,7 @@ export class LeadController {
         private _touchPointFileService: TouchPointFileService,
     ) {}
 
-    @Get()
+    @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
@@ -74,6 +74,7 @@ export class LeadController {
     async getCompanyById(@Param('id') id: string): Promise<DetailLeadDto> {
         return this._leadService.findLeadById(id);
     }
+
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: LeadUpdateDto, description: 'Successfully Created' })

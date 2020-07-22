@@ -117,7 +117,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.updatedAt = Date();
         leadCurrent.rankRevision = leadCurrent.rankRevision || [];
         leadCurrent.rankRevision.push(rankRevision);
-
         const updateLeadCurrent = Object.assign(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
@@ -223,8 +222,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
-            .andWhere('lead.status LIKE :status', {
-                status: '%In-progress%',
+            .andWhere('lead.status = :status', {
+                status: `${pageOptionsDto.status}`,
             })
             .addOrderBy('lead.rank', pageOptionsDto.order);
 

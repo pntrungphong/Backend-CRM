@@ -6,13 +6,13 @@ import {
     HttpCode,
     HttpException,
     HttpStatus,
+    Logger,
     Param,
     Post,
     Res,
     UploadedFiles,
     UseGuards,
     UseInterceptors,
-    Logger,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import {
@@ -86,7 +86,6 @@ export class FileController {
         description: 'Get file by id',
     })
     async getFileById(@Param('id') id: string, @Res() res: Response) {
-        
         const fileEntity = await this._service.getFileById(id);
         return res.sendFile(`${fileEntity.path}`, { root: './' });
     }

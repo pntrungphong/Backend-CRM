@@ -119,10 +119,7 @@ export class ContactController {
             user,
         );
         if (!updatedContact) {
-            throw new HttpException(
-                'Update failed',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         if (updateDto.company) {
             await this._companyContactService.updateCompany(

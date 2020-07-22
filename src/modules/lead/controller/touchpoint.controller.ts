@@ -5,6 +5,7 @@ import {
     Get,
     HttpCode,
     HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -12,7 +13,6 @@ import {
     UseGuards,
     UseInterceptors,
     ValidationPipe,
-    Logger,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,

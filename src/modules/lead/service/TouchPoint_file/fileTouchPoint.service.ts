@@ -61,7 +61,7 @@ export class TouchPointFileService {
             where: { leadId },
             relations: ['file', 'touchPoint'],
         });
-        Logger.log("fileTP.sv");
+        Logger.log('fileTP.sv');
         const listFile = [];
         file.map((it) => {
             const fileTouchPoint = new InfoFileTouchPointDto(it);

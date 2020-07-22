@@ -44,6 +44,7 @@ export class CompanyService {
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();
+
         const listIdCompany = companies.map((it) => it.id);
         const results = [];
         for await (const iterator of listIdCompany) {
