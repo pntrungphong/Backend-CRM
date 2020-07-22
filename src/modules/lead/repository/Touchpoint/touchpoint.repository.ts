@@ -36,7 +36,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         let order = 1;
         if (lastEntity) {
             order = lastEntity.order + 1;
-            if(lastEntity.status!=='Done'){
+            if(lastEntity.status!='Done'){
                 touchPointDto.status='Draft'
             }else{
                 touchPointDto.status='In-progress'
