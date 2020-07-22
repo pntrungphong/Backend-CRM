@@ -26,7 +26,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
         const lastEntity = await this.repository.findOne({
-            select: ['order'],
+            select: ['order','status'],
             where: { leadId: touchPointDto.leadId },
             order: {
                 id: 'DESC',
@@ -35,16 +35,22 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         let order = 1;
         if (lastEntity) {
             order = lastEntity.order + 1;
+            if(lastEntity.status!=='Done'){
+                touchPointDto.status='Draft'
+            }else{
+                touchPointDto.status='In_progress'
+            }
         }
-
+        else{touchPointDto.status='In_progress'}
         const touchPointEntity = this.repository.create({
             ...touchPointDto,
             createdBy: user.id,
-            updatedBy: user.id,
+            updatedBy: user.id, 
             order,
         });
 
         const newTouchPoint = await this.repository.save(touchPointEntity);
+        console.table(newTouchPoint)
         return newTouchPoint.toDto() as TouchPointEntity;
     }
     public async getList(
@@ -154,16 +160,24 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
     ): Promise<TouchPointEntity> {
         const touchpoint = await this.repository.findOne({ id });
+        const lateTouchPoint=await this.repository.findOne({order:touchpoint.order+1,leadId:touchpoint.leadId})
+        if(lateTouchPoint){
+            if(updateDto.status=='Done'){
+                lateTouchPoint.status='In_progress'
+            }
+        }
         if (!touchpoint) {
             throw new HttpException(
                 'Cập nhật thất bại',
                 HttpStatus.NOT_ACCEPTABLE,
             );
         }
+        this.repository.save(lateTouchPoint)
         const updatedTouchPoint = this.repository.merge(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
         });
+
         return this.repository.save(updatedTouchPoint);
     }
 }
