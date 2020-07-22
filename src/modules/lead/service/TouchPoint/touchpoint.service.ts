@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
 import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
@@ -20,6 +20,7 @@ export class TouchPointService {
         user: UserEntity,
         createDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
+        Logger.log('tp.service up');
         const createTouchPoint = await this._touchPointRepository.create(
             user,
             createDto,
@@ -32,12 +33,14 @@ export class TouchPointService {
                 createDto.leadId,
             );
         }
+        Logger.log('tp.service down');
         return createTouchPoint;
     }
 
     async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
+        Logger.log('tp.service');
         return this._touchPointRepository.getList(pageOptionsDto);
     }
 

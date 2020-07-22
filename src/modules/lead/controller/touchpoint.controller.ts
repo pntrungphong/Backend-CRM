@@ -12,6 +12,7 @@ import {
     UseGuards,
     UseInterceptors,
     ValidationPipe,
+    Logger,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -51,6 +52,7 @@ export class TouchPointController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
+        Logger.log('tp.controller');
         return this._touchPointService.getList(pageOptionsDto);
     }
 
@@ -64,6 +66,7 @@ export class TouchPointController {
         @Body() data: UpdateTouchPointDto,
         @AuthUser() user: UserEntity,
     ): Promise<TouchPointDto> {
+        Logger.log('tp.controller');
         return this._touchPointService.create(user, data);
     }
 

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -25,6 +25,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
+        Logger.log('tp.repository');
         const lastEntity = await this.repository.findOne({
             select: ['order'],
             where: { leadId: touchPointDto.leadId },
@@ -50,6 +51,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
     public async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
+        Logger.log('tp.service');
         const queryBuilder = this.repository
             .createQueryBuilder('touchpoint')
             .leftJoinAndSelect('touchpoint.lead', 'lead')
