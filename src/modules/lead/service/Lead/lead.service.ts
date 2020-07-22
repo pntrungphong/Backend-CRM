@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
@@ -33,6 +33,7 @@ export class LeadService {
         updateDto: LeadUpdateByIdDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
+        Logger.log('lead.service');
         const updatedLead = await this._leadRepository.update(
             id,
             updateDto,
@@ -69,6 +70,7 @@ export class LeadService {
     async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        Logger.log('lead.service');
         return this._leadRepository.getList(pageOptionsDto);
     }
 
@@ -77,6 +79,7 @@ export class LeadService {
         updateDto: LeadChangeStatusDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
+        Logger.log('lead.service');
         const changeStatus = await this._leadRepository.changeStatus(
             id,
             updateDto,

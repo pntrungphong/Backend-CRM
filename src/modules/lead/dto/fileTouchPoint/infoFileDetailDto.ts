@@ -24,5 +24,5 @@ export class InfoFileDetailDto {
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto;
     @ApiPropertyOptional({ type: [OrderTouchPointDto] })
-    touchpoint: OrderTouchPointDto;
+    touchPoint: OrderTouchPointDto;
 }

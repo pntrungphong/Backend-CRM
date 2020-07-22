@@ -17,7 +17,7 @@ export class TaskEntity extends AbstractEntity<TaskDto> {
     id: string;
 
     @Column({ name: 'taskname' })
-    taskname: string;
+    taskName: string;
 
     @Column({ name: 'type' })
     type: string;

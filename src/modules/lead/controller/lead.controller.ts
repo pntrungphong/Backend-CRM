@@ -5,6 +5,7 @@ import {
     Get,
     HttpCode,
     HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -60,6 +61,7 @@ export class LeadController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        Logger.log('lead.controller');
         return this._leadService.getList(pageOptionsDto);
     }
     @Get('/:id')
@@ -93,9 +95,10 @@ export class LeadController {
         @Body() updateDto: LeadUpdateByIdDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadEntity> {
+        Logger.log('lead.controller');
         return this._leadService.update(id, updateDto, user);
     }
-    @Put(':id/changeRank')
+    @Put(':id/rank')
     @ApiOkResponse({
         type: LeadChangeRankDto,
         description: 'Successfully Updated',

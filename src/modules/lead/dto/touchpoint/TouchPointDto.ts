@@ -5,7 +5,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import { AbstractDto } from '../../../../common/dto/AbstractDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { TaskDto } from '../task/TaskDto';
-import { InfoFileTouchPointDto } from './infoFileTouchPointDto';
+import { InfoFileTouchPointDto } from './InfoFileTouchPointDto';
 import { InfoLeadTouchPointDto } from './InfoLeadTouchPointDto';
 
 export class TouchPointDto extends AbstractDto {

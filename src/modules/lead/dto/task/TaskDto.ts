@@ -9,7 +9,7 @@ import { UserDto } from '../../../user/dto/UserDto';
 export class TaskDto extends AbstractDto {
     @IsOptional()
     @ApiPropertyOptional()
-    taskname: string;
+    taskName: string;
 
     @IsOptional()
     @ApiPropertyOptional()
@@ -27,7 +27,7 @@ export class TaskDto extends AbstractDto {
     user: UserDto;
     constructor(task: TaskEntity) {
         super(task);
-        this.taskname = task.taskname;
+        this.taskName = task.taskName;
         this.type = task.type;
         this.userId = task.userId;
         this.dueDate = task.dueDate;

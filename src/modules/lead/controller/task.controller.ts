@@ -30,18 +30,18 @@ import { TaskService } from '../service/Task/task.service';
 export class TaskController {
     constructor(private _taskService: TaskService) {}
 
-    @Post(':touchpointId/task')
+    @Post(':touchPointId/task')
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
         type: TaskDto,
         description: 'Successfully Created',
     })
     async createTask(
-        @Param('touchpointId') touchpointId: string,
+        @Param('touchPointId') touchPointId: string,
         @Body() data: UpdateTaskDto,
         @AuthUser() user: UserEntity,
     ): Promise<TaskEntity> {
-        return this._taskService.create(user, data, touchpointId);
+        return this._taskService.create(user, data, touchPointId);
     }
 
     @Put(':touchPointId/task/:taskId')

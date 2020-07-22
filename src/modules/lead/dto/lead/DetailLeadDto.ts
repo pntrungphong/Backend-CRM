@@ -3,6 +3,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { FileDto } from '../../../file/dto/fileDto';
+import { RankRevisionDto } from '../../../lead/field/RankRevisionDto';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { TagEntity } from '../../../tag/tag.entity';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
@@ -10,7 +11,6 @@ import { NoteDto } from '../note/NoteDto';
 import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
 import { InfoLeadContactDto } from './InfoLeadContactDto';
-import { RankRevisionDto } from '../../../lead/field/RankRevisionDto';
 export class DetailLeadDto {
     @ApiPropertyOptional()
     id: string;
@@ -52,7 +52,7 @@ export class DetailLeadDto {
     @ApiPropertyOptional({ type: [FileDto] })
     file: FileDto[];
     @ApiPropertyOptional({ type: [TouchPointDto] })
-    touchpoint: TouchPointDto[];
+    touchPoint: TouchPointDto[];
     constructor(lead: LeadEntity) {
         this.id = lead.id;
         this.name = lead.name;
@@ -69,7 +69,7 @@ export class DetailLeadDto {
         this.status = lead.status;
         this.file = lead.file.toDtos();
         this.relatedTo = lead.relatedTo.toDtos();
-        this.touchpoint = lead.touchpoint;
-        this.rankRevision=lead.rankRevision
+        this.touchPoint = lead.touchPoint;
+        this.rankRevision = lead.rankRevision;
     }
 }
