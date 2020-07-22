@@ -42,7 +42,7 @@ import { CompanyContactService } from '../service/companyContact.service';
 export class CompanyController {
     constructor(
         private _companyService: CompanyService,
-        private _companyContactService: CompanyContactService, // private _tagCompanyService: TagCompanyService,
+        private _companyContactService: CompanyContactService,
     ) {}
 
     @Get()
@@ -84,7 +84,7 @@ export class CompanyController {
                 createCompany.id,
             );
         }
-        // await this._tagCompanyService.create(data.tag, createCompany.id);
+
         return createCompany.toDto() as CompanyDto;
     }
 
@@ -103,7 +103,7 @@ export class CompanyController {
             data,
             user,
         );
-        // await this._tagCompanyService.update(data.tag, updatedCompany.id);
+
         if (data.contact) {
             await this._companyContactService.updateContact(
                 data.contact,

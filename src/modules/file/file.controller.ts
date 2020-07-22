@@ -12,6 +12,7 @@ import {
     UploadedFiles,
     UseGuards,
     UseInterceptors,
+    Logger,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import {
@@ -50,17 +51,18 @@ export class FileController {
         AnyFilesInterceptor({
             storage: diskStorage({
                 destination: './uploads',
-                filename: (req, file, cb) => {
+                fileName: (req, file, cb) => {
                     try {
                         const fileName = uuid();
+                        Logger.log('tp.controller f');
                         return cb(
                             null,
-                            `${fileName}${extname(file.originalname)}`,
+                            `${fileName}${extname(file.originalName)}`,
                         );
                     } catch (err) {
                         return cb(
                             new HttpException(
-                                'Errored at upload',
+                                'Error at upload',
                                 HttpStatus.BAD_REQUEST,
                             ),
                         );
@@ -84,6 +86,7 @@ export class FileController {
         description: 'Get file by id',
     })
     async getFileById(@Param('id') id: string, @Res() res: Response) {
+        
         const fileEntity = await this._service.getFileById(id);
         return res.sendFile(`${fileEntity.path}`, { root: './' });
     }
@@ -96,6 +99,6 @@ export class FileController {
     })
     async downloadFile(@Param('id') id: string, @Res() res: Response) {
         const fileEntity = await this._service.getFileById(id);
-        return res.download(`./${fileEntity.path}`, fileEntity.originalname);
+        return res.download(`./${fileEntity.path}`, fileEntity.originalName);
     }
 }

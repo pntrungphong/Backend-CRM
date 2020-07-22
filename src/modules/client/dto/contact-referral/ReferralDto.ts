@@ -9,7 +9,7 @@ export class ReferralDto {
     idTarget: string;
 
     @ApiPropertyOptional({ type: [] })
-    hastag: string;
+    hashtag: string;
 
     @ApiPropertyOptional()
     name: string;
@@ -20,7 +20,7 @@ export class ReferralDto {
     constructor(contact: ContactEntity, referral: ContactReferralEntity) {
         this.name = contact.name;
         this.id = referral.id.toString();
-        this.hastag = referral.hastag;
+        this.hashtag = referral.hashtag;
         this.idTarget = referral.idTarget;
     }
 }

@@ -52,11 +52,11 @@ export class CompanyService {
                 relations: ['contact'],
             });
             const listIdContact = company.contact.map((it) => it.idContact);
-            const rawDatas = await this._contactRepository.findByIds([
+            const rawData = await this._contactRepository.findByIds([
                 ...listIdContact,
             ]);
             const result = new DetailCompanyDto(company);
-            result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
+            result.contact = rawData.map((it) => new GeneralInfoDto(it));
             results.push(result);
         }
         const pageMetaDto = new PageMetaDto({
@@ -76,9 +76,9 @@ export class CompanyService {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
         const listIdContact = company.contact.map((it) => it.idContact);
-        const rawDatas = await this._contactRepository.findByIds(listIdContact);
+        const rawData = await this._contactRepository.findByIds(listIdContact);
         const result = new DetailCompanyDto(company);
-        result.contact = rawDatas.map((it) => new GeneralInfoDto(it));
+        result.contact = rawData.map((it) => new GeneralInfoDto(it));
 
         return result;
     }

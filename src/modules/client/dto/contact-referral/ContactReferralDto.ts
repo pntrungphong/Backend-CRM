@@ -7,5 +7,5 @@ export class ContactReferralDto {
     idTarget: string;
 
     @ApiProperty({ type: [] })
-    hastag: string;
+    hashtag: string;
 }

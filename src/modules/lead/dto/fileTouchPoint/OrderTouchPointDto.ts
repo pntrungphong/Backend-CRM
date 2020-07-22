@@ -7,7 +7,7 @@ import { TouchPointEntity } from '../../../../modules/lead/entity/Touchpoint/tou
 export class OrderTouchPointDto {
     @ApiPropertyOptional()
     order: number;
-    constructor(touchpoint: TouchPointEntity) {
-        this.order = touchpoint.order;
+    constructor(touchPoint: TouchPointEntity) {
+        this.order = touchPoint.order;
     }
 }

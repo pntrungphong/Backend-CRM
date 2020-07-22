@@ -22,9 +22,6 @@ export class UserService {
         public readonly awsS3Service: AwsS3Service,
     ) {}
 
-    /**
-     * Find single user
-     */
     findOne(findData: FindConditions<UserEntity>): Promise<UserEntity> {
         return this.userRepository.findOne(findData);
     }
@@ -52,7 +49,7 @@ export class UserService {
         file: IFile,
     ): Promise<UserEntity> {
         let avatar: string;
-        if (file && !this.validatorService.isImage(file.mimetype)) {
+        if (file && !this.validatorService.isImage(file.mimeType)) {
             throw new FileNotImageException();
         }
 
