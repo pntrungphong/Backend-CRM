@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable} from '@nestjs/common';
 
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { UserEntity } from '../../user/user.entity';
@@ -44,6 +44,7 @@ export class CompanyService {
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
             .getManyAndCount();
+
         const listIdCompany = companies.map((it) => it.id);
         const results = [];
         for await (const iterator of listIdCompany) {

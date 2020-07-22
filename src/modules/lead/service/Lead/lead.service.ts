@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
+import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 import { NoteRepository } from '../../../lead/repository/Note/note.repository';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
@@ -9,8 +11,6 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
-import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
-import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 @Injectable()
 export class LeadService {
     constructor(
@@ -42,10 +42,7 @@ export class LeadService {
             await this._noteRepository.update(updateDto.note, updatedLead.id);
         }
         if (!updatedLead) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return updatedLead;
     }
@@ -61,10 +58,7 @@ export class LeadService {
             user,
         );
         if (!changeRank) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return changeRank;
     }
@@ -76,6 +70,11 @@ export class LeadService {
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
         return this._leadRepository.getList(pageOptionsDto);
+    }
+    async getInProgressLeads(
+        pageOptionsDto: LeadsPageOptionsDto,
+    ): Promise<LeadsPageDetailDto> {
+        return this._leadRepository.getInProgressLeads(pageOptionsDto);
     }
 
     async changeStatus(
@@ -89,10 +88,7 @@ export class LeadService {
             user,
         );
         if (!changeStatus) {
-            throw new HttpException(
-                'Update failed',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return changeStatus;
     }
