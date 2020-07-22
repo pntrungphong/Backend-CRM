@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { UserEntity } from '../../user/user.entity';

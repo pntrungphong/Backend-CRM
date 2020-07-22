@@ -49,19 +49,6 @@ export class LeadController {
         private _touchPointFileService: TouchPointFileService,
     ) {}
 
-    @Get('/inProgress')
-    @HttpCode(HttpStatus.OK)
-    @ApiResponse({
-        status: HttpStatus.OK,
-        description: 'Get leads list',
-        type: LeadsPageDto,
-    })
-    getInProgressLeads(
-        @Query(new ValidationPipe({ transform: true }))
-        pageOptionsDto: LeadsPageOptionsDto,
-    ): Promise<LeadsPageDetailDto> {
-        return this._leadService.getInProgressLeads(pageOptionsDto);
-    }
     @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
@@ -108,12 +95,12 @@ export class LeadController {
     ): Promise<LeadEntity> {
         return this._leadService.update(id, updateDto, user);
     }
-    @Put(':id/changerank')
+    @Put(':id/changeRank')
     @ApiOkResponse({
         type: LeadChangeRankDto,
         description: 'Successfully Updated',
     })
-    async changerank(
+    async changeRank(
         @Param('id') id: string,
         @Body() updateDto: LeadChangeRankDto,
         @AuthUser() user: UserEntity,

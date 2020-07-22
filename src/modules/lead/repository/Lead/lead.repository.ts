@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus} from '@nestjs/common';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -208,6 +208,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        Logger.log(pageOptionsDto.q);
+        Logger.log(pageOptionsDto.status);
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
@@ -221,8 +223,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
-            .andWhere('lead.status LIKE :status', {
-                status: `%${pageOptionsDto.status}%`,
+            .andWhere('lead.status = :status', {
+                status: `${pageOptionsDto.status}`,
             })
             .addOrderBy('lead.rank', pageOptionsDto.order);
         const [leads, leadsCount] = await queryBuilder
@@ -267,88 +269,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                     const infoTask = new TaskDto(it as TaskEntity);
                     const infoUser = new UserDto(infoTask.user as UserEntity);
                     infoTask.user = infoUser;
-                    listTask.push(infoTask);
-                });
-                infoTouchPoint.task = listTask;
-                listTouchPoint.push(infoTouchPoint);
-            });
-            listTouchPoint.sort(
-                (a, b) =>
-                    parseInt(a.order.toString(), 10) -
-                    parseInt(b.order.toString(), 10),
-            );
-            lead.touchpoint = listTouchPoint;
-            lead.tag = listTag;
-            lead.contact = listContact;
-            lead.relatedTo = listRelatedTo;
-            lead.rankRevision = iterator.rankRevision;
-            results.push(lead);
-        }
-        return new LeadsPageDetailDto(results, pageMetaDto);
-    }
-
-    public async getInProgressLeads(
-        pageOptionsDto: LeadsPageOptionsDto,
-    ): Promise<LeadsPageDetailDto> {
-        const queryBuilder = this.repository
-            .createQueryBuilder('lead')
-            .leftJoinAndSelect('lead.note', 'note')
-            .leftJoinAndSelect('lead.company', 'company')
-            .leftJoinAndSelect('lead.contact', 'contact')
-            .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
-            .leftJoinAndSelect('lead.tag', 'tag')
-            .leftJoinAndSelect('lead.touchpoint', 'touchpoint')
-            .leftJoinAndSelect('touchpoint.task', 'task')
-            .leftJoinAndSelect('task.user', 'user')
-            .where('LOWER (lead.name) LIKE :name', {
-                name: `%${pageOptionsDto.q.toLowerCase()}%`,
-            })
-            .andWhere('lead.status LIKE :status', {
-                status: '%In-progress%',
-            })
-            .addOrderBy('lead.rank', pageOptionsDto.order);
-        const [leads, leadsCount] = await queryBuilder
-            .skip(pageOptionsDto.skip)
-            .take(pageOptionsDto.take)
-            .getManyAndCount();
-        const pageMetaDto = new PageMetaDto({
-            pageOptionsDto,
-            itemCount: leadsCount,
-        });
-        const results = [];
-        for await (const iterator of leads) {
-            const lead = new LeadDto(iterator);
-            lead.company = new InfoLeadCompanyDto(iterator.company);
-            const contact = lead.contact;
-            const listContact = [] as InfoLeadContactDto[];
-            contact.map((item) => {
-                const infoContact = new InfoLeadContactDto(<ContactEntity>item);
-                listContact.push(infoContact);
-            });
-            const relatedTo = lead.relatedTo;
-            const listRelatedTo = [] as InfoLeadContactDto[];
-            relatedTo.forEach((item) => {
-                const infoRelatedTo = new InfoLeadContactDto(
-                    item as ContactEntity,
-                );
-                listRelatedTo.push(infoRelatedTo);
-            });
-
-            const listTag = [] as InfoLeadTagDto[];
-            lead.tag.map((item) => {
-                const infoTag = new InfoLeadTagDto(item as TagEntity);
-                listTag.push(infoTag);
-            });
-            const listTouchPoint = [] as TouchPointDto[];
-            lead.touchpoint.map((item) => {
-                const infoTouchPoint = new TouchPointDto(
-                    item as TouchPointEntity,
-                );
-                const listTask = [] as TaskDto[];
-                infoTouchPoint.task.map((it) => {
-                    const infoTask = new TaskDto(it as TaskEntity);
-                    const inforUser = new UserDto(infoTask.user as UserEntity);
-                    infoTask.user = inforUser;
                     listTask.push(infoTask);
                 });
                 infoTouchPoint.task = listTask;

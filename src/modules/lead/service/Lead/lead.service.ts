@@ -71,11 +71,6 @@ export class LeadService {
     ): Promise<LeadsPageDetailDto> {
         return this._leadRepository.getList(pageOptionsDto);
     }
-    async getInProgressLeads(
-        pageOptionsDto: LeadsPageOptionsDto,
-    ): Promise<LeadsPageDetailDto> {
-        return this._leadRepository.getInProgressLeads(pageOptionsDto);
-    }
 
     async changeStatus(
         id: string,
