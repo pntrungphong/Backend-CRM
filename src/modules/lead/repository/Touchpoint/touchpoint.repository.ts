@@ -39,10 +39,10 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             if(lastEntity.status!=='Done'){
                 touchPointDto.status='Draft'
             }else{
-                touchPointDto.status='In_progress'
+                touchPointDto.status='In-progress'
             }
         }
-        else{touchPointDto.status='In_progress'}
+        else{touchPointDto.status='In-progress'}
         const touchPointEntity = this.repository.create({
             ...touchPointDto,
             createdBy: user.id,
@@ -164,7 +164,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         const lateTouchPoint=await this.repository.findOne({order:touchpoint.order+1,leadId:touchpoint.leadId})
         if(lateTouchPoint){
             if(updateDto.status=='Done'){
-                lateTouchPoint.status='In_progress'
+                lateTouchPoint.status='In-progress'
             }
         }
         if (!touchpoint) {
