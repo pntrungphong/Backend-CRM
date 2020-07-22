@@ -8,7 +8,6 @@ import {
 
 import { CompanyEntity } from './company.entity';
 import { ContactEntity } from './contact.entity';
-
 @Entity({ name: 'company_contact' })
 export class CompanyContactEntity {
     @PrimaryGeneratedColumn('uuid')

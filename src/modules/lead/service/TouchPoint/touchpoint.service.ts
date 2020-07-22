@@ -9,13 +9,14 @@ import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { TouchPointRepository } from '../../repository/Touchpoint/touchpoint.repository';
 import { TouchPointFileService } from '../TouchPoint_file/fileTouchPoint.service';
 import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 @Injectable()
 export class TouchPointService {
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointFilePointService: TouchPointFileService,
     ) {}
-
+    @Transactional()
     async create(
         user: UserEntity,
         createDto: UpdateTouchPointDto,

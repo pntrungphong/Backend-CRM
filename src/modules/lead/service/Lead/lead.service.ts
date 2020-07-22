@@ -11,13 +11,16 @@ import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
+import { Connection } from 'typeorm';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 @Injectable()
 export class LeadService {
     constructor(
         private readonly _leadRepository: LeadRepository,
         private readonly _noteRepository: NoteRepository,
+        private readonly _connection :Connection
     ) {}
-
+    @Transactional()
     async create(
         user: UserEntity,
         createDto: LeadUpdateDto,
@@ -28,6 +31,7 @@ export class LeadService {
         }
         return createLead;
     }
+    @Transactional()
     async update(
         id: string,
         updateDto: LeadUpdateByIdDto,
@@ -49,7 +53,7 @@ export class LeadService {
         }
         return updatedLead;
     }
-
+    @Transactional()
     async changeRank(
         id: string,
         updateDto: LeadChangeRankDto,
@@ -77,7 +81,7 @@ export class LeadService {
     ): Promise<LeadsPageDetailDto> {
         return this._leadRepository.getList(pageOptionsDto);
     }
-
+    @Transactional()
     async changeStatus(
         id: string,
         updateDto: LeadChangeStatusDto,

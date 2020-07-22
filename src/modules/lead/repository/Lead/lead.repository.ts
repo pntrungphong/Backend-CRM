@@ -26,6 +26,7 @@ import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
+import {getConnection} from "typeorm";
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -117,7 +118,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.updatedAt = Date();
         leadCurrent.rankRevision=leadCurrent.rankRevision || [];
         leadCurrent.rankRevision.push(rankRevision);    
-        console.table(leadCurrent.rankRevision)
         const updateLeadCurrent = Object.assign(leadCurrent, {
             ...updateDto,
             updatedBy: user.id,
@@ -141,7 +141,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         let leadCurrent = await this.repository.findOne({
             where: { id },
         });
-
         if (!leadCurrent) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }

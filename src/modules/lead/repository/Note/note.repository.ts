@@ -20,7 +20,6 @@ export class NoteRepository extends AbstractRepository<NoteEntity> {
 
     public async update(notes: NoteDto[], idLead: string): Promise<void> {
         const updateNotes = await this.repository.find({ idLead });
-        console.table(updateNotes);
         await this.repository.remove(updateNotes);
         const noteClean = notes.map((it) => ({
             title: it.title,
