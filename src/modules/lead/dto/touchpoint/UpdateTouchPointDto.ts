@@ -26,6 +26,10 @@ export class UpdateTouchPointDto {
     @ApiProperty()
     meetingDate: Date;
 
+    @IsOptional()
+    @ApiProperty()
+    actualDate: Date;
+
     @IsNumber()
     @ApiPropertyOptional()
     leadId: number;

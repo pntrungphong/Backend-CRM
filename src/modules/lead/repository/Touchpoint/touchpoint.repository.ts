@@ -27,7 +27,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        Logger.log('tp.repository');
+        touchPointDto.actualDate=touchPointDto.meetingDate;
         const lastEntity = await this.repository.findOne({
             select: ['order', 'status'],
             where: { leadId: touchPointDto.leadId },
@@ -41,10 +41,10 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             if (lastEntity.status !== StatusTouchPoint.DONE) {
                 touchPointDto.status = StatusTouchPoint.DRAFT;
             } else {
-                touchPointDto.status = StatusTouchPoint.INPROGRESS;
+                touchPointDto.status = StatusTouchPoint.IN_PROGRESS;
             }
         } else {
-            touchPointDto.status = StatusTouchPoint.INPROGRESS;
+            touchPointDto.status = StatusTouchPoint.IN_PROGRESS;
         }
         const touchPointEntity = this.repository.create({
             order,
@@ -166,7 +166,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         });
         if (lateTouchPoint) {
             if (updateDto.status === StatusTouchPoint.DONE) {
-                lateTouchPoint.status = StatusTouchPoint.INPROGRESS;
+                lateTouchPoint.status = StatusTouchPoint.IN_PROGRESS;
             }
         }
         if (!touchpoint) {
