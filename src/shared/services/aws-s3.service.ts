@@ -29,7 +29,7 @@ export class AwsS3Service {
 
     async uploadImage(file: IFile) {
         const fileName = this.generatorService.fileName(
-            <string>mime.extension(file.mimeType),
+            <string>mime.extension(file.mimetype),
         );
         const key = 'images/' + fileName;
         await this._s3

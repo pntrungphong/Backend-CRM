@@ -57,7 +57,7 @@ export class FileController {
                         Logger.log('tp.controller f');
                         return cb(
                             null,
-                            `${fileName}${extname(file.originalName)}`,
+                            `${fileName}${extname(file.originalname)}`,
                         );
                     } catch (err) {
                         return cb(
@@ -98,6 +98,6 @@ export class FileController {
     })
     async downloadFile(@Param('id') id: string, @Res() res: Response) {
         const fileEntity = await this._service.getFileById(id);
-        return res.download(`./${fileEntity.path}`, fileEntity.originalName);
+        return res.download(`./${fileEntity.path}`, fileEntity.originalname);
     }
 }

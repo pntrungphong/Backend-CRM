@@ -15,13 +15,13 @@ import { FileDto } from './dto/fileDto';
 @Entity({ name: 'file' })
 export class FileEntity extends AbstractEntity<FileDto> {
     @Column({ nullable: true, name: 'original_name' })
-    originalName: string;
+    originalname: string;
 
     @Column({ nullable: true, name: 'path' })
     path: string;
 
     @Column({ nullable: true, name: 'type' })
-    mimeType: string;
+    mimetype: string;
 
     @Column({ nullable: true, name: 'file_name' })
     filename: string;

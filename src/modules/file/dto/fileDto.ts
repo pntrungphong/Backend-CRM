@@ -7,13 +7,13 @@ import { FileEntity } from '../file.entity';
 
 export class FileDto extends AbstractDto {
     @ApiPropertyOptional()
-    originalName: string;
+    originalname: string;
 
     @ApiPropertyOptional()
     path: string;
 
     @ApiPropertyOptional()
-    mimeType: string;
+    mimetype: string;
 
     @ApiPropertyOptional()
     filename: string;
@@ -29,8 +29,8 @@ export class FileDto extends AbstractDto {
 
     constructor(fileEntity: FileEntity) {
         super(fileEntity);
-        this.originalName = fileEntity.originalName;
-        this.mimeType = fileEntity.mimeType;
+        this.originalname = fileEntity.originalname;
+        this.mimetype = fileEntity.mimetype;
         this.filename = fileEntity.filename;
         this.path = fileEntity.path;
         this.destination = fileEntity.destination;
