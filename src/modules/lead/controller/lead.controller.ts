@@ -5,6 +5,7 @@ import {
     Get,
     HttpCode,
     HttpStatus,
+    Logger,
     Param,
     Post,
     Put,
@@ -28,16 +29,16 @@ import { UserEntity } from '../../../modules/user/user.entity';
 import { InfoFileDetailDto } from '../dto/fileTouchPoint/infoFileDetailDto';
 import { DetailLeadDto } from '../dto/lead/DetailLeadDto';
 import { LeadChangeRankDto } from '../dto/lead/LeadChangeRankDto';
+import { LeadChangeStatusDto } from '../dto/lead/LeadChangeStatusDto';
 import { LeadDto } from '../dto/lead/LeadDto';
 import { LeadsPageDetailDto } from '../dto/lead/LeadsPageDetailDto';
 import { LeadsPageDto } from '../dto/lead/LeadsPageDto';
 import { LeadsPageOptionsDto } from '../dto/lead/LeadsPageOptionsDto';
+import { LeadUpdateByIdDto } from '../dto/lead/LeadUpdateByIdDto';
 import { LeadUpdateDto } from '../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../entity/Lead/lead.entity';
 import { LeadService } from '../service/Lead/lead.service';
 import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
-import { LeadChangeStatusDto } from '../dto/lead/LeadChangeStatusDto';
-import { LeadUpdateByIdDto } from '../dto/lead/LeadUpdateByIdDto';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -49,7 +50,7 @@ export class LeadController {
         private _touchPointFileService: TouchPointFileService,
     ) {}
 
-    @Get()
+    @Get('')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
@@ -60,6 +61,7 @@ export class LeadController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        Logger.log('lead.controller');
         return this._leadService.getList(pageOptionsDto);
     }
     @Get('/:id')
@@ -72,6 +74,7 @@ export class LeadController {
     async getCompanyById(@Param('id') id: string): Promise<DetailLeadDto> {
         return this._leadService.findLeadById(id);
     }
+
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({ type: LeadUpdateDto, description: 'Successfully Created' })
@@ -92,14 +95,15 @@ export class LeadController {
         @Body() updateDto: LeadUpdateByIdDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadEntity> {
+        Logger.log('lead.controller');
         return this._leadService.update(id, updateDto, user);
     }
-    @Put(':id/changerank')
+    @Put(':id/rank')
     @ApiOkResponse({
         type: LeadChangeRankDto,
         description: 'Successfully Updated',
     })
-    async changerank(
+    async changeRank(
         @Param('id') id: string,
         @Body() updateDto: LeadChangeRankDto,
         @AuthUser() user: UserEntity,
@@ -128,10 +132,6 @@ export class LeadController {
         @Body() updateDto: LeadChangeStatusDto,
         @AuthUser() user: UserEntity,
     ): Promise<any> {
-        await this._leadService.changeStatus(
-            id,
-            updateDto,
-            user,
-        );
+        await this._leadService.changeStatus(id, updateDto, user);
     }
 }

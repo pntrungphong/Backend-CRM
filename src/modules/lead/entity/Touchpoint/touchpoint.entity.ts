@@ -41,14 +41,14 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     @Column({ name: 'lead_id' })
     leadId: number;
 
-    @ManyToOne(() => LeadEntity, (lead) => lead.touchpoint)
+    @ManyToOne(() => LeadEntity, (lead) => lead.touchPoint)
     @JoinColumn({
         name: 'lead_id',
     })
     lead: LeadEntity;
     @OneToMany(
         () => TouchPointFileEntity,
-        (fileTouchPoint) => fileTouchPoint.touchpoint,
+        (fileTouchPoint) => fileTouchPoint.touchPoint,
     )
     @JoinColumn()
     fileTouchPoint: TouchPointFileEntity[];

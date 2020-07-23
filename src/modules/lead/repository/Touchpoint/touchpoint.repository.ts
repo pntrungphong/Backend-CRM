@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -10,14 +10,14 @@ import { TaskDto } from '../../../../modules/lead/dto/task/TaskDto';
 import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 import { TaskEntity } from '../../../../modules/lead/entity/Task/task.entity';
-import { TouchPointsPageDto } from '../../..//lead/dto/touchpoint/TouchPointsPageDto';
 import { FileEntity } from '../../../file/file.entity';
-import { InfoFileTouchPointDto } from '../../../lead/dto/touchpoint/infoFileTouchPointDto';
 import { InfoLeadTouchPointDto } from '../../../lead/dto/touchpoint/InfoLeadTouchPointDto';
 import { TouchPointDto } from '../../../lead/dto/touchpoint/TouchPointDto';
+import { TouchPointsPageDto } from '../../../lead/dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../../../lead/dto/touchpoint/TouchPointsPagesOptionsDto';
 import { TouchPointFileEntity } from '../../../lead/entity/Touchpoint_file/fileTouchPoint.entity';
 import { UserEntity } from '../../../user/user.entity';
+import { InfoFileTouchPointDto } from '../../dto/touchpoint/InfoFileTouchPointDto';
 import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 
@@ -27,6 +27,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
+        Logger.log('tp.repository');
         const lastEntity = await this.repository.findOne({
             select: ['order', 'status'],
             where: { leadId: touchPointDto.leadId },
@@ -46,10 +47,10 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             touchPointDto.status = StatusTouchPoint.INPROGRESS;
         }
         const touchPointEntity = this.repository.create({
+            order,
             ...touchPointDto,
             createdBy: user.id,
             updatedBy: user.id,
-            order,
         });
         const newTouchPoint = await this.repository.save(touchPointEntity);
         return newTouchPoint.toDto() as TouchPointEntity;
@@ -57,6 +58,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
     public async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
+        Logger.log('tp.service');
         const queryBuilder = this.repository
             .createQueryBuilder('touchpoint')
             .leftJoinAndSelect('touchpoint.lead', 'lead')
@@ -99,12 +101,12 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         return new TouchPointsPageDto(result, pageMetaDto);
     }
 
-    public async getLeadById(id: string): Promise<TouchPointDto> {
+    public async getTouchPointById(id: string): Promise<TouchPointDto> {
         const touchPointInfo = await this.repository.findOne({
             where: { id },
             relations: [
                 'fileTouchPoint.file',
-                'fileTouchPoint.touchpoint',
+                'fileTouchPoint.touchPoint',
                 'fileTouchPoint',
                 'lead',
                 'task',
@@ -121,9 +123,9 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             const infoDetailFile = new FileDto(infoFile.file as FileEntity);
             infoFile.file = infoDetailFile;
             const orderTouchPoint = new OrderTouchPointDto(
-                infoFile.touchpoint as TouchPointEntity,
+                infoFile.touchPoint as TouchPointEntity,
             );
-            infoFile.touchpoint = orderTouchPoint;
+            infoFile.touchPoint = orderTouchPoint;
             listFile.push(infoFile);
             touchpoint.fileTouchPoint = listFile;
         });
@@ -144,10 +146,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
     ): Promise<TouchPointEntity> {
         const touchpoint = await this.repository.findOne({ id });
         if (!touchpoint) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         const updatedTouchPoint = Object.assign(touchpoint, {
             ...updateDto,
@@ -171,10 +170,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             }
         }
         if (!touchpoint) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         this.repository.save(lateTouchPoint);
         const updatedTouchPoint = this.repository.merge(touchpoint, {

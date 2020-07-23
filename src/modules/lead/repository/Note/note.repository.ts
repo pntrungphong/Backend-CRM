@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -11,15 +12,16 @@ export class NoteRepository extends AbstractRepository<NoteEntity> {
     ): Promise<void> {
         for await (const note of createNoteDto) {
             const noteObj = { ...note, idLead };
-            const newnote = this.repository.create({
+            const newNote = this.repository.create({
                 ...noteObj,
             });
-            await this.repository.save(newnote);
+            await this.repository.save(newNote);
         }
     }
 
     public async update(notes: NoteDto[], idLead: string): Promise<void> {
         const updateNotes = await this.repository.find({ idLead });
+        Logger.log('note.repo');
         await this.repository.remove(updateNotes);
         const noteClean = notes.map((it) => ({
             title: it.title,

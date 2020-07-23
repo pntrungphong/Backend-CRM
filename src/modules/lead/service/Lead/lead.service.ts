@@ -1,5 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
@@ -12,6 +11,7 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 @Injectable()
 export class LeadService {
     constructor(
@@ -35,6 +35,7 @@ export class LeadService {
         updateDto: LeadUpdateByIdDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
+        Logger.log('lead.service');
         const updatedLead = await this._leadRepository.update(
             id,
             updateDto,
@@ -44,10 +45,7 @@ export class LeadService {
             await this._noteRepository.update(updateDto.note, updatedLead.id);
         }
         if (!updatedLead) {
-            throw new HttpException(
-                'Cập nhật thất bại',
-                HttpStatus.NOT_ACCEPTABLE,
-            );
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return updatedLead;
     }
@@ -74,6 +72,7 @@ export class LeadService {
     async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        Logger.log('lead.service');
         return this._leadRepository.getList(pageOptionsDto);
     }
     @Transactional()
@@ -82,6 +81,7 @@ export class LeadService {
         updateDto: LeadChangeStatusDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
+        Logger.log('lead.service');
         const changeStatus = await this._leadRepository.changeStatus(
             id,
             updateDto,

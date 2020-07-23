@@ -20,7 +20,7 @@ export class ContactReferralEntity {
     idTarget: string;
 
     @Column({ name: 'hastag' })
-    hastag: string;
+    hashtag: string;
 
     @ManyToOne(() => ContactEntity, (contact) => contact.referral)
     @JoinColumn({

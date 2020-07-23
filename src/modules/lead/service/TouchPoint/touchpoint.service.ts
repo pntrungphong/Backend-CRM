@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
+import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 import { TouchPointsPageDto } from '../../../lead/dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../../../lead/dto/touchpoint/TouchPointsPagesOptionsDto';
 import { UserEntity } from '../../../user/user.entity';
@@ -8,7 +9,6 @@ import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { TouchPointRepository } from '../../repository/Touchpoint/touchpoint.repository';
 import { TouchPointFileService } from '../TouchPoint_file/fileTouchPoint.service';
-import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 @Injectable()
@@ -22,6 +22,7 @@ export class TouchPointService {
         user: UserEntity,
         createDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
+        Logger.log('tp.service up');
         const createTouchPoint = await this._touchPointRepository.create(
             user,
             createDto,
@@ -34,17 +35,19 @@ export class TouchPointService {
                 createDto.leadId,
             );
         }
+        Logger.log('tp.service down');
         return createTouchPoint;
     }
 
     async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
+        Logger.log('tp.service');
         return this._touchPointRepository.getList(pageOptionsDto);
     }
 
-    async findLeadById(id: string): Promise<TouchPointDto> {
-        return this._touchPointRepository.getLeadById(id);
+    async getTouchPointById(id: string): Promise<TouchPointDto> {
+        return this._touchPointRepository.getTouchPointById(id);
     }
     async update(
         id: string,
@@ -78,5 +81,4 @@ export class TouchPointService {
         );
         return updateTouchPoint;
     }
-  
 }

@@ -26,7 +26,7 @@ export class TouchPointFileEntity {
 
     @ManyToOne(
         () => TouchPointEntity,
-        (touchpoint) => touchpoint.fileTouchPoint,
+        (touchPoint) => touchPoint.fileTouchPoint,
         {
             onDelete: 'NO ACTION',
             onUpdate: 'NO ACTION',
@@ -35,7 +35,7 @@ export class TouchPointFileEntity {
     @JoinColumn({
         name: 'touchpoint_id',
     })
-    touchpoint: TouchPointEntity;
+    touchPoint: TouchPointEntity;
 
     @ManyToOne(() => FileEntity, (file) => file.fileTouchPoint, {
         onDelete: 'NO ACTION',

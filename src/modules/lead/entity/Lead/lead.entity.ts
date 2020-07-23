@@ -23,7 +23,7 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     name: string;
     @Column({ nullable: false })
     rank: string;
-    @Column({ nullable: false , default: 'In-progress'})
+    @Column({ nullable: false, default: 'In-progress' })
     status: string;
     @Column({ nullable: true, name: 'review' })
     review: string;
@@ -51,11 +51,11 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     })
     note: NoteEntity[];
 
-    @OneToMany(() => TouchPointEntity, (touchpoint) => touchpoint.lead)
+    @OneToMany(() => TouchPointEntity, (touchPoint) => touchPoint.lead)
     @JoinColumn({
         name: 'lead_id',
     })
-    touchpoint: TouchPointEntity[];
+    touchPoint: TouchPointEntity[];
 
     @ManyToMany(() => ContactEntity)
     @JoinTable({

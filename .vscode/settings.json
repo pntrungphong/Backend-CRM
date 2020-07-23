@@ -1,9 +1,12 @@
 {
     "cSpell.words": [
+        "Dtos",
         "Injectable",
+        "jsonb",
         "microservices",
         "nestjs",
-        "postgres"
+        "postgres",
+        "viveo"
     ],
     "editor.detectIndentation": false
 }

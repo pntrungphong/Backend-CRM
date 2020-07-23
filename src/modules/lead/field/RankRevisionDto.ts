@@ -10,11 +10,11 @@ export class RankRevisionDto {
     reason: string;
 
     @ApiPropertyOptional()
-    touchpoint:number
-    
+    touchPoint: number;
+
     @ApiPropertyOptional()
-    updatedBy:string
-    
+    updatedBy: string;
+
     @ApiPropertyOptional()
-    updatedAt:string
+    updatedAt: string;
 }

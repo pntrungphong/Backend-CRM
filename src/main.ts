@@ -8,7 +8,6 @@ import {
 import * as compression from 'compression';
 import * as RateLimit from 'express-rate-limit';
 import * as helmet from 'helmet';
-import * as morgan from 'morgan';
 import {
     initializeTransactionalContext,
     patchTypeORMRepositoryWithBaseRepository,

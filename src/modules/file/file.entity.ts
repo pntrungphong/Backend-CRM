@@ -15,13 +15,13 @@ import { FileDto } from './dto/fileDto';
 @Entity({ name: 'file' })
 export class FileEntity extends AbstractEntity<FileDto> {
     @Column({ nullable: true, name: 'original_name' })
-    originalname: string;
+    originalName: string;
 
     @Column({ nullable: true, name: 'path' })
     path: string;
 
     @Column({ nullable: true, name: 'type' })
-    mimetype: string;
+    mimeType: string;
 
     @Column({ nullable: true, name: 'file_name' })
     filename: string;
@@ -47,7 +47,7 @@ export class FileEntity extends AbstractEntity<FileDto> {
     lead: LeadEntity[];
     @OneToMany(
         () => TouchPointFileEntity,
-        (fileTouchPoint) => fileTouchPoint.touchpoint,
+        (fileTouchPoint) => fileTouchPoint.touchPoint,
     )
     @JoinColumn()
     fileTouchPoint: TouchPointFileEntity[];
