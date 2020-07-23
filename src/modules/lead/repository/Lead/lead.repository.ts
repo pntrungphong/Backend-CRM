@@ -207,7 +207,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
-        Logger.log('lead.repo');
+
+     
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
@@ -221,12 +222,12 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
             })
-            .andWhere('lead.status = :status', {
-                status: `${pageOptionsDto.status}`,
-            })
-            .addOrderBy('lead.rank', pageOptionsDto.order);
-
-        Logger.log('lead.repo 1');
+            if(pageOptionsDto.status){
+                queryBuilder.andWhere('lead.status = :status', {
+                    status: `${pageOptionsDto.status}`,
+                })
+            }
+            queryBuilder.addOrderBy('lead.rank', pageOptionsDto.order);
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
