@@ -7,4 +7,7 @@ export class LeadChangeStatusDto {
     @IsOptional()
     @ApiPropertyOptional()
     status: string;
+    @IsOptional()
+    @ApiPropertyOptional()
+    review: string;
 }
