@@ -31,6 +31,7 @@ import { TouchPointsPageDto } from '../dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../dto/touchpoint/TouchPointsPagesOptionsDto';
 import { UpdateTouchPointDto } from '../dto/touchpoint/UpdateTouchPointDto';
 import { UpdateTouchPointMarkDoneDto } from '../dto/touchpoint/UpdateTouchPointMarkDoneDto';
+import { UpdateDetailTouchPointDto } from '../dto/touchpoint/UpdateDetailTouchPointDto';
 import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
 
 @Controller('touchpoint')
@@ -82,14 +83,14 @@ export class TouchPointController {
     }
     @Put(':id')
     @ApiOkResponse({
-        type: UpdateTouchPointDto,
+        type: UpdateDetailTouchPointDto,
         description: 'Successfully Updated',
     })
     async update(
         @Param('id') id: string,
-        @Body() updateDto: UpdateTouchPointDto,
+        @Body() updateDto: UpdateDetailTouchPointDto,
         @AuthUser() user: UserEntity,
-    ): Promise<UpdateTouchPointDto> {
+    ): Promise<UpdateDetailTouchPointDto> {
         const updatedLead = await this._touchPointService.update(
             id,
             updateDto,

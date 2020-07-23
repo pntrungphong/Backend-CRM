@@ -141,7 +141,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const leadCurrent = await this.repository.findOne({
             where: { id },
         });
-
         if (!leadCurrent) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }

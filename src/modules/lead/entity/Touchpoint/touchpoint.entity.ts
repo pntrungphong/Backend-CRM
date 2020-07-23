@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../../../common/abstract.entity';
+import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
 import { TouchPointDto } from '../../dto/touchpoint/TouchPointDto';
 import { LeadEntity } from '../Lead/lead.entity';
 import { TaskEntity } from '../Task/task.entity';
@@ -12,7 +13,12 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     order: number;
     @Column({ name: 'goal' })
     goal: string;
-    @Column({ nullable: false, name: 'status' })
+    @Column({
+        type: 'enum',
+        enum: StatusTouchPoint,
+        default: StatusTouchPoint.INPROGRESS,
+        name: 'status',
+    })
     status: string;
     @Column({ name: 'note' })
     note: string;

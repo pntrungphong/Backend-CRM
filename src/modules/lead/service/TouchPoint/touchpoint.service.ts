@@ -9,13 +9,15 @@ import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { TouchPointRepository } from '../../repository/Touchpoint/touchpoint.repository';
 import { TouchPointFileService } from '../TouchPoint_file/fileTouchPoint.service';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
+import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 @Injectable()
 export class TouchPointService {
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointFilePointService: TouchPointFileService,
     ) {}
-
+    @Transactional()
     async create(
         user: UserEntity,
         createDto: UpdateTouchPointDto,
@@ -49,7 +51,7 @@ export class TouchPointService {
     }
     async update(
         id: string,
-        updateDto: UpdateTouchPointDto,
+        updateDto: UpdateDetailTouchPointDto,
         user: UserEntity,
     ): Promise<TouchPointEntity> {
         const updateTouchPoint = await this._touchPointRepository.update(
@@ -62,7 +64,7 @@ export class TouchPointService {
             await this._touchPointFilePointService.updateFileTouchPoint(
                 updateDto.file,
                 idTouchPoint,
-                updateDto.leadId,
+                updateTouchPoint.leadId,
             );
         }
         return updateTouchPoint;
