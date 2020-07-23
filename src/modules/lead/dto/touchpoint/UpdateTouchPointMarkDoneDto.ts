@@ -11,4 +11,8 @@ export class UpdateTouchPointMarkDoneDto {
     @IsOptional()
     @ApiProperty()
     review: string;
+
+    @IsOptional()
+    @ApiProperty()
+    actualDate: Date;
 }

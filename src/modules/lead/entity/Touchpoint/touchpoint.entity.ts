@@ -16,7 +16,7 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     @Column({
         type: 'enum',
         enum: StatusTouchPoint,
-        default: StatusTouchPoint.INPROGRESS,
+        default: StatusTouchPoint.IN_PROGRESS,
         name: 'status',
     })
     status: string;
@@ -27,6 +27,8 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
 
     @Column({ name: 'meeting_date' })
     meetingDate: Date;
+    @Column({ name: 'actual_date' })
+    actualDate: Date;
     @Column({
         nullable: true,
         name: 'created_by',
