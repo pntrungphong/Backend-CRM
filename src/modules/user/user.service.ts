@@ -49,7 +49,7 @@ export class UserService {
         file: IFile,
     ): Promise<UserEntity> {
         let avatar: string;
-        if (file && !this.validatorService.isImage(file.mimeType)) {
+        if (file && !this.validatorService.isImage(file.mimetype)) {
             throw new FileNotImageException();
         }
 
