@@ -11,8 +11,8 @@ export class FileService {
 
     async upload(file: FileDto, user: UserEntity): Promise<FileEntity> {
         const fileData = Object.assign(file, {
-            createdBy: user.id,
-            updatedBy: user.id,
+            createdBy: user.firstName,
+            updatedBy: user.firstName,
         });
         return this.repository.create(fileData);
     }

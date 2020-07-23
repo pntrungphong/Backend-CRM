@@ -208,7 +208,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
 
-     
+
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
