@@ -23,6 +23,10 @@ export class UpdateDetailTouchPointDto {
     @ApiProperty()
     meetingDate: Date;
 
+    @IsOptional()
+    @ApiProperty()
+    actualDate: Date;
+
 
     @IsArray()
     @IsOptional()

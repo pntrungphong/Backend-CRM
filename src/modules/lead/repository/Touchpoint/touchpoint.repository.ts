@@ -145,6 +145,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         updateDto: UpdateDetailTouchPointDto,
         user: UserEntity,
     ): Promise<TouchPointEntity> {
+        updateDto.actualDate=updateDto.meetingDate;
         const touchpoint = await this.repository.findOne({ id });
         if (!touchpoint) {
             throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
