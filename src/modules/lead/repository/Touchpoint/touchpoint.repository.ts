@@ -27,8 +27,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        touchPointDto.meetingDate=new Date();
-        touchPointDto.actualDate = touchPointDto.meetingDate;
+        touchPointDto.actualDate=touchPointDto.meetingDate;
         const lastEntity = await this.repository.findOne({
             select: ['order', 'status'],
             where: { leadId: touchPointDto.leadId },
