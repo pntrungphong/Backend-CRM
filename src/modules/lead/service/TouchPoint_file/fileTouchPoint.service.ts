@@ -3,8 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { FileDto } from '../../../../modules/file/dto/fileDto';
 import { FileEntity } from '../../../../modules/file/file.entity';
 import { OrderTouchPointDto } from '../../../../modules/lead/dto/fileTouchPoint/OrderTouchPointDto';
+import { TouchPointFileEntity } from '../../../../modules/lead/entity/Touchpoint_file/fileTouchPoint.entity';
 import { TouchPointEntity } from '../../../../modules/lead/entity/Touchpoint/touchpoint.entity';
 import { LinkTouchPointFileDto } from '../../../lead/dto/fileTouchPoint/LinkFileDto';
+import { NoteFileTouchPointDto } from '../../../lead/dto/fileTouchPoint/NoteFileTouchPoint';
 import { TouchPointFileDto } from '../../dto/fileTouchPoint/TouchPointFileDto';
 import { InfoFileTouchPointDto } from '../../dto/touchpoint/InfoFileTouchPointDto';
 import { TouchPointFileRepository } from '../../repository/TouchpointFile/fileTouchPoint.repository';
@@ -51,6 +53,17 @@ export class TouchPointFileService {
             touchPointId,
             leadId,
         );
+    }
+
+    async updateNote(
+        noteFile: NoteFileTouchPointDto,
+        fileTouchPointId: number,
+    ): Promise<TouchPointFileEntity> {
+        const updateNote = this.relationRepository.updateNote(
+            noteFile,
+            fileTouchPointId,
+        );
+        return updateNote;
     }
     async createRelation(relationObj: TouchPointFileDto): Promise<void> {
         const relation = this.relationRepository.create({ ...relationObj });
