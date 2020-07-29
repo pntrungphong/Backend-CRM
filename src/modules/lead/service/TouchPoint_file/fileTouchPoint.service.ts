@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FileDto } from '../../../../modules/file/dto/fileDto';
 import { FileEntity } from '../../../../modules/file/file.entity';
@@ -58,17 +58,11 @@ export class TouchPointFileService {
         noteFile: NoteFileTouchPointDto,
         fileTouchPointId: number,
     ): Promise<TouchPointFileEntity> {
-        const fileTouchPoint = await this.relationRepository.findOne({
-            where: { id: fileTouchPointId },
-        });
-        if (!fileTouchPoint) {
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
-        }
-        const updatedNoteFile = Object.assign(fileTouchPoint, {
-            ...noteFile,
-        });
-
-        return this.relationRepository.save(updatedNoteFile);
+        const updateNote = this.relationRepository.updateNote(
+            noteFile,
+            fileTouchPointId,
+        );
+        return updateNote;
     }
     async createRelation(relationObj: TouchPointFileDto): Promise<void> {
         const relation = this.relationRepository.create({ ...relationObj });
