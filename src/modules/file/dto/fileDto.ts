@@ -22,6 +22,9 @@ export class FileDto extends AbstractDto {
     destination: string;
 
     @ApiPropertyOptional()
+    url: string;
+
+    @ApiPropertyOptional()
     createdBy: string;
 
     @ApiPropertyOptional()
@@ -34,6 +37,7 @@ export class FileDto extends AbstractDto {
         this.filename = fileEntity.filename;
         this.path = fileEntity.path;
         this.destination = fileEntity.destination;
+        this.url = fileEntity.url;
         this.createdBy = fileEntity.createdBy;
         this.updatedBy = fileEntity.updatedBy;
     }

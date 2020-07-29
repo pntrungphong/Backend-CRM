@@ -1,6 +1,6 @@
 'use strict';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
+import { IsArray,IsOptional } from 'class-validator';
 
 import { LinkTouchPointFileDto } from '../fileTouchPoint/LinkFileDto';
 import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
@@ -9,7 +9,6 @@ export class UpdateDetailTouchPointDto {
     @IsOptional()
     @ApiProperty()
     goal: string;
-
 
     @IsOptional()
     @ApiProperty()
@@ -26,7 +25,6 @@ export class UpdateDetailTouchPointDto {
     @IsOptional()
     @ApiProperty()
     actualDate: Date;
-
 
     @IsArray()
     @IsOptional()

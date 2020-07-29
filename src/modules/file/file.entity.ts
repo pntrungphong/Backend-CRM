@@ -38,6 +38,9 @@ export class FileEntity extends AbstractEntity<FileDto> {
     @Column({ nullable: false, name: 'updated_by' })
     updatedBy: string;
 
+    @Column({ nullable: false, name: 'url' })
+    url: string;
+
     @ManyToMany(() => LeadEntity, { cascade: true })
     @JoinTable({
         name: 'lead_file',
