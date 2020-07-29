@@ -8,6 +8,8 @@ import { OrderTouchPointDto } from '../fileTouchPoint/OrderTouchPointDto';
 
 export class InfoFileTouchPointDto {
     @ApiPropertyOptional()
+    id: number;
+    @ApiPropertyOptional()
     fileId: number;
 
     @ApiPropertyOptional()
@@ -26,6 +28,7 @@ export class InfoFileTouchPointDto {
     touchPoint: OrderTouchPointDto;
 
     constructor(touchPointFile: TouchPointFileEntity) {
+        this.id = touchPointFile.id;
         this.fileId = touchPointFile.fileId;
         this.touchPointId = touchPointFile.touchPointId;
         this.leadId = touchPointFile.leadId;

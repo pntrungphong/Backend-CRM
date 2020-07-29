@@ -23,7 +23,7 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     name: string;
     @Column({ nullable: false })
     rank: string;
-    @Column({ nullable: false, default: 'In-progress' })
+    @Column({ nullable: false, default: 'On-going' })
     status: string;
     @Column({ nullable: true, name: 'review' })
     review: string;

@@ -207,8 +207,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
-
-
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
@@ -221,13 +219,13 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             .leftJoinAndSelect('task.user', 'user')
             .where('LOWER (lead.name) LIKE :name', {
                 name: `%${pageOptionsDto.q.toLowerCase()}%`,
-            })
-            if(pageOptionsDto.status){
-                queryBuilder.andWhere('lead.status = :status', {
-                    status: `${pageOptionsDto.status}`,
-                })
-            }
-            queryBuilder.addOrderBy('lead.rank', pageOptionsDto.order);
+            });
+        if (pageOptionsDto.status) {
+            queryBuilder.andWhere('lead.status = :status', {
+                status: `${pageOptionsDto.status}`,
+            });
+        }
+        queryBuilder.addOrderBy('lead.rank', pageOptionsDto.order);
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -277,9 +275,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 listTouchPoint.push(infoTouchPoint);
             });
             listTouchPoint.sort(
-                (a, b) =>
-                    parseInt(a.order.toString(), 10) -
-                    parseInt(b.order.toString(), 10),
+                (a, b) => a.meetingDate.getTime() - b.meetingDate.getTime(),
             );
             lead.touchPoint = listTouchPoint;
             lead.tag = listTag;
