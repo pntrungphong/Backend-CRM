@@ -1,6 +1,7 @@
 'use strict';
 
 import {
+    Body,
     Controller,
     Get,
     HttpCode,
@@ -33,13 +34,17 @@ import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../user/user.entity';
 import { FileDto } from './dto/fileDto';
+import { UrlDto } from './dto/urlDto';
+import { FileEntity } from './file.entity';
 import { FileService } from './file.service';
+
 @Controller('file')
 @ApiTags('file')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class FileController {
+    public logger = new Logger(FileController.name);
     constructor(private _service: FileService) {}
 
     @Post()
@@ -54,7 +59,8 @@ export class FileController {
                 fileName: (req, file, cb) => {
                     try {
                         const fileName = uuid();
-                        Logger.log('tp.controller f');
+                        this.logger.log('Post file');
+
                         return cb(
                             null,
                             `${fileName}${extname(file.originalname)}`,
@@ -77,6 +83,16 @@ export class FileController {
     ): Promise<FileDto> {
         const uploadedFile = await this._service.upload(files[0], user);
         return uploadedFile.toDto() as FileDto;
+    }
+
+    @Post('url')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({ type: UrlDto, description: 'Successfully Registered' })
+    async uploadUrl(
+        @Body() urls: UrlDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<FileEntity> {
+        return this._service.uploadUrl(urls, user);
     }
 
     @Get(':id')

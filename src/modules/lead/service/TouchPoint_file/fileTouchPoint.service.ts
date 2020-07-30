@@ -13,6 +13,7 @@ import { TouchPointFileRepository } from '../../repository/TouchpointFile/fileTo
 
 @Injectable()
 export class TouchPointFileService {
+    public logger = new Logger(TouchPointFileService.name);
     constructor(public readonly relationRepository: TouchPointFileRepository) {}
 
     async createFileTouchPoint(
@@ -74,7 +75,7 @@ export class TouchPointFileService {
             where: { leadId },
             relations: ['file', 'touchPoint'],
         });
-        Logger.log('fileTP.sv');
+        this.logger.log('Get List');
         const listFile = [];
         file.map((it) => {
             const fileTouchPoint = new InfoFileTouchPointDto(it);
