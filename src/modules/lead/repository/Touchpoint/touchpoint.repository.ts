@@ -50,31 +50,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const newTouchPoint = await this.repository.save(touchPointEntity);
-        const entity = await this.repository.find({
-            where: { leadId: touchPointDto.leadId },
-            order: {
-                meetingDate: 'ASC',
-            },
-        });
-        if (entity.length === 1) {
-            this.updateOrder(entity[0].id, 1);
-        } else {
-            entity
-                .sort(
-                    (a, b) => a.meetingDate.getTime() - b.meetingDate.getTime(),
-                )
-                .sort((a, b) => {
-                    const index = {
-                        "Done": 1,
-                        'In-progress': 2,
-                        "Planning": 3,
-                    };
-                    return index[a.status] - index[b.status];
-                });
-            for (let i = 1; i < entity.length; i++) {
-                this.updateOrder(entity[i].id, i + 1);
-            }
-        }
+        await this.sortTouchPoint(touchPointDto.leadId,'meetingDate');
         return newTouchPoint.toDto() as TouchPointEntity;
     }
 
@@ -159,6 +135,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             listTask.push(infoTask);
         });
         touchpoint.task = listTask;
+        touchpoint.task.sort((a,b)=>a.createdAt.getTime()-b.createdAt.getTime())
         return touchpoint;
     }
 
@@ -177,32 +154,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const update = await this.repository.save(updatedTouchPoint);
-        const entity = await this.repository.find({
-            where: { leadId: touchpoint.leadId },
-            order: {
-                meetingDate: 'ASC',
-            },
-        });
-        if (entity.length === 1) {
-            this.updateOrder(entity[0].id, 1);
-        } else {
-            entity
-                .sort(
-                    (a, b) => a.meetingDate.getTime() - b.meetingDate.getTime(),
-                )
-                .sort((a, b) => {
-                    const index = {
-                        "Done": 1,
-                        'In-progress': 2,
-                        "Planning": 3,
-                    };
-                    return index[a.status] - index[b.status];
-                });
-            for (let i = 1; i < entity.length; i++) {
-                this.updateOrder(entity[i].id, i + 1);
-            }
-        }
-        Logger.log(entity);
+        this.sortTouchPoint(touchpoint.leadId,'meetingDate');
         return update;
     }
 
@@ -241,30 +193,38 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const markDone = await this.repository.save(updatedTouchPoint);
+        await this.sortTouchPoint(touchpoint.leadId,'actualDate')
+        return markDone;
+    }
+
+    async sortTouchPoint(leadId: number,typeSort:string) {
+        const index = {
+            [StatusTouchPoint.DONE]: 1,
+            [StatusTouchPoint.IN_PROGRESS]: 2,
+            [StatusTouchPoint.DRAFT]: 3,
+        };
+        const type=typeSort
         const entity = await this.repository.find({
-            where: { leadId: touchpoint.leadId },
+            where: { leadId: leadId },
             order: {
-                actualDate: 'ASC',
+                [type]: 'ASC',
             },
         });
-
-        if (entity.length === 1) {
-            this.updateOrder(entity[0].id, 1);
-        } else {
+        if(type=='meetingDate'){
             entity
-                .sort((a, b) => a.actualDate.getTime() - b.actualDate.getTime())
-                .sort((a, b) => {
-                    const index = {
-                        "Done": 1,
-                        'In-progress': 2,
-                        "Planning": 3,
-                    };
-                    return index[a.status] - index[b.status];
-                });
-            for (let i = 0; i < entity.length; i++) {
-                this.updateOrder(entity[i].id, i + 1);
-            }
+            .sort((a, b) => a.meetingDate.getTime() - b.meetingDate.getTime())
+            .sort((a, b) => {
+                return index[a.status] - index[b.status];
+            });
+        }else{
+            entity
+            .sort((a, b) => a.actualDate.getTime() - b.actualDate.getTime())
+            .sort((a, b) => {
+                return index[a.status] - index[b.status];
+            });
         }
-        return markDone;
+        for (let i = 0; i < entity.length; i++) {
+            this.updateOrder(entity[i].id, i + 1);
+        }
     }
 }
