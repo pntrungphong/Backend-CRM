@@ -7,7 +7,7 @@ import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
 
 export class UpdateTouchPointDto {
     @IsOptional()
-    @ApiProperty()
+    @ApiProperty({example: "complete first meeting"})
     goal: string;
 
     @IsOptional()

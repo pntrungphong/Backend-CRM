@@ -50,7 +50,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const newTouchPoint = await this.repository.save(touchPointEntity);
-        await this.sortTouchPoint(touchPointDto.leadId,'meetingDate');
+        await this.sortTouchPoint(touchPointDto.leadId);
         return newTouchPoint.toDto() as TouchPointEntity;
     }
 
@@ -135,7 +135,9 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             listTask.push(infoTask);
         });
         touchpoint.task = listTask;
-        touchpoint.task.sort((a,b)=>a.createdAt.getTime()-b.createdAt.getTime())
+        touchpoint.task.sort(
+            (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        );
         return touchpoint;
     }
 
@@ -154,19 +156,8 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const update = await this.repository.save(updatedTouchPoint);
-        this.sortTouchPoint(touchpoint.leadId,'meetingDate');
+        this.sortTouchPoint(touchpoint.leadId);
         return update;
-    }
-
-    async updateOrder(id: string, order: number): Promise<TouchPointEntity> {
-        const touchpoint = await this.repository.findOne({ id });
-        if (!touchpoint) {
-            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
-        }
-        const updatedTouchPoint = Object.assign(touchpoint, {
-            order,
-        });
-        return this.repository.save(updatedTouchPoint);
     }
 
     async updateMarkDone(
@@ -193,38 +184,33 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const markDone = await this.repository.save(updatedTouchPoint);
-        await this.sortTouchPoint(touchpoint.leadId,'actualDate')
+        await this.sortTouchPoint(touchpoint.leadId);
         return markDone;
     }
 
-    async sortTouchPoint(leadId: number,typeSort:string) {
+    async sortTouchPoint(leadId: number) {
         const index = {
             [StatusTouchPoint.DONE]: 1,
             [StatusTouchPoint.IN_PROGRESS]: 2,
             [StatusTouchPoint.DRAFT]: 3,
         };
-        const type=typeSort
         const entity = await this.repository.find({
             where: { leadId: leadId },
             order: {
-                [type]: 'ASC',
+                actualDate: 'ASC',
             },
         });
-        if(type=='meetingDate'){
             entity
-            .sort((a, b) => a.meetingDate.getTime() - b.meetingDate.getTime())
-            .sort((a, b) => {
-                return index[a.status] - index[b.status];
+                .sort((a, b) => a.actualDate.getTime() - b.actualDate.getTime())
+                .sort((a, b) => {
+                    return index[a.status] - index[b.status];
+                });
+
+        const newOrderEntities = entity.map((touchpoint, index) => {
+            return Object.assign(touchpoint, {
+                order: index + 1,
             });
-        }else{
-            entity
-            .sort((a, b) => a.actualDate.getTime() - b.actualDate.getTime())
-            .sort((a, b) => {
-                return index[a.status] - index[b.status];
-            });
-        }
-        for (let i = 0; i < entity.length; i++) {
-            this.updateOrder(entity[i].id, i + 1);
-        }
+        })
+        this.repository.save(newOrderEntities);
     }
 }
