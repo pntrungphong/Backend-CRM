@@ -225,7 +225,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 status: `${pageOptionsDto.status}`,
             });
         }
-        queryBuilder.addOrderBy('lead.rank', pageOptionsDto.order);
+        queryBuilder
+            .addOrderBy('lead.rank', pageOptionsDto.order)
+            .addOrderBy('lead.createdAt',pageOptionsDto.order);
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -274,9 +276,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 infoTouchPoint.task = listTask;
                 listTouchPoint.push(infoTouchPoint);
             });
-            listTouchPoint.sort(
-                (a, b) => a.meetingDate.getTime() - b.meetingDate.getTime(),
-            );
+            listTouchPoint.sort((a, b) => a.order - b.order);
+
             lead.touchPoint = listTouchPoint;
             lead.tag = listTag;
             lead.contact = listContact;

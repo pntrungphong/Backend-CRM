@@ -27,18 +27,15 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         touchPointDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        touchPointDto.meetingDate=new Date();
-        touchPointDto.actualDate=touchPointDto.meetingDate;
+        touchPointDto.actualDate = touchPointDto.meetingDate;
         const lastEntity = await this.repository.findOne({
-            select: ['order', 'status'],
+            select: ['status'],
             where: { leadId: touchPointDto.leadId },
             order: {
                 id: 'DESC',
             },
         });
-        let order = 1;
         if (lastEntity) {
-            order = lastEntity.order + 1;
             if (lastEntity.status !== StatusTouchPoint.DONE) {
                 touchPointDto.status = StatusTouchPoint.DRAFT;
             } else {
@@ -48,14 +45,15 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             touchPointDto.status = StatusTouchPoint.IN_PROGRESS;
         }
         const touchPointEntity = this.repository.create({
-            order,
             ...touchPointDto,
             createdBy: user.id,
             updatedBy: user.id,
         });
         const newTouchPoint = await this.repository.save(touchPointEntity);
+        await this.sortTouchPoint(touchPointDto.leadId);
         return newTouchPoint.toDto() as TouchPointEntity;
     }
+
     public async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
@@ -137,6 +135,9 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             listTask.push(infoTask);
         });
         touchpoint.task = listTask;
+        touchpoint.task.sort(
+            (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        );
         return touchpoint;
     }
 
@@ -145,7 +146,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         updateDto: UpdateDetailTouchPointDto,
         user: UserEntity,
     ): Promise<TouchPointEntity> {
-        updateDto.actualDate=updateDto.meetingDate;
+        updateDto.actualDate = updateDto.meetingDate;
         const touchpoint = await this.repository.findOne({ id });
         if (!touchpoint) {
             throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
@@ -154,8 +155,11 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             ...updateDto,
             updatedBy: user.id,
         });
-        return this.repository.save(updatedTouchPoint);
+        const update = await this.repository.save(updatedTouchPoint);
+        this.sortTouchPoint(touchpoint.leadId);
+        return update;
     }
+
     async updateMarkDone(
         id: string,
         updateDto: UpdateTouchPointMarkDoneDto,
@@ -179,7 +183,34 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             ...updateDto,
             updatedBy: user.id,
         });
+        const markDone = await this.repository.save(updatedTouchPoint);
+        await this.sortTouchPoint(touchpoint.leadId);
+        return markDone;
+    }
 
-        return this.repository.save(updatedTouchPoint);
+    async sortTouchPoint(leadId: number) {
+        const index = {
+            [StatusTouchPoint.DONE]: 1,
+            [StatusTouchPoint.IN_PROGRESS]: 2,
+            [StatusTouchPoint.DRAFT]: 3,
+        };
+        const entity = await this.repository.find({
+            where: { leadId: leadId },
+            order: {
+                actualDate: 'ASC',
+            },
+        });
+            entity
+                .sort((a, b) => a.actualDate.getTime() - b.actualDate.getTime())
+                .sort((a, b) => {
+                    return index[a.status] - index[b.status];
+                });
+
+        const newOrderEntities = entity.map((touchpoint, index) => {
+            return Object.assign(touchpoint, {
+                order: index + 1,
+            });
+        })
+        this.repository.save(newOrderEntities);
     }
 }
