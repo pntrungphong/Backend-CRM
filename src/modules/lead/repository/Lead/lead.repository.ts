@@ -274,9 +274,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 infoTouchPoint.task = listTask;
                 listTouchPoint.push(infoTouchPoint);
             });
-            listTouchPoint.sort(
-                (a, b) => a.meetingDate.getTime() - b.meetingDate.getTime(),
-            );
+            listTouchPoint.sort((a, b) => a.order - b.order);
+
             lead.touchPoint = listTouchPoint;
             lead.tag = listTag;
             lead.contact = listContact;
