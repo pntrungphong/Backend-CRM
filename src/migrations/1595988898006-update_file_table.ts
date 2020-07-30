@@ -9,6 +9,9 @@ export class UpdateFileTable1595988898006 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query('DROP TABLE "file"');
+        await queryRunner.query(`
+            ALTER TABLE file
+            DROP COLUMN url;
+        `);
     }
 }
