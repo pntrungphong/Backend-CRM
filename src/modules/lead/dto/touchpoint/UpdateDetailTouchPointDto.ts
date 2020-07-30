@@ -1,6 +1,6 @@
 'use strict';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray,IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsOptional } from 'class-validator';
 
 import { LinkTouchPointFileDto } from '../fileTouchPoint/LinkFileDto';
 import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';

@@ -82,7 +82,7 @@ export class TouchPointController {
     async getTouchPointById(@Param('id') id: string): Promise<TouchPointDto> {
         return this._touchPointService.getTouchPointById(id);
     }
-    
+
     @Put(':id')
     @ApiOkResponse({
         type: UpdateDetailTouchPointDto,

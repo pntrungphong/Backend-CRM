@@ -35,8 +35,8 @@ import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.se
 import { UserEntity } from '../user/user.entity';
 import { FileDto } from './dto/fileDto';
 import { UrlDto } from './dto/urlDto';
-import { FileService } from './file.service';
 import { FileEntity } from './file.entity';
+import { FileService } from './file.service';
 
 @Controller('file')
 @ApiTags('file')
@@ -93,7 +93,6 @@ export class FileController {
         @AuthUser() user: UserEntity,
     ): Promise<FileEntity> {
         return this._service.uploadUrl(urls, user);
-        
     }
 
     @Get(':id')

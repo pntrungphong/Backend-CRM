@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { MimeTypeFile } from '../../common/constants/mimetype-file';
+import { TouchPointFileDto } from '../lead/dto/fileTouchPoint/TouchPointFileDto';
+import { TouchPointFileService } from '../lead/service/TouchPoint_file/fileTouchPoint.service';
 import { UserEntity } from '../user/user.entity';
 import { FileDto } from './dto/fileDto';
 import { UrlDto } from './dto/urlDto';
@@ -11,7 +13,10 @@ import { FileRepository } from './file.repository';
 export class FileService {
     public logger = new Logger(FileService.name);
 
-    constructor(public readonly repository: FileRepository) {}
+    constructor(
+        public readonly repository: FileRepository,
+        public readonly touchPointFileService: TouchPointFileService,
+    ) {}
 
     async upload(file: FileDto, user: UserEntity): Promise<FileEntity> {
         const fileData = Object.assign(file, {
@@ -30,9 +35,25 @@ export class FileService {
             originalname: urlDto.name,
             mimetype: MimeTypeFile.LINK,
         });
+
         const newFile = await this.repository.create(file);
-        
-        return newFile.toDto();
+        const fileTouchPoint = new TouchPointFileDto(
+            parseInt(newFile.id, 10),
+            urlDto.touchPointId,
+            urlDto.leadId,
+            urlDto.type,
+            urlDto.note,
+        );
+
+        const fileTouchPoints = [];
+        fileTouchPoints.push(fileTouchPoint);
+        void this.touchPointFileService.createFileTouchPoint(
+            fileTouchPoints,
+            urlDto.touchPointId,
+            urlDto.leadId,
+        );
+
+        return newFile.toDto() as FileEntity;
     }
 
     async getFileById(id: string): Promise<FileEntity> {

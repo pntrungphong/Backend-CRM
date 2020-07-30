@@ -18,6 +18,7 @@ export class TouchPointFileDto {
     @IsOptional()
     @ApiProperty()
     type: string;
+
     @IsOptional()
     @ApiProperty()
     note: string;
