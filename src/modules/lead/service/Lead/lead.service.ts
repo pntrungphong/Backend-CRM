@@ -14,6 +14,7 @@ import { LeadRepository } from '../../repository/Lead/lead.repository';
 import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 @Injectable()
 export class LeadService {
+    public logger = new Logger(LeadService.name);
     constructor(
         private readonly _leadRepository: LeadRepository,
         private readonly _noteRepository: NoteRepository,
@@ -72,7 +73,7 @@ export class LeadService {
     async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
-        Logger.log('lead.service');
+        this.logger.log('GET LIST');
         return this._leadRepository.getList(pageOptionsDto);
     }
     @Transactional()
@@ -81,7 +82,7 @@ export class LeadService {
         updateDto: LeadChangeStatusDto,
         user: UserEntity,
     ): Promise<LeadEntity> {
-        Logger.log('lead.service');
+        this.logger.log('Chang Status');
         const changeStatus = await this._leadRepository.changeStatus(
             id,
             updateDto,
@@ -92,4 +93,12 @@ export class LeadService {
         }
         return changeStatus;
     }
+
+    async getListRelationCompany(
+        idCompany: string,
+    ): Promise<LeadEntity[]> {
+        this.logger.log('GET LIST RELATION COMPANY');
+        return this._leadRepository.getListRelationCompany(idCompany);
+    }
+    
 }

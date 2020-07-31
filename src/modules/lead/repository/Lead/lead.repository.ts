@@ -28,6 +28,7 @@ import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
+    public logger = new Logger(LeadRepository.name);
     public async create(
         user: UserEntity,
         leadDto: LeadUpdateDto,
@@ -129,7 +130,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const updatedLead = await this.repository.save(updateLeadCurrent, {
             reload: true,
         });
-        Logger.log('lead.repo');
+        this.logger.log('UPDATE');
         return updatedLead.toDto() as LeadEntity;
     }
 
@@ -207,6 +208,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        this.logger.log('GET LIST');
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
@@ -237,7 +239,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             itemCount: leadsCount,
         });
         const results = [];
-        Logger.log('lead.repo 2');
         for await (const iterator of leads) {
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
@@ -285,7 +286,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             lead.rankRevision = iterator.rankRevision;
             results.push(lead);
         }
-        Logger.log('lead.repo 3');
         return new LeadsPageDetailDto(results, pageMetaDto);
     }
 
@@ -306,5 +306,60 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             updatedBy: user.id,
         });
         return this.repository.save(changStatus);
+    }
+
+    public async getListRelationCompany(
+        idCompany: string,
+    ): Promise<LeadEntity[]> {
+        this.logger.log('GET LIST RELATION COMPANY');
+        const queryBuilder = this.repository
+            .createQueryBuilder('lead')
+            .leftJoinAndSelect('lead.note', 'note')
+            .leftJoinAndSelect('lead.company', 'company')
+            .leftJoinAndSelect('lead.contact', 'contact')
+            .leftJoinAndSelect('lead.relatedTo', 'relatedTo')
+            .leftJoinAndSelect('lead.tag', 'tag')
+            .where('lead.idCompany = :idCompany', {
+                idCompany: `${idCompany}`,
+            });
+        queryBuilder
+            .addOrderBy('lead.status', "ASC")
+            .addOrderBy('lead.createdAt', "ASC");
+        const [leads] = await queryBuilder
+            .getManyAndCount();
+
+        const results = [];
+        for await (const iterator of leads) {
+            const lead = new LeadDto(iterator);
+            lead.company = new InfoLeadCompanyDto(iterator.company);
+            const contact = lead.contact;
+            const listContact = [] as InfoLeadContactDto[];
+            contact.map((item) => {
+                const infoContact = new InfoLeadContactDto(<ContactEntity>item);
+                listContact.push(infoContact);
+            });
+            const relatedTo = lead.relatedTo;
+            const listRelatedTo = [] as InfoLeadContactDto[];
+            relatedTo.forEach((item) => {
+                const infoRelatedTo = new InfoLeadContactDto(
+                    item as ContactEntity,
+                );
+                listRelatedTo.push(infoRelatedTo);
+            });
+
+            const listTag = [] as InfoLeadTagDto[];
+            lead.tag.map((item) => {
+                const infoTag = new InfoLeadTagDto(item as TagEntity);
+                listTag.push(infoTag);
+            });
+    
+            lead.tag = listTag;
+            lead.contact = listContact;
+            lead.relatedTo = listRelatedTo;
+            lead.rankRevision = iterator.rankRevision;
+            results.push(lead);
+        }
+        
+        return results;
     }
 }
