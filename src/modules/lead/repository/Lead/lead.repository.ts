@@ -189,9 +189,10 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         result.touchPoint.forEach((item) => {
             const infoTouchPoint = new TouchPointDto(item as TouchPointEntity);
             const listTask = [] as TaskDto[];
-            infoTouchPoint.fileTouchPoint.map((it)=>{
+            infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map((it)=>{
                 const infoFileTouchPoint=new FileDto(it.file as FileEntity)
                 it.file=infoFileTouchPoint
+                return it;
             })
             infoTouchPoint.task.map((it) => {
                 const infoTask = new TaskDto(it as TaskEntity);
