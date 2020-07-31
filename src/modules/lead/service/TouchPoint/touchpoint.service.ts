@@ -13,6 +13,7 @@ import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transaction
 import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 @Injectable()
 export class TouchPointService {
+    public logger = new Logger(TouchPointService.name);
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointFilePointService: TouchPointFileService,
@@ -22,7 +23,7 @@ export class TouchPointService {
         user: UserEntity,
         createDto: UpdateTouchPointDto,
     ): Promise<TouchPointEntity> {
-        Logger.log('tp.service up');
+        this.logger.log('POST');
         const createTouchPoint = await this._touchPointRepository.create(
             user,
             createDto,
@@ -35,20 +36,20 @@ export class TouchPointService {
                 createDto.leadId,
             );
         }
-        Logger.log('tp.service down');
         return createTouchPoint;
     }
 
     async getList(
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
-        Logger.log('tp.service');
+        this.logger.log('GET LIST');
         return this._touchPointRepository.getList(pageOptionsDto);
     }
 
     async getTouchPointById(id: string): Promise<TouchPointDto> {
         return this._touchPointRepository.getTouchPointById(id);
     }
+    
     async update(
         id: string,
         updateDto: UpdateDetailTouchPointDto,
@@ -69,6 +70,7 @@ export class TouchPointService {
         }
         return updateTouchPoint;
     }
+
     async updateMarkDone(
         id: string,
         updateDto: UpdateTouchPointMarkDoneDto,

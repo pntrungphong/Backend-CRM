@@ -139,6 +139,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         touchpoint.task.sort(
             (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
         );
+
         return touchpoint;
     }
 
