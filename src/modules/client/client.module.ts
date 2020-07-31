@@ -13,6 +13,20 @@ import { CompanyContactService } from './service/companyContact.service';
 import { ContactService } from './service/contact.service';
 import { ContactReferralService } from './service/referral.service';
 import { TagRepository } from '../tag/tag.repository';
+import { LeadRepository } from '../lead/repository/Lead/lead.repository';
+import { NoteRepository } from '../lead/repository/Note/note.repository';
+import { TouchPointRepository } from '../lead/repository/Touchpoint/touchpoint.repository';
+import { TouchPointFileRepository } from '../lead/repository/TouchpointFile/fileTouchPoint.repository';
+import { TaskRepository } from '../lead/repository/Task/task.repository';
+import { LeadController } from '../lead/controller/lead.controller';
+import { TouchPointController } from '../lead/controller/touchpoint.controller';
+import { TaskController } from '../lead/controller/task.controller';
+import { FileTouchPointController } from '../lead/controller/fileTouchPoint.controller';
+import { LeadService } from '../lead/service/Lead/lead.service';
+import { NoteService } from '../lead/service/Note/note.service';
+import { TouchPointService } from '../lead/service/TouchPoint/touchpoint.service';
+import { TouchPointFileService } from '../lead/service/TouchPoint_file/fileTouchPoint.service';
+import { TaskService } from '../lead/service/Task/task.service';
 
 @Module({
     imports: [
@@ -22,21 +36,42 @@ import { TagRepository } from '../tag/tag.repository';
             CompanyRepository,
             CompanyContactRepository,
             ContactReferralRepository,
-            TagRepository
+            TagRepository,
+            LeadRepository,
+            NoteRepository,
+            TouchPointRepository,
+            TouchPointFileRepository,
+            TaskRepository,
         ]),
     ],
-    controllers: [ContactController, CompanyController],
+    controllers: [
+        ContactController, 
+        CompanyController,
+        LeadController,
+        TouchPointController,
+        TaskController,
+        FileTouchPointController,
+    ],
     exports: [
         CompanyService,
         ContactService,
         ContactReferralService,
         CompanyContactService,
+        LeadService,
+        NoteService,
+        TouchPointService,
+        TouchPointFileService,
     ],
     providers: [
         CompanyService,
         ContactService,
         ContactReferralService,
         CompanyContactService,
+        LeadService,
+        NoteService,
+        TouchPointService,
+        TouchPointFileService,
+        TaskService,
     ],
 })
 export class ClientModule {}
