@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 
 import { PageMetaDto } from '../../../common/dto/PageMetaDto';
 import { UserEntity } from '../../user/user.entity';
@@ -10,11 +10,14 @@ import { GeneralInfoDto } from '../dto/contact/GeneralInfoDto';
 import { CompanyEntity } from '../entity/company.entity';
 import { CompanyRepository } from '../repository/company.repository';
 import { ContactRepository } from '../repository/contact.repository';
+import { LeadRepository } from '../../lead/repository/Lead/lead.repository';
 @Injectable()
 export class CompanyService {
+    public logger = new Logger(CompanyService.name);
     constructor(
         public readonly companyRepository: CompanyRepository,
         private readonly _contactRepository: ContactRepository,
+        private readonly _leadRepository: LeadRepository,
     ) {}
 
     async create(
@@ -76,6 +79,7 @@ export class CompanyService {
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
+
         const listIdContact = company.contact.map((it) => it.idContact);
         const rawData = await this._contactRepository.findByIds(listIdContact);
         const result = new DetailCompanyDto(company);
