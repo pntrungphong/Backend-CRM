@@ -26,6 +26,7 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { FileDto } from '../../../../modules/file/dto/fileDto';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async create(
@@ -171,6 +172,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 'relatedTo',
                 'touchPoint',
                 'touchPoint.task',
+                'touchPoint.fileTouchPoint',
+                'touchPoint.fileTouchPoint.file',
                 'touchPoint.task.user',
             ],
         });
@@ -186,6 +189,10 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         result.touchPoint.forEach((item) => {
             const infoTouchPoint = new TouchPointDto(item as TouchPointEntity);
             const listTask = [] as TaskDto[];
+            infoTouchPoint.fileTouchPoint.map((it)=>{
+                const infoFileTouchPoint=new FileDto(it.file as FileEntity)
+                it.file=infoFileTouchPoint
+            })
             infoTouchPoint.task.map((it) => {
                 const infoTask = new TaskDto(it as TaskEntity);
                 const infoUser = new UserDto(infoTask.user as UserEntity);
