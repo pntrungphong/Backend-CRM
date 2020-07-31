@@ -48,15 +48,21 @@ export class ContactEntity extends AbstractEntity<ContactDto> {
     @JoinColumn()
     referral: ContactReferralEntity[];
 
-    @ManyToMany(() => LeadEntity, (lead) => lead.contact)
+    @ManyToMany(() => LeadEntity)
+    @JoinTable({
+        name: 'contact_lead',
+        joinColumns: [{ name: 'contact_id' }],
+        inverseJoinColumns: [{ name: 'lead_id' }],
+    })
     lead: LeadEntity[];
+
     @ManyToMany(() => TagEntity, { cascade: true, eager: true })
     @JoinTable({
         name: 'tag_source',
         joinColumn: { name: 'source_id' },
         inverseJoinColumn: { name: 'tag_id' },
     })
-    tag: TagEntity[];
+    tag: TagEntity[]; 
 
     dtoClass = ContactDto;
 }

@@ -28,6 +28,7 @@ import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
+    public logger = new Logger(LeadRepository.name);
     public async create(
         user: UserEntity,
         leadDto: LeadUpdateDto,
@@ -129,7 +130,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const updatedLead = await this.repository.save(updateLeadCurrent, {
             reload: true,
         });
-        Logger.log('lead.repo');
+        this.logger.log('UPDATE');
         return updatedLead.toDto() as LeadEntity;
     }
 
@@ -207,6 +208,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList(
         pageOptionsDto: LeadsPageOptionsDto,
     ): Promise<LeadsPageDetailDto> {
+        this.logger.log('GET LIST');
         const queryBuilder = this.repository
             .createQueryBuilder('lead')
             .leftJoinAndSelect('lead.note', 'note')
@@ -227,7 +229,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         }
         queryBuilder
             .addOrderBy('lead.rank', pageOptionsDto.order)
-            .addOrderBy('lead.createdAt',pageOptionsDto.order);
+            .addOrderBy('lead.createdAt', pageOptionsDto.order);
+
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -237,7 +240,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             itemCount: leadsCount,
         });
         const results = [];
-        Logger.log('lead.repo 2');
         for await (const iterator of leads) {
             const lead = new LeadDto(iterator);
             lead.company = new InfoLeadCompanyDto(iterator.company);
@@ -285,7 +287,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             lead.rankRevision = iterator.rankRevision;
             results.push(lead);
         }
-        Logger.log('lead.repo 3');
         return new LeadsPageDetailDto(results, pageMetaDto);
     }
 

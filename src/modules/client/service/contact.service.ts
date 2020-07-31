@@ -12,6 +12,7 @@ import { DetailContactDto } from '../dto/contact/DetailContactDto';
 import { ContactEntity } from '../entity/contact.entity';
 import { CompanyRepository } from '../repository/company.repository';
 import { ContactRepository } from '../repository/contact.repository';
+import { BasicInfoLeadDto } from '../../lead/dto/lead/BasicInfoLeadDto';
 
 @Injectable()
 export class ContactService {
@@ -94,7 +95,7 @@ export class ContactService {
 
     async findById(id: string): Promise<DetailContactDto> {
         const contact = await this.contactRepository.findOne({
-            relations: ['company', 'referral', 'tag'],
+            relations: ['company', 'referral', 'tag', 'lead'],
             where: { id },
         });
         if (!contact) {
@@ -115,6 +116,8 @@ export class ContactService {
         result.referral = listContacts.map(
             (it, index) => new ReferralDto(it, contact.referral[index]),
         );
+
+        result.lead = contact.lead.map((it) => new BasicInfoLeadDto(it));
 
         return result;
     }
