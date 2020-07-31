@@ -11,7 +11,7 @@ export class TouchPointFileRepository extends Repository<TouchPointFileEntity> {
         fileTouchPointId: number,
     ): Promise<TouchPointFileEntity> {
         const fileTouchPoint = await this.findOne({
-            where: { id: fileTouchPointId },
+            where: { fileId: fileTouchPointId },
         });
         if (!fileTouchPoint) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
