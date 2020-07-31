@@ -3,6 +3,7 @@ import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
+import { FileDto } from '../../../../modules/file/dto/fileDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
@@ -105,10 +106,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const listContactEntity = await this.getRepositoryFor(
             ContactEntity,
         ).findByIds(listContact);
-
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(updateDto.rank, 10);
-        rankRevision.reason = updateDto.rankRevision[0].reason;
+        [rankRevision.reason] = [updateDto.rankRevision[0].reason] as [string];
         if (!rankRevision.reason) {
             rankRevision.reason = '';
         }
@@ -146,7 +146,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         }
         const rankRevision = new RankRevisionDto();
         rankRevision.rank = parseInt(updateDto.rank, 10);
-        rankRevision.reason = updateDto.rankRevision[0].reason;
+        [rankRevision.reason] = [updateDto.rankRevision[0].reason] as [string];
         rankRevision.touchPoint = 0;
         rankRevision.updatedBy = user.id;
         rankRevision.updatedAt = Date();
@@ -171,6 +171,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 'relatedTo',
                 'touchPoint',
                 'touchPoint.task',
+                'touchPoint.fileTouchPoint',
+                'touchPoint.fileTouchPoint.file',
                 'touchPoint.task.user',
             ],
         });
@@ -186,6 +188,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         result.touchPoint.forEach((item) => {
             const infoTouchPoint = new TouchPointDto(item as TouchPointEntity);
             const listTask = [] as TaskDto[];
+            infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                (it) => {
+                    const infoFileTouchPoint = new FileDto(
+                        it.file as FileEntity,
+                    );
+                    it.file = infoFileTouchPoint;
+                    return it;
+                },
+            );
             infoTouchPoint.task.map((it) => {
                 const infoTask = new TaskDto(it as TaskEntity);
                 const infoUser = new UserDto(infoTask.user as UserEntity);
@@ -227,7 +238,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         }
         queryBuilder
             .addOrderBy('lead.rank', pageOptionsDto.order)
-            .addOrderBy('lead.createdAt',pageOptionsDto.order);
+            .addOrderBy('lead.createdAt', 'DESC');
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
@@ -285,7 +296,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             lead.rankRevision = iterator.rankRevision;
             results.push(lead);
         }
-        Logger.log('lead.repo 3');
         return new LeadsPageDetailDto(results, pageMetaDto);
     }
 
