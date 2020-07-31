@@ -234,7 +234,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         }
         queryBuilder
             .addOrderBy('lead.rank', pageOptionsDto.order)
-            .addOrderBy('lead.createdAt',pageOptionsDto.order);
+            .addOrderBy('lead.createdAt','DESC');
         const [leads, leadsCount] = await queryBuilder
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take)
