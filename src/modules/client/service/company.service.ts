@@ -10,6 +10,7 @@ import { GeneralInfoDto } from '../dto/contact/GeneralInfoDto';
 import { CompanyEntity } from '../entity/company.entity';
 import { CompanyRepository } from '../repository/company.repository';
 import { ContactRepository } from '../repository/contact.repository';
+import { BasicInfoLeadDto } from '../../lead/dto/lead/BasicInfoLeadDto';
 import { LeadRepository } from '../../lead/repository/Lead/lead.repository';
 @Injectable()
 export class CompanyService {
@@ -73,7 +74,7 @@ export class CompanyService {
     async findById(id: string): Promise<DetailCompanyDto> {
         const company = await this.companyRepository.findOne({
             where: { id },
-            relations: ['contact', 'tag'],
+            relations: ['contact', 'tag', 'lead'],
         });
 
         if (!company) {
@@ -84,6 +85,8 @@ export class CompanyService {
         const rawData = await this._contactRepository.findByIds(listIdContact);
         const result = new DetailCompanyDto(company);
         result.contact = rawData.map((it) => new GeneralInfoDto(it));
+
+        result.lead = company.lead.map((it) => new BasicInfoLeadDto(it));
 
         return result;
     }

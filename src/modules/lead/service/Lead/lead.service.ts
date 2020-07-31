@@ -93,12 +93,4 @@ export class LeadService {
         }
         return changeStatus;
     }
-
-    async getListRelationCompany(
-        idCompany: string,
-    ): Promise<LeadEntity[]> {
-        this.logger.log('GET LIST RELATION COMPANY');
-        return this._leadRepository.getListRelationCompany(idCompany);
-    }
-    
 }

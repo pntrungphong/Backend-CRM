@@ -8,6 +8,7 @@ import { GeneralInfoDto } from '../contact/GeneralInfoDto';
 import { EmailDto } from '../field/EmailDto';
 import { PhoneDto } from '../field/PhoneDto';
 import { WebsiteDto } from '../field/WebsiteDto';
+import { BasicInfoLeadDto } from '../../../lead/dto/lead/BasicInfoLeadDto';
 
 export class DetailCompanyDto {
     @ApiPropertyOptional()
@@ -43,6 +44,9 @@ export class DetailCompanyDto {
     @ApiPropertyOptional({ type: [TagDto] })
     tag: TagDto[];
 
+    @ApiPropertyOptional({ type: [BasicInfoLeadDto] })
+    lead: BasicInfoLeadDto[];
+
     @ApiPropertyOptional()
     createdBy: string;
 
@@ -58,6 +62,7 @@ export class DetailCompanyDto {
         this.website = company.website;
         this.url = company.url;
         this.tag = company.tag;
+        this.lead = company.lead;
         this.createdBy = company.createdBy;
         this.updatedBy = company.updatedBy;
         this.createdAt = company.createdAt;
