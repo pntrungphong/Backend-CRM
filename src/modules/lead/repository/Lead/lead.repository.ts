@@ -68,6 +68,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             contact: listContactEntity,
             company: companyEntity,
             rankRevision: [rankRevision],
+            onHov: 0,
         });
 
         const newLead = await this.repository.save(leadEntity, {

@@ -4,9 +4,11 @@ export class UpdateTouchpoint1596513858634 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
         ALTER TABLE touchpoint
-        ADD lane varchar(10) NOT NULL,
+        ADD COLUMN lane varchar(10)
+        `);
+        await queryRunner.query(`
         ALTER TABLE lead
-        ADD  on_hov integer
+        ADD COLUMN on_hov integer
         `);
     }
 

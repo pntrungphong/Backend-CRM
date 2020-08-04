@@ -1,12 +1,13 @@
 'use strict';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 
+import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { NoteDto } from '../note/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
-import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
@@ -23,6 +24,10 @@ export class LeadUpdateDto {
     @IsOptional()
     @ApiPropertyOptional()
     review: string;
+    @IsEnum(TypeTouchPoint)
+    @IsString()
+    @ApiPropertyOptional()
+    lane: string;
     @IsOptional()
     @ApiProperty({ type: [RankRevisionDto] })
     rankRevision: RankRevisionDto;

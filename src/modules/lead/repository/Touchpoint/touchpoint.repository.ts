@@ -36,16 +36,46 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
                 id: 'DESC',
             },
         });
-        let order=1
-        if(lastEntity){
-            order=order+1
+        let order = 1;
+        if (lastEntity) {
+            order = order + 1;
         }
         touchPointDto.status = StatusTouchPoint.DRAFT;
         const touchPointEntity = this.repository.create({
+            order,
             ...touchPointDto,
             createdBy: user.id,
             updatedBy: user.id,
-            order
+        });
+        const newTouchPoint = await this.repository.save(touchPointEntity);
+        return newTouchPoint.toDto() as TouchPointEntity;
+    }
+
+    public async createTouchPointWithLane(
+        user: UserEntity,
+        lane: string,
+        leadId: number,
+    ): Promise<TouchPointEntity> {
+        const lastEntity = await this.repository.findOne({
+            select: ['order'],
+            where: { leadId },
+            order: {
+                id: 'DESC',
+            },
+        });
+        let order = 1;
+        if (lastEntity) {
+            order = order + 1;
+        }
+        const touchPointEntity = this.repository.create({
+            lane,
+            order,
+            leadId,
+            status: StatusTouchPoint.DRAFT,
+            createdBy: user.id,
+            updatedBy: user.id,
+            meetingDate: new Date(),
+            actualDate: new Date(),
         });
         const newTouchPoint = await this.repository.save(touchPointEntity);
         return newTouchPoint.toDto() as TouchPointEntity;
@@ -154,7 +184,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             updatedBy: user.id,
         });
         const update = await this.repository.save(updatedTouchPoint);
-        this.sortTouchPoint(touchpoint.leadId);
+        void this.sortTouchPoint(touchpoint.leadId);
         return update;
     }
 
@@ -168,15 +198,13 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             order: touchpoint.order + 1,
             leadId: touchpoint.leadId,
         });
-        if (lateTouchPoint) {
-            if (updateDto.status === StatusTouchPoint.DONE) {
-                lateTouchPoint.status = StatusTouchPoint.IN_PROGRESS;
-            }
+        if (lateTouchPoint && updateDto.status === StatusTouchPoint.DONE) {
+            lateTouchPoint.status = StatusTouchPoint.IN_PROGRESS;
         }
         if (!touchpoint) {
             throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
-        this.repository.save(lateTouchPoint);
+        void this.repository.save(lateTouchPoint);
         const updatedTouchPoint = this.repository.merge(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
@@ -193,22 +221,20 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             [StatusTouchPoint.DRAFT]: 3,
         };
         const entity = await this.repository.find({
-            where: { leadId: leadId },
+            where: { leadId },
             order: {
                 actualDate: 'ASC',
             },
         });
         entity
             .sort((a, b) => a.actualDate.getTime() - b.actualDate.getTime())
-            .sort((a, b) => {
-                return index[a.status] - index[b.status];
-            });
+            .sort((a, b) => index[a.status] - index[b.status]);
 
-        const newOrderEntities = entity.map((touchpoint, index) => {
-            return Object.assign(touchpoint, {
-                order: index + 1,
-            });
-        });
-        this.repository.save(newOrderEntities);
+        const newOrderEntities = entity.map((touchpoint, i) =>
+            Object.assign(touchpoint, {
+                order: i + 1,
+            }),
+        );
+        void this.repository.save(newOrderEntities);
     }
 }

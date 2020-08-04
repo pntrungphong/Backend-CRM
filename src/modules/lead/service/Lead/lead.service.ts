@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
+import { TouchPointRepository } from '../../../../modules/lead/repository/Touchpoint/touchpoint.repository';
 import { NoteRepository } from '../../../lead/repository/Note/note.repository';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
@@ -11,23 +13,29 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
-import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 @Injectable()
 export class LeadService {
     public logger = new Logger(LeadService.name);
     constructor(
         private readonly _leadRepository: LeadRepository,
         private readonly _noteRepository: NoteRepository,
+        private readonly _touchPointRepository: TouchPointRepository,
     ) {}
     @Transactional()
     async create(
         user: UserEntity,
         createDto: LeadUpdateDto,
+        lane: string,
     ): Promise<LeadEntity> {
         const createLead = await this._leadRepository.create(user, createDto);
         if (createDto.note) {
             await this._noteRepository.create(createDto.note, createLead.id);
         }
+        await this._touchPointRepository.createTouchPointWithLane(
+            user,
+            lane,
+            parseInt(createLead.id, 10),
+        );
         return createLead;
     }
     @Transactional()
