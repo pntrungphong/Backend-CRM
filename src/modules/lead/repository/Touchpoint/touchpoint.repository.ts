@@ -38,7 +38,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         });
         let order = 1;
         if (lastEntity) {
-            order = order + 1;
+            order = lastEntity.order + 1;
         }
         touchPointDto.status = StatusTouchPoint.DRAFT;
         const touchPointEntity = this.repository.create({

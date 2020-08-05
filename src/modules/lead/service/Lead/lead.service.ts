@@ -5,6 +5,7 @@ import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeR
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 import { TouchPointRepository } from '../../../../modules/lead/repository/Touchpoint/touchpoint.repository';
+import { InfoOnHovDto } from '../../../lead/dto/lead/InfoOnHovDto';
 import { NoteRepository } from '../../../lead/repository/Note/note.repository';
 import { UserEntity } from '../../../user/user.entity';
 import { DetailLeadDto } from '../../dto/lead/DetailLeadDto';
@@ -26,7 +27,7 @@ export class LeadService {
         user: UserEntity,
         createDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
-        if (!createDto.onHov){
+        if (!createDto.onHov) {
             createDto.onHov = 0;
         }
         const createLead = await this._leadRepository.create(user, createDto);
@@ -104,5 +105,17 @@ export class LeadService {
             throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
         return changeStatus;
+    }
+    @Transactional()
+    async onHov(
+        id: string,
+        onHovDto: InfoOnHovDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        const onHov = await this._leadRepository.onHov(id, onHovDto, user);
+        if (!onHov) {
+            throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
+        }
+        return onHov;
     }
 }

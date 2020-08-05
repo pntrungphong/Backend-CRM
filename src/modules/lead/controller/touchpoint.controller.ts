@@ -54,7 +54,7 @@ export class TouchPointController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
-        this.logger.log('tp.controller');
+        this.logger.log('GET LIST');
         return this._touchPointService.getList(pageOptionsDto);
     }
 

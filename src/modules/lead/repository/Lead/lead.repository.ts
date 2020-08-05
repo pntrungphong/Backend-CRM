@@ -15,6 +15,7 @@ import { CompanyEntity } from '../../../client/entity/company.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
 import { InfoLeadContactDto } from '../../../lead/dto/lead/InfoLeadContactDto';
+import { InfoOnHovDto } from '../../../lead/dto/lead/InfoOnHovDto';
 import { TaskDto } from '../../../lead/dto/task/TaskDto';
 import { TaskEntity } from '../../../lead/entity/Task/task.entity';
 import { TagEntity } from '../../../tag/tag.entity';
@@ -31,7 +32,7 @@ import { LeadEntity } from '../../entity/Lead/lead.entity';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
-    
+
     public async create(
         user: UserEntity,
         leadDto: LeadUpdateDto,
@@ -322,5 +323,26 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             updatedBy: user.id,
         });
         return this.repository.save(changStatus);
+    }
+
+    public async onHov(
+        id: string,
+        onHovDto: InfoOnHovDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        this.logger.log(id);
+        const leadCurrent = await this.repository.findOne({
+            where: { id },
+        });
+        this.logger.log(leadCurrent);
+        if (!leadCurrent) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+
+        const updatedLead = this.repository.merge(leadCurrent, {
+            ...onHovDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(updatedLead);
     }
 }
