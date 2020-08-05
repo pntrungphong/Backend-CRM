@@ -56,21 +56,10 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         lane: string,
         leadId: number,
     ): Promise<TouchPointEntity> {
-        const lastEntity = await this.repository.findOne({
-            select: ['order'],
-            where: { leadId },
-            order: {
-                id: 'DESC',
-            },
-        });
-        let order = 1;
-        if (lastEntity) {
-            order = order + 1;
-        }
         const touchPointEntity = this.repository.create({
             lane,
-            order,
             leadId,
+            order: 1,
             status: StatusTouchPoint.DRAFT,
             createdBy: user.id,
             updatedBy: user.id,

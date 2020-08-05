@@ -27,6 +27,7 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { StatusLead } from '../../../../common/constants/status-lead';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
@@ -61,6 +62,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.updatedAt = Date();
         leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
+            status: StatusLead.IN_PROGRESS,
             createdBy: user.id,
             updatedBy: user.id,
             file: listFileEntity,
@@ -68,7 +70,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             contact: listContactEntity,
             company: companyEntity,
             rankRevision: [rankRevision],
-            onHov: 0,
+            onHov: leadDto.onHov,
+
         });
 
         const newLead = await this.repository.save(leadEntity, {

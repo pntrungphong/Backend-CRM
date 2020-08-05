@@ -8,38 +8,54 @@ import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto'
 import { TagDto } from '../../../tag/dto/TagDto';
 import { NoteDto } from '../note/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
+import { StatusLead } from '../../../../common/constants/status-lead';
 export class LeadUpdateDto {
     @IsString()
     @ApiPropertyOptional()
     name: string;
+
+    @IsEnum(StatusLead)
     @IsString()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({example: "In-progress"})
     status: string;
+
     @IsOptional()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({example: "1"})
     rank: string;
+
     @IsString()
     @ApiPropertyOptional()
     description: string;
+
     @IsOptional()
     @ApiPropertyOptional()
     review: string;
+
     @IsEnum(TypeTouchPoint)
-    @IsString()
-    @ApiPropertyOptional()
+    @IsOptional()
+    @ApiPropertyOptional({example: "PC"})
     lane: string;
+
+    @IsOptional()
+    @ApiPropertyOptional({example: "0"})
+    onHov: number;
+
     @IsOptional()
     @ApiProperty({ type: [RankRevisionDto] })
     rankRevision: RankRevisionDto;
+
     @IsString()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({example: "1"})
     idCompany: string;
+
     @IsArray()
     @ApiProperty({ type: [ContactLeadDto] })
     linkContact: ContactLeadDto[];
+
     @IsArray()
     @ApiProperty({ type: [ContactLeadDto] })
     relatedTo: ContactLeadDto[];
+
     @IsArray()
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
@@ -49,6 +65,6 @@ export class LeadUpdateDto {
     tag: TagDto[];
 
     @IsOptional()
-    @ApiPropertyOptional({ type: [String] })
+    @ApiPropertyOptional({ type: [String], example: {file: '1'} })
     file: string[];
 }
