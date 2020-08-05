@@ -39,6 +39,7 @@ import { LeadUpdateDto } from '../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../entity/Lead/lead.entity';
 import { LeadService } from '../service/Lead/lead.service';
 import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
+import { Lead4LaneDto } from '../dto/lead/Lead4LaneDto';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -64,6 +65,21 @@ export class LeadController {
         Logger.log('lead.controller');
         return this._leadService.getList(pageOptionsDto);
     }
+
+    @Get('lane')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Get leads list',
+        type: Lead4LaneDto,
+    })
+    getLead4Lane(): Promise<Lead4LaneDto> {
+        Logger.log('lead.controller');
+        return this._leadService.getLead4Lane();
+    }
+
+
+
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({

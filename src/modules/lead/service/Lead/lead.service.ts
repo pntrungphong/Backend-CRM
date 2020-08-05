@@ -13,6 +13,7 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
+import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 @Injectable()
 export class LeadService {
     public logger = new Logger(LeadService.name);
@@ -76,6 +77,10 @@ export class LeadService {
     }
     async findLeadById(id: string): Promise<DetailLeadDto> {
         return this._leadRepository.getLeadById(id);
+    }
+
+    async getLead4Lane(): Promise<Lead4LaneDto> {
+        return this._leadRepository.getList4Lane();
     }
 
     async getList(
