@@ -19,6 +19,7 @@ import { CompanyEntity } from '../../../client/entity/company.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
 import { InfoLeadContactDto } from '../../../lead/dto/lead/InfoLeadContactDto';
+import { InfoOnHovDto } from '../../../lead/dto/lead/InfoOnHovDto';
 import { TaskDto } from '../../../lead/dto/task/TaskDto';
 import { TaskEntity } from '../../../lead/entity/Task/task.entity';
 import { TagEntity } from '../../../tag/tag.entity';
@@ -543,5 +544,25 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 'touchPoint.task.user',
             ],
         });
+    }
+    public async onHov(
+        id: string,
+        onHovDto: InfoOnHovDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        this.logger.log(id);
+        const leadCurrent = await this.repository.findOne({
+            where: { id },
+        });
+        this.logger.log(leadCurrent);
+        if (!leadCurrent) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+
+        const updatedLead = this.repository.merge(leadCurrent, {
+            ...onHovDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(updatedLead);
     }
 }

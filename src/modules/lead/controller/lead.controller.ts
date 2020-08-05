@@ -28,6 +28,7 @@ import { AuthUserInterceptor } from '../../../interceptors/auth-user-interceptor
 import { UserEntity } from '../../../modules/user/user.entity';
 import { InfoFileDetailDto } from '../dto/fileTouchPoint/infoFileDetailDto';
 import { DetailLeadDto } from '../dto/lead/DetailLeadDto';
+import { InfoOnHovDto } from '../dto/lead/InfoOnHovDto';
 import { LeadChangeRankDto } from '../dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../dto/lead/LeadChangeStatusDto';
 import { LeadDto } from '../dto/lead/LeadDto';
@@ -125,6 +126,18 @@ export class LeadController {
         @AuthUser() user: UserEntity,
     ): Promise<any> {
         await this._leadService.changeRank(id, updateDto, user);
+    }
+    @Put(':id/onHov')
+    @ApiOkResponse({
+        type: LeadEntity,
+        description: 'Successfully Updated',
+    })
+    async onHov(
+        @Param('id') id: string,
+        @Body() onHovDto: InfoOnHovDto,
+        @AuthUser() user: UserEntity,
+    ): Promise<any> {
+        await this._leadService.onHov(id, onHovDto, user);
     }
     @Get('/:id/file')
     @HttpCode(HttpStatus.OK)

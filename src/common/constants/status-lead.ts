@@ -3,5 +3,5 @@
 export enum StatusLead {
     IN_PROGRESS = 'In-progress',
     DEAL = 'Deal',
-    UN_DEAL = 'Un-deal',
+    UN_DEAL = 'No-deal',
 }
