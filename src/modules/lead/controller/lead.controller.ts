@@ -98,7 +98,7 @@ export class LeadController {
         @Body() data: LeadUpdateDto,
         @AuthUser() user: UserEntity,
     ): Promise<LeadEntity> {
-        return this._leadService.create(user, data, data.lane);
+        return this._leadService.create(user, data);
     }
 
     @Put(':id')

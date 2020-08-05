@@ -26,17 +26,21 @@ export class LeadService {
     async create(
         user: UserEntity,
         createDto: LeadUpdateDto,
-        lane: string,
     ): Promise<LeadEntity> {
+        if (!createDto.onHov){
+            createDto.onHov = 0;
+        }
         const createLead = await this._leadRepository.create(user, createDto);
         if (createDto.note) {
             await this._noteRepository.create(createDto.note, createLead.id);
         }
-        await this._touchPointRepository.createTouchPointWithLane(
-            user,
-            lane,
-            parseInt(createLead.id, 10),
-        );
+        if (createDto.lane) {
+            await this._touchPointRepository.createTouchPointWithLane(
+                user,
+                createDto.lane,
+                parseInt(createLead.id, 10),
+            );
+        }
         return createLead;
     }
     @Transactional()
