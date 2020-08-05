@@ -2,17 +2,20 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { FileDto } from '../../../file/dto/fileDto';
-import { RankRevisionDto } from '../../../lead/field/RankRevisionDto';
+import { RankRevisionDto } from '../../field/RankRevisionDto';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { TagEntity } from '../../../tag/tag.entity';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { NoteDto } from '../note/NoteDto';
 import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
-export class LeadPHDto {
+
+export class LeadLaneDto {
     @ApiPropertyOptional()
     id: string;
+
+    @ApiPropertyOptional()
+    onHov: number;
 
     @ApiPropertyOptional()
     createdAt: Date;
@@ -61,5 +64,6 @@ export class LeadPHDto {
         this.status = lead.status;
         this.touchPoint = lead.touchPoint;
         this.rankRevision = lead.rankRevision;
+        this.onHov = lead.onHov;
     }
 }

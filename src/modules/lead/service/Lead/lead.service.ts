@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
+import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
@@ -13,7 +14,6 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
-import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 @Injectable()
 export class LeadService {
     public logger = new Logger(LeadService.name);
@@ -27,7 +27,7 @@ export class LeadService {
         user: UserEntity,
         createDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
-        if (!createDto.onHov){
+        if (!createDto.onHov) {
             createDto.onHov = 0;
         }
         const createLead = await this._leadRepository.create(user, createDto);

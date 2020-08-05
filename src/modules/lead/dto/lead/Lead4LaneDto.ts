@@ -1,20 +1,19 @@
 'use strict';
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { LeadHovDto } from './LeadHovDto';
-import { LeadLMDto } from './LeadLMDto';
-import { LeadPCDto } from './LeadPCDto';
-import { LeadPHDto } from './LeadPHDto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+
+import { LeadLaneDto } from './LeadLaneDto';
+
 export class Lead4LaneDto {
-    @ApiPropertyOptional({ type: [LeadHovDto] })
-    leadHov: LeadHovDto[];
+    @ApiPropertyOptional({ type: [LeadLaneDto] })
+    leadHov: LeadLaneDto[];
 
-    @ApiPropertyOptional({ type: [LeadLMDto] })
-    leadLM: LeadLMDto[];
+    @ApiPropertyOptional({ type: [LeadLaneDto] })
+    leadLM: LeadLaneDto[];
 
-    @ApiPropertyOptional({ type: [LeadPCDto] })
-    leadPC: LeadPCDto[];
+    @ApiPropertyOptional({ type: [LeadLaneDto] })
+    leadPC: LeadLaneDto[];
 
-    @ApiPropertyOptional({ type: [LeadPHDto] })
-    leadPH: LeadPHDto[];
+    @ApiPropertyOptional({ type: [LeadLaneDto] })
+    leadPH: LeadLaneDto[];
 }

@@ -1,10 +1,12 @@
 'use strict';
 import { ApiProperty } from '@nestjs/swagger';
-import {  IsOptional } from 'class-validator';
+import {  IsOptional, IsEnum, IsString } from 'class-validator';
+import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
 
 
 export class UpdateTouchPointMarkDoneDto {
-    @IsOptional()
+    @IsEnum(StatusTouchPoint)
+    @IsString()
     @ApiProperty()
     status: string;
 
