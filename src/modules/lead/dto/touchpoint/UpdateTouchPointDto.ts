@@ -2,12 +2,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
-import { LinkTouchPointFileDto } from '../fileTouchPoint/LinkFileDto';
-import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
+import { UpdateTaskDto } from '../task/UpdateTaskDto';
 
 export class UpdateTouchPointDto {
     @IsOptional()
-    @ApiProperty({example: "complete first meeting"})
+    @ApiProperty({ example: 'complete first meeting' })
     goal: string;
 
     @IsOptional()
@@ -31,11 +30,11 @@ export class UpdateTouchPointDto {
     actualDate: Date;
 
     @IsNumber()
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ example: 1 })
     leadId: number;
 
     @IsArray()
     @IsOptional()
-    @ApiProperty({ type: [LinkTouchPointFileDto] })
-    file: TouchPointFileDto[];
+    @ApiProperty({ type: [UpdateTaskDto] })
+    tasks: UpdateTaskDto[];
 }

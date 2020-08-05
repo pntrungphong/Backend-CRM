@@ -55,6 +55,6 @@ export class TaskController {
         @Body() updateDto: UpdateTaskDto,
         @AuthUser() user: UserEntity,
     ): Promise<TaskEntity> {
-        return this._taskService.update(user, updateDto, touchPointId, taskId);
+        return this._taskService.update(user, updateDto, touchPointId);
     }
 }

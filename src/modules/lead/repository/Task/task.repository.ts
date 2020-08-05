@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -26,9 +27,12 @@ export class TaskRepository extends AbstractRepository<TaskEntity> {
         user: UserEntity,
         updateTaskDto: UpdateTaskDto,
         touchPointId: string,
-        taskId: string,
     ): Promise<TaskEntity> {
-        const updateTasks = await this.repository.find({ id: taskId });
+        // const updateTasks = await this.repository.find({ id: taskId });
+        // await this.repository.remove(updateTasks);
+
+        const updateTasks = await this.repository.find({ touchPointId });
+        Logger.log(updateTasks);
         await this.repository.remove(updateTasks);
 
         return this.create(user, updateTaskDto, touchPointId);

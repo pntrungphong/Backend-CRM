@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { UpdateTaskDto } from '../../../lead/dto/task/UpdateTaskDto';
 import { TaskEntity } from '../../../lead/entity/Task/task.entity';
@@ -20,13 +20,8 @@ export class TaskService {
         user: UserEntity,
         updateDto: UpdateTaskDto,
         touchPointId: string,
-        taskId: string,
     ): Promise<TaskEntity> {
-        return this.taskRepository.update(
-            user,
-            updateDto,
-            touchPointId,
-            taskId,
-        );
+        Logger.log(updateDto);
+        return this.taskRepository.update(user, updateDto, touchPointId);
     }
 }

@@ -61,7 +61,7 @@ export class TouchPointController {
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
-        type: UpdateTouchPointDto,
+        type: TouchPointDto,
         description: 'Successfully Created',
     })
     async createTouchPoint(
