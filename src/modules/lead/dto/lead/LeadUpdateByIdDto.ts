@@ -1,16 +1,18 @@
 'use strict';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 
+import { StatusLead } from '../../../../common/constants/status-lead';
+import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { NoteDto } from '../note/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
-import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 export class LeadUpdateByIdDto {
     @IsString()
     @ApiPropertyOptional()
     name: string;
+    @IsEnum(StatusLead)
     @IsString()
     @ApiPropertyOptional()
     status: string;
@@ -23,6 +25,10 @@ export class LeadUpdateByIdDto {
     @IsOptional()
     @ApiPropertyOptional()
     review: string;
+    @IsOptional()
+    @ApiPropertyOptional()
+    onHov: number;
+
     @IsOptional()
     @ApiProperty({ type: [RankRevisionDto] })
     rankRevision: RankRevisionDto;

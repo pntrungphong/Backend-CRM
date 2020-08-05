@@ -172,6 +172,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             ...updateDto,
             updatedBy: user.id,
         });
+        Logger.log(updatedTouchPoint);
         return this.repository.save(updatedTouchPoint);
     }
 
@@ -187,6 +188,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         const updatedTouchPoint = this.repository.merge(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
+            actualDate: new Date(),
         });
         return this.repository.save(updatedTouchPoint);
     }
