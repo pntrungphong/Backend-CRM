@@ -172,7 +172,6 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
             ...updateDto,
             updatedBy: user.id,
         });
-        Logger.log(updatedTouchPoint);
         return this.repository.save(updatedTouchPoint);
     }
 
@@ -185,10 +184,10 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         if (!touchpoint) {
             throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
-        const updatedTouchPoint = this.repository.merge(touchpoint, {
+        const updatedTouchPoint = Object.assign(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
-            actualDate: new Date(),
+            actualDate:new Date()
         });
         return this.repository.save(updatedTouchPoint);
     }

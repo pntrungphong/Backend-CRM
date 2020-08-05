@@ -533,7 +533,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     }
     async findLeadById(it: number) {
         return this.repository.findOne({
-            where: { id: it },
+            where: { id: it},
             relations: [
                 'company',
                 'note',
