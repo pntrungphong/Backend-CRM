@@ -26,6 +26,9 @@ export class LeadService {
         user: UserEntity,
         createDto: LeadUpdateDto,
     ): Promise<LeadEntity> {
+        if (!createDto.onHov){
+            createDto.onHov = 0;
+        }
         const createLead = await this._leadRepository.create(user, createDto);
         if (createDto.note) {
             await this._noteRepository.create(createDto.note, createLead.id);

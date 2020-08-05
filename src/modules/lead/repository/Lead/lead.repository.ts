@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
+import { StatusLead } from '../../../../common/constants/status-lead';
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { FileDto } from '../../../../modules/file/dto/fileDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
@@ -27,10 +28,10 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
-import { StatusLead } from '../../../../common/constants/status-lead';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
+    
     public async create(
         user: UserEntity,
         leadDto: LeadUpdateDto,
@@ -71,7 +72,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             company: companyEntity,
             rankRevision: [rankRevision],
             onHov: leadDto.onHov,
-
         });
 
         const newLead = await this.repository.save(leadEntity, {
