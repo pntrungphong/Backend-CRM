@@ -389,11 +389,18 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             },
         );
         const leadIdLM = touchpointLM.map((it) => it.leadId);
-        result.leadLM = await Promise.all(
+        const leadLMs = await Promise.all(
             leadIdLM.map(async (it) => {
                 const leadLM = await this.findLeadById(it);
-                const resultLM = new LeadLaneDto(leadLM);
-                resultLM.company = new InfoLeadCompanyDto(leadLM.company);
+                return leadLM;
+            }),
+        );
+        this.logger.log(leadLMs);
+        result.leadLM = [];
+        leadLMs.forEach((it) => {
+            if (it.onHov == 0) {
+                const resultLM = new LeadLaneDto(it);
+                resultLM.company = new InfoLeadCompanyDto(it.company);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultLM.touchPoint.forEach((item) => {
                     if (
@@ -426,9 +433,10 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                     }
                 });
                 resultLM.touchPoint = listTouchPoint;
-                return resultLM;
-            }),
-        );
+                result.leadLM.push(resultLM);
+            }
+        });
+
         const touchpointPC = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
@@ -438,11 +446,19 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             },
         );
         const leadIdPC = touchpointPC.map((it) => it.leadId);
-        result.leadPC = await Promise.all(
+
+        const leadPCs = await Promise.all(
             leadIdPC.map(async (it) => {
                 const leadPC = await this.findLeadById(it);
-                const resultPC = new LeadLaneDto(leadPC);
-                resultPC.company = new InfoLeadCompanyDto(leadPC.company);
+                return leadPC;
+            }),
+        );
+        this.logger.log(leadPCs);
+        result.leadPC = [];
+        leadPCs.forEach((it) => {
+            if (it.onHov == 0) {
+                const resultPC = new LeadLaneDto(it);
+                resultPC.company = new InfoLeadCompanyDto(it.company);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPC.touchPoint.forEach((item) => {
                     if (
@@ -475,9 +491,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                     }
                 });
                 resultPC.touchPoint = listTouchPoint;
-                return resultPC;
-            }),
-        );
+                result.leadPC.push(resultPC);
+            }
+        });
         const touchpointPH = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
@@ -488,11 +504,17 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         );
 
         const leadIdPH = touchpointPH.map((it) => it.leadId);
-        result.leadPH = await Promise.all(
+        const leadPHs = await Promise.all(
             leadIdPH.map(async (it) => {
                 const leadPH = await this.findLeadById(it);
-                const resultPH = new LeadLaneDto(leadPH);
-                resultPH.company = new InfoLeadCompanyDto(leadPH.company);
+                return leadPH;
+            }),
+        );
+        result.leadPH = [];
+        leadPHs.forEach((it) => {
+            if (it.onHov == 0) {
+                const resultPH = new LeadLaneDto(it);
+                resultPH.company = new InfoLeadCompanyDto(it.company);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPH.touchPoint.forEach((item) => {
                     if (
@@ -525,15 +547,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                     }
                 });
                 resultPH.touchPoint = listTouchPoint;
-                return resultPH;
-            }),
-        );
+                result.leadPH.push(resultPH);
+            }
+        });
 
         return result;
     }
     async findLeadById(it: number) {
         return this.repository.findOne({
-            where: { id: it},
+            where: { id: it },
             relations: [
                 'company',
                 'note',
