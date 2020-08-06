@@ -18,6 +18,7 @@ export class TouchPointService {
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointTaskPointService: TaskService,
     ) {}
+
     @Transactional()
     async create(
         user: UserEntity,
@@ -29,13 +30,13 @@ export class TouchPointService {
             createDto,
         );
         if (createDto.tasks) {
-            createDto.tasks.map((task) =>
-                this._touchPointTaskPointService.create(
+            createDto.tasks.map((task) => {
+                void this._touchPointTaskPointService.create(
                     user,
                     task,
                     createTouchPoint.id,
-                ),
-            );
+                );
+            });
         }
         return createTouchPoint;
     }
@@ -51,6 +52,7 @@ export class TouchPointService {
         return this._touchPointRepository.getTouchPointById(id);
     }
 
+    @Transactional()
     async update(
         id: string,
         updateDto: UpdateDetailTouchPointDto,
@@ -61,15 +63,18 @@ export class TouchPointService {
             updateDto,
             user,
         );
-        this.logger.log(updateDto.tasks);
+
         if (updateDto.tasks) {
-            updateDto.tasks.map((task) =>
-                this._touchPointTaskPointService.update(
+            updateDto.tasks.map((task) => {
+                void this._touchPointTaskPointService.remove(
+                    updateTouchPoint.id,
+                );
+                void this._touchPointTaskPointService.create(
                     user,
                     task,
                     updateTouchPoint.id,
-                ),
-            );
+                );
+            });
         }
         return updateTouchPoint;
     }

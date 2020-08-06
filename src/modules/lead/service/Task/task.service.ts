@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { UpdateTaskDto } from '../../../lead/dto/task/UpdateTaskDto';
 import { TaskEntity } from '../../../lead/entity/Task/task.entity';
@@ -16,12 +16,7 @@ export class TaskService {
         return this.taskRepository.create(user, createDto, touchPointId);
     }
 
-    async update(
-        user: UserEntity,
-        updateDto: UpdateTaskDto,
-        touchPointId: string,
-    ): Promise<TaskEntity> {
-        Logger.log(updateDto);
-        return this.taskRepository.update(user, updateDto, touchPointId);
+    async remove(touchPointId: string): Promise<any> {
+        return this.taskRepository.remove(touchPointId);
     }
 }

@@ -2,8 +2,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsEnum, IsOptional } from 'class-validator';
 
-import { UpdateTaskDto } from '../task/UpdateTaskDto';
 import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
+import { UpdateTaskDto } from '../task/UpdateTaskDto';
 
 export class UpdateDetailTouchPointDto {
     @IsOptional()
@@ -12,7 +12,7 @@ export class UpdateDetailTouchPointDto {
 
     @IsEnum(TypeTouchPoint)
     @IsOptional()
-    @ApiProperty()
+    @ApiProperty({ example: 'LM' })
     lane: string;
 
     @IsOptional()

@@ -3,7 +3,6 @@ import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
 import { StatusLead } from '../../../../common/constants/status-lead';
-import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
 import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { FileDto } from '../../../../modules/file/dto/fileDto';
@@ -333,7 +332,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList4Lane(): Promise<Lead4LaneDto> {
         const result = new Lead4LaneDto();
         const leadHov = await this.repository.find({
-            where: { onHov: 1 ,status:StatusLead.IN_PROGRESS},
+            where: { onHov: 1, status: StatusLead.IN_PROGRESS },
             relations: [
                 'touchPoint',
                 'touchPoint.task',
@@ -346,7 +345,8 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             const resultHov = new LeadLaneDto(it);
             const listTouchPoint = [] as TouchPointDto[];
             resultHov.touchPoint.forEach((item) => {
-                if(item.status=='Undone'){
+                // if (item.status)
+                {
                     const infoTouchPoint = new TouchPointDto(
                         item as TouchPointEntity,
                     );
@@ -362,7 +362,9 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                     );
                     infoTouchPoint.task.map((j) => {
                         const infoTask = new TaskDto(j as TaskEntity);
-                        const infoUser = new UserDto(infoTask.user as UserEntity);
+                        const infoUser = new UserDto(
+                            infoTask.user as UserEntity,
+                        );
                         infoTask.user = infoUser;
                         listTask.push(infoTask);
                     });
@@ -382,29 +384,23 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const touchpointLM = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
-                    status: StatusTouchPoint.UNDONE,
+                    // status: StatusTouchPoint.UNDONE,
                     lane: TypeTouchPoint.LM,
                 },
             },
         );
         const leadIdLM = touchpointLM.map((it) => it.leadId);
         const leadLMs = await Promise.all(
-            leadIdLM.map(async (it) => {
-                const leadLM = await this.findLeadById(it);
-                return leadLM;
-            }),
+            leadIdLM.map(async (it) => this.findLeadById(it)),
         );
         this.logger.log(leadLMs);
         result.leadLM = [];
         leadLMs.forEach((it) => {
-            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
+            if (it.onHov === 0 && it.status === StatusLead.IN_PROGRESS) {
                 const resultLM = new LeadLaneDto(it);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultLM.touchPoint.forEach((item) => {
-                    if (
-                        item.status === StatusTouchPoint.UNDONE &&
-                        item.lane === TypeTouchPoint.LM
-                    ) {
+                    if (item.lane === TypeTouchPoint.LM) {
                         const infoTouchPoint = new TouchPointDto(
                             item as TouchPointEntity,
                         );
@@ -438,7 +434,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const touchpointPC = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
-                    status: StatusTouchPoint.UNDONE,
+                    // status: StatusTouchPoint.UNDONE,
                     lane: TypeTouchPoint.PC,
                 },
             },
@@ -446,22 +442,16 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const leadIdPC = touchpointPC.map((it) => it.leadId);
 
         const leadPCs = await Promise.all(
-            leadIdPC.map(async (it) => {
-                const leadPC = await this.findLeadById(it);
-                return leadPC;
-            }),
+            leadIdPC.map(async (it) => this.findLeadById(it)),
         );
         this.logger.log(leadPCs);
         result.leadPC = [];
         leadPCs.forEach((it) => {
-            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
+            if (it.onHov === 0 && it.status === StatusLead.IN_PROGRESS) {
                 const resultPC = new LeadLaneDto(it);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPC.touchPoint.forEach((item) => {
-                    if (
-                        item.status === StatusTouchPoint.UNDONE &&
-                        item.lane === TypeTouchPoint.PC
-                    ) {
+                    if (item.lane === TypeTouchPoint.PC) {
                         const infoTouchPoint = new TouchPointDto(
                             item as TouchPointEntity,
                         );
@@ -494,7 +484,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const touchpointPH = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
-                    status: StatusTouchPoint.UNDONE,
+                    // status: StatusTouchPoint.UNDONE,
                     lane: TypeTouchPoint.PH,
                 },
             },
@@ -502,21 +492,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
 
         const leadIdPH = touchpointPH.map((it) => it.leadId);
         const leadPHs = await Promise.all(
-            leadIdPH.map((it) => {
-                return this.findLeadById(it);
-                
-            }),
+            leadIdPH.map((it) => this.findLeadById(it)),
         );
         result.leadPH = [];
         leadPHs.forEach((it) => {
-            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
+            if (it.onHov === 0 && it.status === StatusLead.IN_PROGRESS) {
                 const resultPH = new LeadLaneDto(it);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPH.touchPoint.forEach((item) => {
-                    if (
-                        item.status === StatusTouchPoint.UNDONE &&
-                        item.lane === TypeTouchPoint.PH
-                    ) {
+                    if (item.lane === TypeTouchPoint.PH) {
                         const infoTouchPoint = new TouchPointDto(
                             item as TouchPointEntity,
                         );
@@ -549,6 +533,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
 
         return result;
     }
+
     async findLeadById(it: number) {
         return this.repository.findOne({
             where: { id: it },
