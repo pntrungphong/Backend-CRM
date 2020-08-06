@@ -40,5 +40,5 @@ export class UpdateTouchPointDto {
     @IsArray()
     @IsOptional()
     @ApiProperty({ type: [UpdateTaskDto] })
-    tasks: UpdateTaskDto[];
+    task: UpdateTaskDto[];
 }
