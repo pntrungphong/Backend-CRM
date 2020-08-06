@@ -55,12 +55,14 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         user: UserEntity,
         lane: string,
         leadId: number,
+        order: number,
+        status: StatusTouchPoint,
     ): Promise<TouchPointEntity> {
         const touchPointEntity = this.repository.create({
             lane,
             leadId,
-            order: 1,
-            status: StatusTouchPoint.UNDONE,
+            order,
+            status,
             createdBy: user.id,
             updatedBy: user.id,
             meetingDate: new Date(),
@@ -187,7 +189,7 @@ export class TouchPointRepository extends AbstractRepository<TouchPointEntity> {
         const updatedTouchPoint = Object.assign(touchpoint, {
             ...updateDto,
             updatedBy: user.id,
-            actualDate:new Date()
+            actualDate: new Date(),
         });
         return this.repository.save(updatedTouchPoint);
     }

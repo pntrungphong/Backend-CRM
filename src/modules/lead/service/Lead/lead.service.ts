@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
+import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
 import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
@@ -35,13 +36,23 @@ export class LeadService {
         if (createDto.note) {
             await this._noteRepository.create(createDto.note, createLead.id);
         }
-        if (createDto.lane) {
-            await this._touchPointRepository.createTouchPointWithLane(
-                user,
-                createDto.lane,
-                parseInt(createLead.id, 10),
-            );
+
+        let orderTouchPoint = 1;
+        let status = StatusTouchPoint.UNDONE;
+        if (!createDto.lane) {
+            createDto.lane = 'LM';
+            orderTouchPoint = 0;
+            status = StatusTouchPoint.DONE;
         }
+
+        void (await this._touchPointRepository.createTouchPointWithLane(
+            user,
+            createDto.lane,
+            parseInt(createLead.id, 10),
+            orderTouchPoint,
+            status,
+        ));
+
         return createLead;
     }
     @Transactional()

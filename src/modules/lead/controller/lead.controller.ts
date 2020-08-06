@@ -29,6 +29,7 @@ import { UserEntity } from '../../../modules/user/user.entity';
 import { InfoFileDetailDto } from '../dto/fileTouchPoint/infoFileDetailDto';
 import { DetailLeadDto } from '../dto/lead/DetailLeadDto';
 import { InfoOnHovDto } from '../dto/lead/InfoOnHovDto';
+import { Lead4LaneDto } from '../dto/lead/Lead4LaneDto';
 import { LeadChangeRankDto } from '../dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../dto/lead/LeadChangeStatusDto';
 import { LeadDto } from '../dto/lead/LeadDto';
@@ -40,7 +41,6 @@ import { LeadUpdateDto } from '../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../entity/Lead/lead.entity';
 import { LeadService } from '../service/Lead/lead.service';
 import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
-import { Lead4LaneDto } from '../dto/lead/Lead4LaneDto';
 @Controller('lead')
 @ApiTags('lead')
 @UseGuards(AuthGuard, RolesGuard)
@@ -79,8 +79,6 @@ export class LeadController {
         return this._leadService.getLead4Lane();
     }
 
-
-
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
@@ -115,6 +113,7 @@ export class LeadController {
         Logger.log('lead.controller');
         return this._leadService.update(id, updateDto, user);
     }
+
     @Put(':id/rank')
     @ApiOkResponse({
         type: LeadChangeRankDto,
@@ -127,6 +126,7 @@ export class LeadController {
     ): Promise<any> {
         await this._leadService.changeRank(id, updateDto, user);
     }
+
     @Put(':id/onHov')
     @ApiOkResponse({
         type: LeadEntity,
@@ -139,6 +139,7 @@ export class LeadController {
     ): Promise<any> {
         await this._leadService.onHov(id, onHovDto, user);
     }
+
     @Get('/:id/file')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
@@ -151,6 +152,7 @@ export class LeadController {
     ): Promise<InfoFileDetailDto[]> {
         return this._touchPointFileService.getList(id);
     }
+
     @Put(':id/status')
     @ApiOkResponse({
         type: LeadChangeStatusDto,

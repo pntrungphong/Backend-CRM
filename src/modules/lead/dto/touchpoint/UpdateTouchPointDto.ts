@@ -10,7 +10,7 @@ export class UpdateTouchPointDto {
     goal: string;
 
     @IsOptional()
-    @ApiProperty()
+    @ApiProperty({ example: 'Undone' })
     status: string;
 
     @IsOptional()
@@ -18,7 +18,7 @@ export class UpdateTouchPointDto {
     note: string;
 
     @IsOptional()
-    @ApiProperty()
+    @ApiProperty({ example: 'PC' })
     lane: string;
 
     @IsOptional()
