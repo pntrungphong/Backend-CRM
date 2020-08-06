@@ -29,8 +29,8 @@ export class TouchPointService {
             user,
             createDto,
         );
-        if (createDto.tasks) {
-            createDto.tasks.map((task) => {
+        if (createDto.task) {
+            createDto.task.map((task) => {
                 void this._touchPointTaskPointService.create(
                     user,
                     task,
@@ -64,11 +64,11 @@ export class TouchPointService {
             user,
         );
 
-        if (updateDto.tasks) {
-            updateDto.tasks.map((task) => {
-                void this._touchPointTaskPointService.remove(
-                    updateTouchPoint.id,
-                );
+        if (updateDto.task) {
+            void (await this._touchPointTaskPointService.remove(
+                updateTouchPoint.id,
+            ));
+            updateDto.task.map((task) => {
                 void this._touchPointTaskPointService.create(
                     user,
                     task,
@@ -76,6 +76,7 @@ export class TouchPointService {
                 );
             });
         }
+
         return updateTouchPoint;
     }
 

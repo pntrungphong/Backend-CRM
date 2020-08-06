@@ -23,10 +23,10 @@ export class TaskRepository extends AbstractRepository<TaskEntity> {
     }
 
     public async remove(touchPointId: string): Promise<any> {
-        const updateTasks = await this.repository.find({
+        const updateTask = await this.repository.find({
             touchPointId,
         });
-        await this.repository.remove(updateTasks);
+        await this.repository.remove(updateTask);
         return;
     }
 }
