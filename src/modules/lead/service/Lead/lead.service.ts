@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
+import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
@@ -81,6 +82,10 @@ export class LeadService {
     }
     async findLeadById(id: string): Promise<DetailLeadDto> {
         return this._leadRepository.getLeadById(id);
+    }
+
+    async getLead4Lane(): Promise<Lead4LaneDto> {
+        return this._leadRepository.getList4Lane();
     }
 
     async getList(

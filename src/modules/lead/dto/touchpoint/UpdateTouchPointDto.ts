@@ -19,6 +19,10 @@ export class UpdateTouchPointDto {
 
     @IsOptional()
     @ApiProperty()
+    lane: string;
+
+    @IsOptional()
+    @ApiProperty()
     review: string;
 
     @IsOptional()

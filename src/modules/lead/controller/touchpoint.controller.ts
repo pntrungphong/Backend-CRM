@@ -98,7 +98,7 @@ export class TouchPointController {
             updateDto,
             user,
         );
-        return updatedLead.toDto() as UpdateTouchPointDto;
+        return updatedLead.toDto() as UpdateDetailTouchPointDto;
     }
 
     @Put(':id/markDone')

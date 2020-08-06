@@ -17,7 +17,6 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     @Column({
         type: 'enum',
         enum: StatusTouchPoint,
-        default: StatusTouchPoint.IN_PROGRESS,
         name: 'status',
     })
     status: string;
