@@ -333,7 +333,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList4Lane(): Promise<Lead4LaneDto> {
         const result = new Lead4LaneDto();
         const leadHov = await this.repository.find({
-            where: { onHov: 1 },
+            where: { onHov: 1 ,status:StatusLead.IN_PROGRESS},
             relations: [
                 'touchPoint',
                 'touchPoint.task',
@@ -397,7 +397,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         this.logger.log(leadLMs);
         result.leadLM = [];
         leadLMs.forEach((it) => {
-            if (it.onHov == 0) {
+            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
                 const resultLM = new LeadLaneDto(it);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultLM.touchPoint.forEach((item) => {
@@ -454,7 +454,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         this.logger.log(leadPCs);
         result.leadPC = [];
         leadPCs.forEach((it) => {
-            if (it.onHov == 0) {
+            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
                 const resultPC = new LeadLaneDto(it);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPC.touchPoint.forEach((item) => {
@@ -509,7 +509,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         );
         result.leadPH = [];
         leadPHs.forEach((it) => {
-            if (it.onHov == 0) {
+            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
                 const resultPH = new LeadLaneDto(it);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPH.touchPoint.forEach((item) => {
