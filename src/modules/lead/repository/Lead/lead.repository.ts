@@ -335,8 +335,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const leadHov = await this.repository.find({
             where: { onHov: 1 },
             relations: [
-                'company',
-                'note',
                 'touchPoint',
                 'touchPoint.task',
                 'touchPoint.fileTouchPoint',
@@ -346,30 +344,31 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         });
         result.leadHov = leadHov.map((it) => {
             const resultHov = new LeadLaneDto(it);
-            resultHov.company = new InfoLeadCompanyDto(it.company);
             const listTouchPoint = [] as TouchPointDto[];
             resultHov.touchPoint.forEach((item) => {
-                const infoTouchPoint = new TouchPointDto(
-                    item as TouchPointEntity,
-                );
-                const listTask = [] as TaskDto[];
-                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
-                    (i) => {
-                        const infoFileTouchPoint = new FileDto(
-                            i.file as FileEntity,
-                        );
-                        i.file = infoFileTouchPoint;
-                        return i;
-                    },
-                );
-                infoTouchPoint.task.map((j) => {
-                    const infoTask = new TaskDto(j as TaskEntity);
-                    const infoUser = new UserDto(infoTask.user as UserEntity);
-                    infoTask.user = infoUser;
-                    listTask.push(infoTask);
-                });
-                infoTouchPoint.task = listTask;
-                listTouchPoint.push(infoTouchPoint);
+                if(item.status=='Undone'){
+                    const infoTouchPoint = new TouchPointDto(
+                        item as TouchPointEntity,
+                    );
+                    const listTask = [] as TaskDto[];
+                    infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                        (i) => {
+                            const infoFileTouchPoint = new FileDto(
+                                i.file as FileEntity,
+                            );
+                            i.file = infoFileTouchPoint;
+                            return i;
+                        },
+                    );
+                    infoTouchPoint.task.map((j) => {
+                        const infoTask = new TaskDto(j as TaskEntity);
+                        const infoUser = new UserDto(infoTask.user as UserEntity);
+                        infoTask.user = infoUser;
+                        listTask.push(infoTask);
+                    });
+                    infoTouchPoint.task = listTask;
+                    listTouchPoint.push(infoTouchPoint);
+                }
             });
             listTouchPoint.sort(
                 (a, b) =>
@@ -400,7 +399,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         leadLMs.forEach((it) => {
             if (it.onHov == 0) {
                 const resultLM = new LeadLaneDto(it);
-                resultLM.company = new InfoLeadCompanyDto(it.company);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultLM.touchPoint.forEach((item) => {
                     if (
@@ -458,7 +456,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         leadPCs.forEach((it) => {
             if (it.onHov == 0) {
                 const resultPC = new LeadLaneDto(it);
-                resultPC.company = new InfoLeadCompanyDto(it.company);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPC.touchPoint.forEach((item) => {
                     if (
@@ -505,16 +502,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
 
         const leadIdPH = touchpointPH.map((it) => it.leadId);
         const leadPHs = await Promise.all(
-            leadIdPH.map(async (it) => {
-                const leadPH = await this.findLeadById(it);
-                return leadPH;
+            leadIdPH.map((it) => {
+                return this.findLeadById(it);
+                
             }),
         );
         result.leadPH = [];
         leadPHs.forEach((it) => {
             if (it.onHov == 0) {
                 const resultPH = new LeadLaneDto(it);
-                resultPH.company = new InfoLeadCompanyDto(it.company);
                 const listTouchPoint = [] as TouchPointDto[];
                 resultPH.touchPoint.forEach((item) => {
                     if (
@@ -557,8 +553,6 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         return this.repository.findOne({
             where: { id: it },
             relations: [
-                'company',
-                'note',
                 'touchPoint',
                 'touchPoint.task',
                 'touchPoint.fileTouchPoint',
