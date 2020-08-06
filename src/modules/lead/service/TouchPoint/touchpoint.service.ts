@@ -65,26 +65,15 @@ export class TouchPointService {
         );
 
         if (updateDto.task) {
-            this.logger.log(updateDto.task);
-        }
-        this.logger.log('a');
-
-        if (updateDto.task) {
-            this.logger.log('b');
             void (await this._touchPointTaskPointService.remove(
                 updateTouchPoint.id,
             ));
             updateDto.task.map((task) => {
-                void this._touchPointTaskPointService.remove(
-                    updateTouchPoint.id,
-                );
                 void this._touchPointTaskPointService.create(
                     user,
                     task,
                     updateTouchPoint.id,
                 );
-                this.logger.log(task);
-                this.logger.log('aaa');
             });
         }
 
