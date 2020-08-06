@@ -33,6 +33,7 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import * as _ from 'lodash';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
@@ -333,7 +334,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList4Lane(): Promise<Lead4LaneDto> {
         const result = new Lead4LaneDto();
         const leadHov = await this.repository.find({
-            where: { onHov: 1 ,status:StatusLead.IN_PROGRESS},
+            where: { onHov: 1, status: StatusLead.IN_PROGRESS },
             relations: [
                 'touchPoint',
                 'touchPoint.task',
@@ -346,29 +347,27 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             const resultHov = new LeadLaneDto(it);
             const listTouchPoint = [] as TouchPointDto[];
             resultHov.touchPoint.forEach((item) => {
-                if(item.status=='Undone'){
-                    const infoTouchPoint = new TouchPointDto(
-                        item as TouchPointEntity,
-                    );
-                    const listTask = [] as TaskDto[];
-                    infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
-                        (i) => {
-                            const infoFileTouchPoint = new FileDto(
-                                i.file as FileEntity,
-                            );
-                            i.file = infoFileTouchPoint;
-                            return i;
-                        },
-                    );
-                    infoTouchPoint.task.map((j) => {
-                        const infoTask = new TaskDto(j as TaskEntity);
-                        const infoUser = new UserDto(infoTask.user as UserEntity);
-                        infoTask.user = infoUser;
-                        listTask.push(infoTask);
-                    });
-                    infoTouchPoint.task = listTask;
-                    listTouchPoint.push(infoTouchPoint);
-                }
+                const infoTouchPoint = new TouchPointDto(
+                    item as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
+                        );
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
+                });
+                infoTouchPoint.task = listTask;
+                listTouchPoint.push(infoTouchPoint);
             });
             listTouchPoint.sort(
                 (a, b) =>
@@ -382,55 +381,56 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const touchpointLM = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
-                    status: StatusTouchPoint.UNDONE,
                     lane: TypeTouchPoint.LM,
                 },
             },
         );
         const leadIdLM = touchpointLM.map((it) => it.leadId);
+        const newLeadIdLM = _.uniqBy(leadIdLM, function (e) {
+            return e;
+        });
         const leadLMs = await Promise.all(
-            leadIdLM.map(async (it) => {
+            newLeadIdLM.map(async (it) => {
                 const leadLM = await this.findLeadById(it);
                 return leadLM;
             }),
         );
-        this.logger.log(leadLMs);
         result.leadLM = [];
         leadLMs.forEach((it) => {
-            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
+            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
                 const resultLM = new LeadLaneDto(it);
-                const listTouchPoint = [] as TouchPointDto[];
-                resultLM.touchPoint.forEach((item) => {
-                    if (
-                        item.status === StatusTouchPoint.UNDONE &&
-                        item.lane === TypeTouchPoint.LM
-                    ) {
-                        const infoTouchPoint = new TouchPointDto(
-                            item as TouchPointEntity,
+                const touchpointLaneLM = resultLM.touchPoint
+                    .filter((it) => {
+                        return it.lane === TypeTouchPoint.LM;
+                    })
+                    .reduce((a, b) => {
+                        const maxId = Math.max(
+                            parseInt(a.id, 10),
+                            parseInt(b.id, 10),
                         );
-                        const listTask = [] as TaskDto[];
-                        infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
-                            (i) => {
-                                const infoFileTouchPoint = new FileDto(
-                                    i.file as FileEntity,
-                                );
-                                i.file = infoFileTouchPoint;
-                                return i;
-                            },
+                        return maxId === parseInt(a.id, 10) ? a : b;
+                    });
+                const infoTouchPoint = new TouchPointDto(
+                    touchpointLaneLM as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
                         );
-                        infoTouchPoint.task.map((j) => {
-                            const infoTask = new TaskDto(j as TaskEntity);
-                            const infoUser = new UserDto(
-                                infoTask.user as UserEntity,
-                            );
-                            infoTask.user = infoUser;
-                            listTask.push(infoTask);
-                        });
-                        infoTouchPoint.task = listTask;
-                        listTouchPoint.push(infoTouchPoint);
-                    }
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
                 });
-                resultLM.touchPoint = listTouchPoint;
+                infoTouchPoint.task = listTask;
+                resultLM.touchPoint = [infoTouchPoint];
                 result.leadLM.push(resultLM);
             }
         });
@@ -438,111 +438,113 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         const touchpointPC = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
-                    status: StatusTouchPoint.UNDONE,
                     lane: TypeTouchPoint.PC,
                 },
             },
         );
         const leadIdPC = touchpointPC.map((it) => it.leadId);
-
+        const newLeadIdPC = _.uniqBy(leadIdPC, function (e) {
+            return e;
+        });
         const leadPCs = await Promise.all(
-            leadIdPC.map(async (it) => {
+            newLeadIdPC.map(async (it) => {
                 const leadPC = await this.findLeadById(it);
                 return leadPC;
             }),
         );
-        this.logger.log(leadPCs);
         result.leadPC = [];
         leadPCs.forEach((it) => {
-            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
+            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
                 const resultPC = new LeadLaneDto(it);
-                const listTouchPoint = [] as TouchPointDto[];
-                resultPC.touchPoint.forEach((item) => {
-                    if (
-                        item.status === StatusTouchPoint.UNDONE &&
-                        item.lane === TypeTouchPoint.PC
-                    ) {
-                        const infoTouchPoint = new TouchPointDto(
-                            item as TouchPointEntity,
+                const touchpointLanePC = resultPC.touchPoint
+                    .filter((it) => {
+                        return it.lane === TypeTouchPoint.PC;
+                    })
+                    .reduce((a, b) => {
+                        const maxId = Math.max(
+                            parseInt(a.id, 10),
+                            parseInt(b.id, 10),
                         );
-                        const listTask = [] as TaskDto[];
-                        infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
-                            (i) => {
-                                const infoFileTouchPoint = new FileDto(
-                                    i.file as FileEntity,
-                                );
-                                i.file = infoFileTouchPoint;
-                                return i;
-                            },
+                        return maxId === parseInt(a.id, 10) ? a : b;
+                    });
+                const infoTouchPoint = new TouchPointDto(
+                    touchpointLanePC as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
                         );
-                        infoTouchPoint.task.map((j) => {
-                            const infoTask = new TaskDto(j as TaskEntity);
-                            const infoUser = new UserDto(
-                                infoTask.user as UserEntity,
-                            );
-                            infoTask.user = infoUser;
-                            listTask.push(infoTask);
-                        });
-                        infoTouchPoint.task = listTask;
-                        listTouchPoint.push(infoTouchPoint);
-                    }
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
                 });
-                resultPC.touchPoint = listTouchPoint;
+                infoTouchPoint.task = listTask;
+                resultPC.touchPoint = [infoTouchPoint];
                 result.leadPC.push(resultPC);
             }
         });
+
         const touchpointPH = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
-                    status: StatusTouchPoint.UNDONE,
                     lane: TypeTouchPoint.PH,
                 },
             },
         );
-
         const leadIdPH = touchpointPH.map((it) => it.leadId);
+        const newLeadIdPH = _.uniqBy(leadIdPH, function (e) {
+            return e;
+        });
         const leadPHs = await Promise.all(
-            leadIdPH.map((it) => {
-                return this.findLeadById(it);
-                
+            newLeadIdPH.map(async (it) => {
+                const leadPH = await this.findLeadById(it);
+                return leadPH;
             }),
         );
         result.leadPH = [];
         leadPHs.forEach((it) => {
-            if (it.onHov == 0 && it.status==StatusLead.IN_PROGRESS) {
+            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
                 const resultPH = new LeadLaneDto(it);
-                const listTouchPoint = [] as TouchPointDto[];
-                resultPH.touchPoint.forEach((item) => {
-                    if (
-                        item.status === StatusTouchPoint.UNDONE &&
-                        item.lane === TypeTouchPoint.PH
-                    ) {
-                        const infoTouchPoint = new TouchPointDto(
-                            item as TouchPointEntity,
+                const touchpointLanePH = resultPH.touchPoint
+                    .filter((it) => {
+                        return it.lane === TypeTouchPoint.PH;
+                    })
+                    .reduce((a, b) => {
+                        const maxId = Math.max(
+                            parseInt(a.id, 10),
+                            parseInt(b.id, 10),
                         );
-                        const listTask = [] as TaskDto[];
-                        infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
-                            (i) => {
-                                const infoFileTouchPoint = new FileDto(
-                                    i.file as FileEntity,
-                                );
-                                i.file = infoFileTouchPoint;
-                                return i;
-                            },
+                        return maxId === parseInt(a.id, 10) ? a : b;
+                    });
+                const infoTouchPoint = new TouchPointDto(
+                    touchpointLanePH as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
                         );
-                        infoTouchPoint.task.map((j) => {
-                            const infoTask = new TaskDto(j as TaskEntity);
-                            const infoUser = new UserDto(
-                                infoTask.user as UserEntity,
-                            );
-                            infoTask.user = infoUser;
-                            listTask.push(infoTask);
-                        });
-                        infoTouchPoint.task = listTask;
-                        listTouchPoint.push(infoTouchPoint);
-                    }
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
                 });
-                resultPH.touchPoint = listTouchPoint;
+                infoTouchPoint.task = listTask;
+                resultPH.touchPoint = [infoTouchPoint];
                 result.leadPH.push(resultPH);
             }
         });
