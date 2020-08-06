@@ -16,17 +16,7 @@ export class TaskService {
         return this.taskRepository.create(user, createDto, touchPointId);
     }
 
-    async update(
-        user: UserEntity,
-        updateDto: UpdateTaskDto,
-        touchPointId: string,
-        taskId: string,
-    ): Promise<TaskEntity> {
-        return this.taskRepository.update(
-            user,
-            updateDto,
-            touchPointId,
-            taskId,
-        );
+    async remove(touchPointId: string): Promise<any> {
+        return this.taskRepository.remove(touchPointId);
     }
 }

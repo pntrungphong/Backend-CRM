@@ -25,8 +25,10 @@ export class TouchPointDto extends AbstractDto {
     review: string;
 
     @ApiPropertyOptional()
-    meetingDate: Date;
+    lane: string;
 
+    @ApiPropertyOptional()
+    meetingDate: Date;
 
     @ApiPropertyOptional()
     actualDate: Date;
@@ -59,6 +61,7 @@ export class TouchPointDto extends AbstractDto {
         this.fileTouchPoint = touchPoint.fileTouchPoint;
         this.task = touchPoint.task;
         this.review = touchPoint.review;
-        this.actualDate=touchPoint.actualDate
+        this.actualDate = touchPoint.actualDate;
+        this.lane = touchPoint.lane;
     }
 }

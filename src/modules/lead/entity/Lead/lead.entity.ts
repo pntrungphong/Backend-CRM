@@ -27,6 +27,8 @@ export class LeadEntity extends AbstractEntity<LeadDto> {
     status: string;
     @Column({ nullable: true, name: 'review' })
     review: string;
+    @Column({ name: 'on_hov', default: 0 })
+    onHov: number;
     @Column({ nullable: true, type: 'jsonb', default: () => "'[]" })
     rankRevision!: RankRevisionDto[];
 

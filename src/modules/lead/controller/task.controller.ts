@@ -44,17 +44,14 @@ export class TaskController {
         return this._taskService.create(user, data, touchPointId);
     }
 
-    @Put(':touchPointId/task/:taskId')
+    @Put(':touchPointId/removeTask')
     @ApiOkResponse({
         type: TaskDto,
         description: 'Successfully Updated',
     })
-    async update(
+    async removeTask(
         @Param('touchPointId') touchPointId: string,
-        @Param('taskId') taskId: string,
-        @Body() updateDto: UpdateTaskDto,
-        @AuthUser() user: UserEntity,
-    ): Promise<TaskEntity> {
-        return this._taskService.update(user, updateDto, touchPointId, taskId);
+    ): Promise<any> {
+        return this._taskService.remove(touchPointId);
     }
 }

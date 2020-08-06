@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
 import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
+import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
 import { UpdateTouchPointMarkDoneDto } from '../../../../modules/lead/dto/touchpoint/UpdateTouchPointMarkDoneDto';
 import { TouchPointsPageDto } from '../../../lead/dto/touchpoint/TouchPointsPageDto';
 import { TouchPointsPagesOptionsDto } from '../../../lead/dto/touchpoint/TouchPointsPagesOptionsDto';
@@ -8,16 +10,15 @@ import { UserEntity } from '../../../user/user.entity';
 import { UpdateTouchPointDto } from '../../dto/touchpoint/UpdateTouchPointDto';
 import { TouchPointEntity } from '../../entity/Touchpoint/touchpoint.entity';
 import { TouchPointRepository } from '../../repository/Touchpoint/touchpoint.repository';
-import { TouchPointFileService } from '../TouchPoint_file/fileTouchPoint.service';
-import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
-import { UpdateDetailTouchPointDto } from '../../../../modules/lead/dto/touchpoint/UpdateDetailTouchPointDto';
+import { TaskService } from '../Task/task.service';
 @Injectable()
 export class TouchPointService {
     public logger = new Logger(TouchPointService.name);
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
-        private readonly _touchPointFilePointService: TouchPointFileService,
+        private readonly _touchPointTaskPointService: TaskService,
     ) {}
+
     @Transactional()
     async create(
         user: UserEntity,
@@ -28,13 +29,14 @@ export class TouchPointService {
             user,
             createDto,
         );
-        const idTouchPoint = parseInt(createTouchPoint.id, 10);
-        if (createDto.file) {
-            await this._touchPointFilePointService.createFileTouchPoint(
-                createDto.file,
-                idTouchPoint,
-                createDto.leadId,
-            );
+        if (createDto.tasks) {
+            createDto.tasks.map((task) => {
+                void this._touchPointTaskPointService.create(
+                    user,
+                    task,
+                    createTouchPoint.id,
+                );
+            });
         }
         return createTouchPoint;
     }
@@ -49,7 +51,8 @@ export class TouchPointService {
     async getTouchPointById(id: string): Promise<TouchPointDto> {
         return this._touchPointRepository.getTouchPointById(id);
     }
-    
+
+    @Transactional()
     async update(
         id: string,
         updateDto: UpdateDetailTouchPointDto,
@@ -60,13 +63,18 @@ export class TouchPointService {
             updateDto,
             user,
         );
-        const idTouchPoint = parseInt(id, 10);
-        if (updateDto.file) {
-            await this._touchPointFilePointService.updateFileTouchPoint(
-                updateDto.file,
-                idTouchPoint,
-                updateTouchPoint.leadId,
-            );
+
+        if (updateDto.tasks) {
+            updateDto.tasks.map((task) => {
+                void this._touchPointTaskPointService.remove(
+                    updateTouchPoint.id,
+                );
+                void this._touchPointTaskPointService.create(
+                    user,
+                    task,
+                    updateTouchPoint.id,
+                );
+            });
         }
         return updateTouchPoint;
     }
@@ -76,11 +84,6 @@ export class TouchPointService {
         updateDto: UpdateTouchPointMarkDoneDto,
         user: UserEntity,
     ): Promise<TouchPointEntity> {
-        const updateTouchPoint = await this._touchPointRepository.updateMarkDone(
-            id,
-            updateDto,
-            user,
-        );
-        return updateTouchPoint;
+        return this._touchPointRepository.updateMarkDone(id, updateDto, user);
     }
 }

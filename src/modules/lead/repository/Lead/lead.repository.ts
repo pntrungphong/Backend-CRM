@@ -2,10 +2,14 @@ import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
+import { StatusLead } from '../../../../common/constants/status-lead';
+import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
 import { PageMetaDto } from '../../../../common/dto/PageMetaDto';
 import { FileDto } from '../../../../modules/file/dto/fileDto';
+import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
+import { LeadLaneDto } from '../../../../modules/lead/dto/lead/LeadLaneDto';
 import { LeadUpdateByIdDto } from '../../../../modules/lead/dto/lead/LeadUpdateByIdDto';
 import { TouchPointDto } from '../../../../modules/lead/dto/touchpoint/TouchPointDto';
 import { TouchPointEntity } from '../../../../modules/lead/entity/Touchpoint/touchpoint.entity';
@@ -14,6 +18,7 @@ import { CompanyEntity } from '../../../client/entity/company.entity';
 import { ContactEntity } from '../../../client/entity/contact.entity';
 import { FileEntity } from '../../../file/file.entity';
 import { InfoLeadContactDto } from '../../../lead/dto/lead/InfoLeadContactDto';
+import { InfoOnHovDto } from '../../../lead/dto/lead/InfoOnHovDto';
 import { TaskDto } from '../../../lead/dto/task/TaskDto';
 import { TaskEntity } from '../../../lead/entity/Task/task.entity';
 import { TagEntity } from '../../../tag/tag.entity';
@@ -27,9 +32,11 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import * as _ from 'lodash';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
+
     public async create(
         user: UserEntity,
         leadDto: LeadUpdateDto,
@@ -61,6 +68,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         rankRevision.updatedAt = Date();
         leadEntity = this.repository.merge(leadEntity, {
             ...leadDto,
+            status: StatusLead.IN_PROGRESS,
             createdBy: user.id,
             updatedBy: user.id,
             file: listFileEntity,
@@ -68,6 +76,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             contact: listContactEntity,
             company: companyEntity,
             rankRevision: [rankRevision],
+            onHov: leadDto.onHov,
         });
 
         const newLead = await this.repository.save(leadEntity, {
@@ -177,6 +186,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 'touchPoint.task.user',
             ],
         });
+
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
         result.contact = leadInfo.contact.map(
@@ -318,5 +328,259 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             updatedBy: user.id,
         });
         return this.repository.save(changStatus);
+    }
+
+    public async getList4Lane(): Promise<Lead4LaneDto> {
+        const result = new Lead4LaneDto();
+        const leadHov = await this.repository.find({
+            where: { onHov: 1, status: StatusLead.IN_PROGRESS },
+            relations: [
+                'touchPoint',
+                'touchPoint.task',
+                'touchPoint.fileTouchPoint',
+                'touchPoint.fileTouchPoint.file',
+                'touchPoint.task.user',
+            ],
+        });
+        result.leadHov = leadHov.map((it) => {
+            const resultHov = new LeadLaneDto(it);
+            const listTouchPoint = [] as TouchPointDto[];
+            resultHov.touchPoint.forEach((item) => {
+                const infoTouchPoint = new TouchPointDto(
+                    item as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
+                        );
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
+                });
+                infoTouchPoint.task = listTask;
+                listTouchPoint.push(infoTouchPoint);
+            });
+            listTouchPoint.sort(
+                (a, b) =>
+                    parseInt(a.order.toString(), 10) -
+                    parseInt(b.order.toString(), 10),
+            );
+            resultHov.touchPoint = listTouchPoint;
+            return resultHov;
+        });
+
+        const touchpointLM = await this.getRepositoryFor(TouchPointEntity).find(
+            {
+                where: {
+                    lane: TypeTouchPoint.LM,
+                },
+            },
+        );
+        const leadIdLM = touchpointLM.map((it) => it.leadId);
+        const newLeadIdLM = _.uniqBy(leadIdLM, function (e) {
+            return e;
+        });
+        const leadLMs = await Promise.all(
+            newLeadIdLM.map(async (it) => {
+                const leadLM = await this.findLeadById(it);
+                return leadLM;
+            }),
+        );
+        result.leadLM = [];
+        leadLMs.forEach((it) => {
+            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
+                const resultLM = new LeadLaneDto(it);
+                const touchpointLaneLM = resultLM.touchPoint
+                    .filter((it) => {
+                        return it.lane === TypeTouchPoint.LM;
+                    })
+                    .reduce((a, b) => {
+                        const maxId = Math.max(
+                            parseInt(a.id, 10),
+                            parseInt(b.id, 10),
+                        );
+                        return maxId === parseInt(a.id, 10) ? a : b;
+                    });
+                const infoTouchPoint = new TouchPointDto(
+                    touchpointLaneLM as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
+                        );
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
+                });
+                infoTouchPoint.task = listTask;
+                resultLM.touchPoint = [infoTouchPoint];
+                result.leadLM.push(resultLM);
+            }
+        });
+
+        const touchpointPC = await this.getRepositoryFor(TouchPointEntity).find(
+            {
+                where: {
+                    lane: TypeTouchPoint.PC,
+                },
+            },
+        );
+        const leadIdPC = touchpointPC.map((it) => it.leadId);
+        const newLeadIdPC = _.uniqBy(leadIdPC, function (e) {
+            return e;
+        });
+        const leadPCs = await Promise.all(
+            newLeadIdPC.map(async (it) => {
+                const leadPC = await this.findLeadById(it);
+                return leadPC;
+            }),
+        );
+        result.leadPC = [];
+        leadPCs.forEach((it) => {
+            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
+                const resultPC = new LeadLaneDto(it);
+                const touchpointLanePC = resultPC.touchPoint
+                    .filter((it) => {
+                        return it.lane === TypeTouchPoint.PC;
+                    })
+                    .reduce((a, b) => {
+                        const maxId = Math.max(
+                            parseInt(a.id, 10),
+                            parseInt(b.id, 10),
+                        );
+                        return maxId === parseInt(a.id, 10) ? a : b;
+                    });
+                const infoTouchPoint = new TouchPointDto(
+                    touchpointLanePC as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
+                        );
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
+                });
+                infoTouchPoint.task = listTask;
+                resultPC.touchPoint = [infoTouchPoint];
+                result.leadPC.push(resultPC);
+            }
+        });
+
+        const touchpointPH = await this.getRepositoryFor(TouchPointEntity).find(
+            {
+                where: {
+                    lane: TypeTouchPoint.PH,
+                },
+            },
+        );
+        const leadIdPH = touchpointPH.map((it) => it.leadId);
+        const newLeadIdPH = _.uniqBy(leadIdPH, function (e) {
+            return e;
+        });
+        const leadPHs = await Promise.all(
+            newLeadIdPH.map(async (it) => {
+                const leadPH = await this.findLeadById(it);
+                return leadPH;
+            }),
+        );
+        result.leadPH = [];
+        leadPHs.forEach((it) => {
+            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
+                const resultPH = new LeadLaneDto(it);
+                const touchpointLanePH = resultPH.touchPoint
+                    .filter((it) => {
+                        return it.lane === TypeTouchPoint.PH;
+                    })
+                    .reduce((a, b) => {
+                        const maxId = Math.max(
+                            parseInt(a.id, 10),
+                            parseInt(b.id, 10),
+                        );
+                        return maxId === parseInt(a.id, 10) ? a : b;
+                    });
+                const infoTouchPoint = new TouchPointDto(
+                    touchpointLanePH as TouchPointEntity,
+                );
+                const listTask = [] as TaskDto[];
+                infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
+                    (i) => {
+                        const infoFileTouchPoint = new FileDto(
+                            i.file as FileEntity,
+                        );
+                        i.file = infoFileTouchPoint;
+                        return i;
+                    },
+                );
+                infoTouchPoint.task.map((j) => {
+                    const infoTask = new TaskDto(j as TaskEntity);
+                    const infoUser = new UserDto(infoTask.user as UserEntity);
+                    infoTask.user = infoUser;
+                    listTask.push(infoTask);
+                });
+                infoTouchPoint.task = listTask;
+                resultPH.touchPoint = [infoTouchPoint];
+                result.leadPH.push(resultPH);
+            }
+        });
+
+        return result;
+    }
+
+    async findLeadById(it: number) {
+        return this.repository.findOne({
+            where: { id: it },
+            relations: [
+                'touchPoint',
+                'touchPoint.task',
+                'touchPoint.fileTouchPoint',
+                'touchPoint.fileTouchPoint.file',
+                'touchPoint.task.user',
+            ],
+        });
+    }
+    public async onHov(
+        id: string,
+        onHovDto: InfoOnHovDto,
+        user: UserEntity,
+    ): Promise<LeadEntity> {
+        this.logger.log(id);
+        const leadCurrent = await this.repository.findOne({
+            where: { id },
+        });
+        this.logger.log(leadCurrent);
+        if (!leadCurrent) {
+            throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+        }
+
+        const updatedLead = this.repository.merge(leadCurrent, {
+            ...onHovDto,
+            updatedBy: user.id,
+        });
+        return this.repository.save(updatedLead);
     }
 }

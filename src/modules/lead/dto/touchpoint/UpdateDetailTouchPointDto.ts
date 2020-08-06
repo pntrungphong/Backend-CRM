@@ -1,14 +1,19 @@
 'use strict';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsOptional } from 'class-validator';
+import { IsArray, IsEnum, IsOptional } from 'class-validator';
 
-import { LinkTouchPointFileDto } from '../fileTouchPoint/LinkFileDto';
-import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
+import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
+import { UpdateTaskDto } from '../task/UpdateTaskDto';
 
 export class UpdateDetailTouchPointDto {
     @IsOptional()
     @ApiProperty()
     goal: string;
+
+    @IsEnum(TypeTouchPoint)
+    @IsOptional()
+    @ApiProperty({ example: 'LM' })
+    lane: string;
 
     @IsOptional()
     @ApiProperty()
@@ -28,6 +33,6 @@ export class UpdateDetailTouchPointDto {
 
     @IsArray()
     @IsOptional()
-    @ApiProperty({ type: [LinkTouchPointFileDto] })
-    file: TouchPointFileDto[];
+    @ApiProperty({ type: [UpdateTaskDto] })
+    tasks: UpdateTaskDto[];
 }

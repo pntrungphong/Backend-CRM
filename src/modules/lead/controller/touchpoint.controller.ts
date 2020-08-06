@@ -54,14 +54,14 @@ export class TouchPointController {
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: TouchPointsPagesOptionsDto,
     ): Promise<TouchPointsPageDto> {
-        this.logger.log('tp.controller');
+        this.logger.log('GET LIST');
         return this._touchPointService.getList(pageOptionsDto);
     }
 
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiOkResponse({
-        type: UpdateTouchPointDto,
+        type: TouchPointDto,
         description: 'Successfully Created',
     })
     async createTouchPoint(
@@ -98,7 +98,7 @@ export class TouchPointController {
             updateDto,
             user,
         );
-        return updatedLead.toDto() as UpdateTouchPointDto;
+        return updatedLead.toDto() as UpdateDetailTouchPointDto;
     }
 
     @Put(':id/markDone')

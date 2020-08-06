@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../../../common/abstract.entity';
 import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
+import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
 import { TouchPointDto } from '../../dto/touchpoint/TouchPointDto';
 import { LeadEntity } from '../Lead/lead.entity';
 import { TaskEntity } from '../Task/task.entity';
@@ -16,10 +17,15 @@ export class TouchPointEntity extends AbstractEntity<TouchPointDto> {
     @Column({
         type: 'enum',
         enum: StatusTouchPoint,
-        default: StatusTouchPoint.IN_PROGRESS,
         name: 'status',
     })
     status: string;
+    @Column({
+        type: 'enum',
+        enum: TypeTouchPoint,
+        name: 'lane',
+    })
+    lane: string;
     @Column({ name: 'note' })
     note: string;
     @Column({ name: 'review' })

@@ -22,15 +22,11 @@ export class TaskRepository extends AbstractRepository<TaskEntity> {
         return newTask.toDto() as TaskEntity;
     }
 
-    public async update(
-        user: UserEntity,
-        updateTaskDto: UpdateTaskDto,
-        touchPointId: string,
-        taskId: string,
-    ): Promise<TaskEntity> {
-        const updateTasks = await this.repository.find({ id: taskId });
+    public async remove(touchPointId: string): Promise<any> {
+        const updateTasks = await this.repository.find({
+            touchPointId,
+        });
         await this.repository.remove(updateTasks);
-
-        return this.create(user, updateTaskDto, touchPointId);
+        return;
     }
 }
