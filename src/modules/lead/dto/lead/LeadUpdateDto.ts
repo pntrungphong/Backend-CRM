@@ -7,6 +7,7 @@ import { StatusLead } from '../../../../common/constants/status-lead';
 import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
 import { RankRevisionDto } from '../../../../modules/lead/field/RankRevisionDto';
 import { TagDto } from '../../../tag/dto/TagDto';
+import { TouchPointFileDto } from '../fileTouchPoint/TouchPointFileDto';
 import { NoteDto } from '../note/NoteDto';
 import { ContactLeadDto } from './ContactLeadDto';
 export class LeadUpdateDto {
@@ -17,7 +18,7 @@ export class LeadUpdateDto {
     @IsEnum(StatusLead)
     @IsString()
     @ApiPropertyOptional({ example: 'In-progress' })
-    status: string;
+    status: StatusLead;
 
     @IsOptional()
     @ApiPropertyOptional({ example: '1' })
@@ -65,6 +66,6 @@ export class LeadUpdateDto {
     tag: TagDto[];
 
     @IsOptional()
-    @ApiPropertyOptional({ type: [String], example: { file: '1' } })
-    file: string[];
+    @ApiPropertyOptional({ type: [TouchPointFileDto] })
+    file: TouchPointFileDto[];
 }

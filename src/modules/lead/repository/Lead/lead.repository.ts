@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import * as _ from 'lodash';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 
@@ -32,7 +33,6 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
-import * as _ from 'lodash';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
@@ -377,31 +377,28 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             return resultHov;
         });
 
-        const touchpointLM = await this.getRepositoryFor(TouchPointEntity).find(
+        const touchPointLM = await this.getRepositoryFor(TouchPointEntity).find(
             {
                 where: {
                     lane: TypeTouchPoint.LM,
                 },
             },
         );
-        const leadIdLM = touchpointLM.map((it) => it.leadId);
+        const leadIdLM = touchPointLM.map((it) => it.leadId);
         const newLeadIdLM = _.uniqBy(leadIdLM, function (e) {
             return e;
         });
         const leadLMs = await Promise.all(
             newLeadIdLM.map(async (it) => {
-                const leadLM = await this.findLeadById(it);
-                return leadLM;
+                return this.findLeadById(it);
             }),
         );
         result.leadLM = [];
         leadLMs.forEach((it) => {
-            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
+            if (it.onHov === 0 && it.status === StatusLead.IN_PROGRESS) {
                 const resultLM = new LeadLaneDto(it);
-                const touchpointLaneLM = resultLM.touchPoint
-                    .filter((it) => {
-                        return it.lane === TypeTouchPoint.LM;
-                    })
+                const touchPointLaneLM = resultLM.touchPoint
+                    .filter((it) => it.lane === TypeTouchPoint.LM)
                     .reduce((a, b) => {
                         const maxId = Math.max(
                             parseInt(a.id, 10),
@@ -410,7 +407,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                         return maxId === parseInt(a.id, 10) ? a : b;
                     });
                 const infoTouchPoint = new TouchPointDto(
-                    touchpointLaneLM as TouchPointEntity,
+                    touchPointLaneLM as TouchPointEntity,
                 );
                 const listTask = [] as TaskDto[];
                 infoTouchPoint.fileTouchPoint = infoTouchPoint.fileTouchPoint.map(
@@ -447,18 +444,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         });
         const leadPCs = await Promise.all(
             newLeadIdPC.map(async (it) => {
-                const leadPC = await this.findLeadById(it);
-                return leadPC;
+                return this.findLeadById(it);
             }),
         );
         result.leadPC = [];
         leadPCs.forEach((it) => {
-            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
+            if (it.onHov === 0 && it.status === StatusLead.IN_PROGRESS) {
                 const resultPC = new LeadLaneDto(it);
                 const touchpointLanePC = resultPC.touchPoint
-                    .filter((it) => {
-                        return it.lane === TypeTouchPoint.PC;
-                    })
+                    .filter((it) => it.lane === TypeTouchPoint.PC)
                     .reduce((a, b) => {
                         const maxId = Math.max(
                             parseInt(a.id, 10),
@@ -504,18 +498,15 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
         });
         const leadPHs = await Promise.all(
             newLeadIdPH.map(async (it) => {
-                const leadPH = await this.findLeadById(it);
-                return leadPH;
+                return this.findLeadById(it);
             }),
         );
         result.leadPH = [];
         leadPHs.forEach((it) => {
-            if (it.onHov == 0 && it.status == StatusLead.IN_PROGRESS) {
+            if (it.onHov === 0 && it.status === StatusLead.IN_PROGRESS) {
                 const resultPH = new LeadLaneDto(it);
                 const touchpointLanePH = resultPH.touchPoint
-                    .filter((it) => {
-                        return it.lane === TypeTouchPoint.PH;
-                    })
+                    .filter((it) => it.lane === TypeTouchPoint.PH)
                     .reduce((a, b) => {
                         const maxId = Math.max(
                             parseInt(a.id, 10),
@@ -563,6 +554,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             ],
         });
     }
+
     public async onHov(
         id: string,
         onHovDto: InfoOnHovDto,

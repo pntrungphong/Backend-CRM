@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Transactional } from 'typeorm-transactional-cls-hooked/dist/Transactional';
 
 import { StatusTouchPoint } from '../../../../common/constants/status-touchpoint';
+import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
 import { Lead4LaneDto } from '../../../../modules/lead/dto/lead/Lead4LaneDto';
 import { LeadChangeRankDto } from '../../../../modules/lead/dto/lead/LeadChangeRankDto';
 import { LeadChangeStatusDto } from '../../../../modules/lead/dto/lead/LeadChangeStatusDto';
@@ -16,6 +17,7 @@ import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { LeadRepository } from '../../repository/Lead/lead.repository';
+import { TouchPointFileService } from '../TouchPoint_file/fileTouchPoint.service';
 @Injectable()
 export class LeadService {
     public logger = new Logger(LeadService.name);
@@ -23,6 +25,7 @@ export class LeadService {
         private readonly _leadRepository: LeadRepository,
         private readonly _noteRepository: NoteRepository,
         private readonly _touchPointRepository: TouchPointRepository,
+        private readonly _touchPointFileService: TouchPointFileService,
     ) {}
     @Transactional()
     async create(
@@ -37,21 +40,33 @@ export class LeadService {
             await this._noteRepository.create(createDto.note, createLead.id);
         }
 
-        let orderTouchPoint = 1;
-        let status = StatusTouchPoint.UNDONE;
-        if (!createDto.lane) {
-            createDto.lane = 'LM';
-            orderTouchPoint = 0;
-            status = StatusTouchPoint.DONE;
-        }
+        let orderTouchPoint = 0;
 
-        void (await this._touchPointRepository.createTouchPointWithLane(
+        const touchPointZero = await this._touchPointRepository.createTouchPointWithLane(
             user,
-            createDto.lane,
+            TypeTouchPoint.LM,
             parseInt(createLead.id, 10),
             orderTouchPoint,
-            status,
-        ));
+            StatusTouchPoint.DONE,
+        );
+
+        orderTouchPoint++;
+
+        this._touchPointFileService.createFileTouchPoint(
+            createDto.file,
+            parseInt(touchPointZero.id, 10),
+            parseInt(createLead.id, 10),
+        );
+
+        if (createDto.lane) {
+            void (await this._touchPointRepository.createTouchPointWithLane(
+                user,
+                createDto.lane,
+                parseInt(createLead.id, 10),
+                orderTouchPoint,
+                StatusTouchPoint.UNDONE,
+            ));
+        }
 
         return createLead;
     }
