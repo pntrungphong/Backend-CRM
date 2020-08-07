@@ -17,7 +17,7 @@ export class TouchPointService {
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointTaskPointService: TaskService,
-    ) {}
+    ) { }
 
     @Transactional()
     async create(

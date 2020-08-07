@@ -627,6 +627,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             ],
         });
     }
+
     public async onHov(
         id: string,
         onHovDto: InfoOnHovDto,
