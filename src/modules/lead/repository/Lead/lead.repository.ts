@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import * as _ from 'lodash';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
+import { inspect } from 'util';
 
 import { StatusLead } from '../../../../common/constants/status-lead';
 import { TypeTouchPoint } from '../../../../common/constants/type-touchpoint';
@@ -32,8 +34,6 @@ import { LeadsPageDetailDto } from '../../dto/lead/LeadsPageDetailDto';
 import { LeadsPageOptionsDto } from '../../dto/lead/LeadsPageOptionsDto';
 import { LeadUpdateDto } from '../../dto/lead/LeadUpdateDto';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
-import * as _ from 'lodash';
-import { inspect } from 'util';
 @EntityRepository(LeadEntity)
 export class LeadRepository extends AbstractRepository<LeadEntity> {
     public logger = new Logger(LeadRepository.name);
@@ -332,59 +332,72 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     }
 
     public async getList4Lane(): Promise<Lead4LaneDto> {
-        const result = new Lead4LaneDto(); //create result frame
+        const result = new Lead4LaneDto(); // create result frame
 
-        //get all lead with tp in-progess
-        const listLead = await this.repository.find({
-            where: { status: StatusLead.IN_PROGRESS },
-            relations: [
-                'touchPoint',
-                'touchPoint.task',
-                'touchPoint.task.user',
-            ],
-        }).then(listLeadEntity => {
-            return listLeadEntity.map(leadEntity => {
-                //sort by order descending
-                const itemLeadEntity = leadEntity;
-                const highestOrderTouchPoint = leadEntity.touchPoint.sort(
-                    (first, second) =>
-                        parseInt(second.order.toString(), 10) -
-                        parseInt(first.order.toString(), 10),
-                );
-                const currentTouchPoint = highestOrderTouchPoint.length ? [highestOrderTouchPoint[0]] : [];
-                itemLeadEntity.touchPoint = currentTouchPoint;
+        // get all lead with tp in-progess
+        const listLead = await this.repository
+            .find({
+                where: { status: StatusLead.IN_PROGRESS },
+                relations: [
+                    'touchPoint',
+                    'touchPoint.task',
+                    'touchPoint.task.user',
+                ],
+            })
+            .then((listLeadEntity) =>
+                listLeadEntity.map((leadEntity) => {
+                    // sort by order descending
+                    const itemLeadEntity = leadEntity;
+                    const highestOrderTouchPoint = leadEntity.touchPoint.sort(
+                        (first, second) =>
+                            parseInt(second.order.toString(), 10) -
+                            parseInt(first.order.toString(), 10),
+                    );
+                    const currentTouchPoint = highestOrderTouchPoint.length
+                        ? [highestOrderTouchPoint[0]]
+                        : [];
+                    itemLeadEntity.touchPoint = currentTouchPoint;
 
-                const itemLeadDTO = new DetailLeadDto(itemLeadEntity);
-                const listTouchPoint = [] as TouchPointDto[];
-                itemLeadEntity.touchPoint.forEach((item) => {
-                    const infoTouchPoint = new TouchPointDto(item as TouchPointEntity);
-                    const listTask = [] as TaskDto[];
-                    infoTouchPoint.task.map((it) => {
-                        const infoTask = new TaskDto(it as TaskEntity);
-                        const infoUser = new UserDto(infoTask.user as UserEntity);
-                        infoTask.user = infoUser;
-                        listTask.push(infoTask);
+                    const itemLeadDTO = new DetailLeadDto(itemLeadEntity);
+                    const listTouchPoint = [] as TouchPointDto[];
+                    itemLeadEntity.touchPoint.forEach((item) => {
+                        const infoTouchPoint = new TouchPointDto(item);
+                        const listTask = [] as TaskDto[];
+                        infoTouchPoint.task.map((it) => {
+                            const infoTask = new TaskDto(it as TaskEntity);
+                            const infoUser = new UserDto(
+                                infoTask.user as UserEntity,
+                            );
+                            infoTask.user = infoUser;
+                            listTask.push(infoTask);
+                        });
+                        infoTouchPoint.task = listTask;
+                        listTouchPoint.push(infoTouchPoint);
                     });
-                    infoTouchPoint.task = listTask;
-                    listTouchPoint.push(infoTouchPoint);
-                });
-                itemLeadDTO.touchPoint = listTouchPoint;
+                    itemLeadDTO.touchPoint = listTouchPoint;
 
+                    return itemLeadDTO;
+                }),
+            );
 
-                return itemLeadDTO;
-            });
-        });
-
-        result.leadHov = listLead.filter(lead => (lead.onHov === 1));
-        const filterLead = listLead.filter(it => it.onHov !== 1 && it.touchPoint.length > 0);
+        result.leadHov = listLead.filter((lead) => lead.onHov === 1);
+        const filterLead = listLead.filter(
+            (it) => it.onHov !== 1 && it.touchPoint.length > 0,
+        );
         console.log(inspect(listLead, false, null, true));
-        result.leadLM = filterLead.filter(lead => (lead.touchPoint[0]?.lane === TypeTouchPoint.LM));
-        result.leadPC = filterLead.filter(lead => (lead.touchPoint[0]?.lane === TypeTouchPoint.PC));
-        result.leadPH = filterLead.filter(lead => (lead.touchPoint[0]?.lane === TypeTouchPoint.PH));
+        result.leadLM = filterLead.filter(
+            (lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.LM,
+        );
+        result.leadPC = filterLead.filter(
+            (lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.PC,
+        );
+        result.leadPH = filterLead.filter(
+            (lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.PH,
+        );
 
         console.log(inspect(result, false, null, true));
         return result;
-        //create new list lead with only 1 touchpoint
+        // create new list lead with only 1 touchpoint
         // const leadHov = await this.repository.find({
         //     where: { onHov: 1, status: StatusLead.IN_PROGRESS },
         //     relations: [

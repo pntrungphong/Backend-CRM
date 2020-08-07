@@ -2,10 +2,10 @@
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { RankRevisionDto } from '../../field/RankRevisionDto';
 import { TagDto } from '../../../tag/dto/TagDto';
 import { TagEntity } from '../../../tag/tag.entity';
 import { LeadEntity } from '../../entity/Lead/lead.entity';
+import { RankRevisionDto } from '../../field/RankRevisionDto';
 import { NoteDto } from '../note/NoteDto';
 import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';

@@ -17,7 +17,7 @@ export class TouchPointService {
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointTaskPointService: TaskService,
-    ) { }
+    ) {}
 
     @Transactional()
     async create(
@@ -38,7 +38,9 @@ export class TouchPointService {
                 );
             });
         }
-        return this._touchPointRepository.getTouchPointById(createTouchPoint.id);
+        return this._touchPointRepository.getTouchPointById(
+            createTouchPoint.id,
+        );
     }
 
     async getList(
