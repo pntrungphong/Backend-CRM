@@ -32,6 +32,9 @@ export class DetailLeadDto {
     @ApiPropertyOptional()
     description: string;
 
+    @ApiPropertyOptional()
+    onHov: number;
+
     @ApiPropertyOptional({ type: [NoteDto] })
     note: NoteDto[];
     @ApiPropertyOptional({ type: [RankRevisionDto] })
@@ -67,9 +70,10 @@ export class DetailLeadDto {
         this.tag = lead.tag;
         this.rank = lead.rank;
         this.status = lead.status;
-        this.file = lead.file.toDtos();
-        this.relatedTo = lead.relatedTo.toDtos();
+        this.file = lead.file?.toDtos();
+        this.relatedTo = lead.relatedTo?.toDtos();
         this.touchPoint = lead.touchPoint;
         this.rankRevision = lead.rankRevision;
+        this.onHov = lead.onHov;
     }
 }

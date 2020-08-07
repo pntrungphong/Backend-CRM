@@ -17,13 +17,13 @@ export class TouchPointService {
     constructor(
         private readonly _touchPointRepository: TouchPointRepository,
         private readonly _touchPointTaskPointService: TaskService,
-    ) {}
+    ) { }
 
     @Transactional()
     async create(
         user: UserEntity,
         createDto: UpdateTouchPointDto,
-    ): Promise<TouchPointEntity> {
+    ): Promise<TouchPointDto> {
         this.logger.log('POST');
         const createTouchPoint = await this._touchPointRepository.create(
             user,
@@ -38,7 +38,7 @@ export class TouchPointService {
                 );
             });
         }
-        return createTouchPoint;
+        return this._touchPointRepository.getTouchPointById(createTouchPoint.id);
     }
 
     async getList(

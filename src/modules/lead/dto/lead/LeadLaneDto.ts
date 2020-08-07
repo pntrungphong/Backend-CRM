@@ -9,7 +9,6 @@ import { LeadEntity } from '../../entity/Lead/lead.entity';
 import { NoteDto } from '../note/NoteDto';
 import { TouchPointDto } from '../touchpoint/TouchPointDto';
 import { InfoLeadCompanyDto } from './InfoLeadCompanyDto';
-
 export class LeadLaneDto {
     @ApiPropertyOptional()
     id: string;

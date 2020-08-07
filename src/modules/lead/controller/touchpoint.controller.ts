@@ -41,7 +41,7 @@ import { TouchPointService } from '../service/TouchPoint/touchpoint.service';
 @ApiBearerAuth()
 export class TouchPointController {
     public logger = new Logger(TouchPointController.name);
-    constructor(private _touchPointService: TouchPointService) {}
+    constructor(private _touchPointService: TouchPointService) { }
 
     @Get()
     @HttpCode(HttpStatus.OK)

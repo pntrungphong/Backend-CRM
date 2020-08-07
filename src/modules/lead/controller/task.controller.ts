@@ -28,7 +28,7 @@ import { TaskService } from '../service/Task/task.service';
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class TaskController {
-    constructor(private _taskService: TaskService) {}
+    constructor(private _taskService: TaskService) { }
 
     @Post(':touchPointId/task')
     @HttpCode(HttpStatus.OK)
