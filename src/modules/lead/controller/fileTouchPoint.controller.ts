@@ -16,8 +16,8 @@ import { LinkTouchPointFileDto } from '../dto/fileTouchPoint/LinkFileDto';
 import { NoteFileTouchPointDto } from '../dto/fileTouchPoint/NoteFileTouchPoint';
 import { TouchPointFileService } from '../service/TouchPoint_file/fileTouchPoint.service';
 
-@Controller('noteFile')
-@ApiTags('noteFile')
+@Controller('touchPointFile')
+@ApiTags('touchPointFile')
 @UseGuards(AuthGuard, RolesGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()

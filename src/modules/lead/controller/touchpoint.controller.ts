@@ -67,16 +67,17 @@ export class TouchPointController {
     async createTouchPoint(
         @Body() data: UpdateTouchPointDto,
         @AuthUser() user: UserEntity,
-    ): Promise<TouchPointDto> {
+    ): Promise<any> {
         this.logger.log('POST');
-        return this._touchPointService.create(user, data);
+        void await this._touchPointService.create(user, data);
+        return;
     }
 
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
-        description: 'Get companies list',
+        description: 'Get touchpoint',
         type: TouchPointDto,
     })
     async getTouchPointById(@Param('id') id: string): Promise<TouchPointDto> {
