@@ -52,7 +52,7 @@ export class LeadService {
 
         orderTouchPoint++;
 
-        this._touchPointFileService.createFileTouchPoint(
+        void this._touchPointFileService.createFileTouchPoint(
             createDto.file,
             parseInt(touchPointZero.id, 10),
             parseInt(createLead.id, 10),
@@ -70,6 +70,7 @@ export class LeadService {
 
         return createLead;
     }
+
     @Transactional()
     async update(
         id: string,
@@ -90,6 +91,7 @@ export class LeadService {
         }
         return updatedLead;
     }
+
     @Transactional()
     async changeRank(
         id: string,
@@ -106,6 +108,7 @@ export class LeadService {
         }
         return changeRank;
     }
+
     async findLeadById(id: string): Promise<DetailLeadDto> {
         return this._leadRepository.getLeadById(id);
     }
@@ -120,6 +123,7 @@ export class LeadService {
         this.logger.log('GET LIST');
         return this._leadRepository.getList(pageOptionsDto);
     }
+
     @Transactional()
     async changeStatus(
         id: string,
@@ -137,6 +141,7 @@ export class LeadService {
         }
         return changeStatus;
     }
+
     @Transactional()
     async onHov(
         id: string,

@@ -33,6 +33,7 @@ import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { UserEntity } from '../user/user.entity';
+import { AttachmentDto } from './dto/attachmentDto';
 import { FileDto } from './dto/fileDto';
 import { UrlDto } from './dto/urlDto';
 import { FileEntity } from './file.entity';
@@ -81,8 +82,7 @@ export class FileController {
         @UploadedFiles() files: FileDto,
         @AuthUser() user: UserEntity,
     ): Promise<FileDto> {
-        const uploadedFile = await this._service.upload(files[0], user);
-        return uploadedFile.toDto() as FileDto;
+        return this._service.upload(files[0], user);
     }
 
     @Post('url')
@@ -93,6 +93,18 @@ export class FileController {
         @AuthUser() user: UserEntity,
     ): Promise<FileEntity> {
         return this._service.uploadUrl(urls, user);
+    }
+
+    @Post('attachment')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        type: AttachmentDto,
+        description: 'Successfully Registered',
+    })
+    async uploadAttachment(
+        @Body() attachment: AttachmentDto,
+    ): Promise<FileEntity> {
+        return this._service.uploadAttachment(attachment);
     }
 
     @Get(':id')

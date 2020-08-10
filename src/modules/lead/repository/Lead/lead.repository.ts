@@ -331,52 +331,84 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
     public async getList4Lane(): Promise<Lead4LaneDto> {
         const result = new Lead4LaneDto(); // create result frame
 
-        // get all lead with tp in-progess
-        const listLeadEntity = await this.repository.find({
-            where: { status: StatusLead.IN_PROGRESS },
-            relations: [
-                'touchPoint',
-                'touchPoint.task',
-                'touchPoint.task.user',
-            ],
-        });
-        const listLeadDto = listLeadEntity.map((leadEntity) => {
-            // sort by order descending
-            const itemLeadEntity = leadEntity;
-            const highestOrderTouchPoint = leadEntity.touchPoint.sort(
-                (first, second) =>
-                    parseInt(second.order.toString(), 10) -
-                    parseInt(first.order.toString(), 10),
+        // get all lead with tp in-progress
+        const listLead = await this.repository
+            .find({
+                where: { status: StatusLead.IN_PROGRESS },
+                relations: [
+                    'touchPoint',
+                    'touchPoint.task',
+                    'touchPoint.task.user',
+                ],
+            })
+            .then((listLeadEntity) =>
+                listLeadEntity.map((leadEntity) => {
+                    // sort by order descending
+                    const itemLeadEntity = leadEntity;
+                    const highestOrderTouchPoint = leadEntity.touchPoint.sort(
+                        (first, second) =>
+                            parseInt(second.order.toString(), 10) -
+                            parseInt(first.order.toString(), 10),
+                    );
+                    const currentTouchPoint = highestOrderTouchPoint.length
+                        ? [highestOrderTouchPoint[0]]
+                        : [];
+                    itemLeadEntity.touchPoint = currentTouchPoint;
+
+                    const itemLeadDTO = new DetailLeadDto(itemLeadEntity);
+                    const listTouchPoint = [] as TouchPointDto[];
+                    itemLeadEntity.touchPoint.forEach((item) => {
+                        const infoTouchPoint = new TouchPointDto(item);
+                        const listTask = [] as TaskDto[];
+                        infoTouchPoint.task.map((it) => {
+                            const infoTask = new TaskDto(it as TaskEntity);
+                            const infoUser = new UserDto(
+                                infoTask.user as UserEntity,
+                            );
+                            infoTask.user = infoUser;
+                            listTask.push(infoTask);
+                        });
+                        infoTouchPoint.task = listTask;
+                        listTouchPoint.push(infoTouchPoint);
+                    });
+                    itemLeadDTO.touchPoint = listTouchPoint;
+
+                    return itemLeadDTO;
+                }),
             );
-            const currentTouchPoint = highestOrderTouchPoint.length
-                ? [highestOrderTouchPoint[0]]
-                : [];
-            itemLeadEntity.touchPoint = currentTouchPoint;
-            const itemLeadDTO = new DetailLeadDto(itemLeadEntity);
-            itemLeadDTO.touchPoint = itemLeadEntity.touchPoint.map((item) => {
-                const infoTouchPoint = new TouchPointDto(item);
-                infoTouchPoint.task = infoTouchPoint.task.map((it) => {
-                    const infoTask = new TaskDto(it as TaskEntity);
-                    infoTask.user = new UserDto(infoTask.user as UserEntity);
-                    return infoTask;
-                });
-                return infoTouchPoint;
-            });
-            return itemLeadDTO;
-        });
-        result.leadHov = listLeadDto.filter((lead) => lead.onHov === 1);
-        const filterLead = listLeadDto.filter(
+
+        result.leadHov = listLead
+            .filter((lead) => lead.onHov === 1)
+            .sort(
+                (first, second) =>
+                    parseInt(first.rank, 10) - parseInt(second.rank, 10),
+            );
+
+        const filterLead = listLead.filter(
             (it) => it.onHov !== 1 && it.touchPoint.length > 0,
         );
-        result.leadLM = filterLead.filter(
-            (lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.LM,
-        );
-        result.leadPC = filterLead.filter(
-            (lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.PC,
-        );
-        result.leadPH = filterLead.filter(
-            (lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.PH,
-        );
+
+        result.leadLM = filterLead
+            .filter((lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.LM)
+            .sort(
+                (first, second) =>
+                    parseInt(first.rank, 10) - parseInt(second.rank, 10),
+            );
+
+        result.leadPC = filterLead
+            .filter((lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.PC)
+            .sort(
+                (first, second) =>
+                    parseInt(first.rank, 10) - parseInt(second.rank, 10),
+            );
+
+        result.leadPH = filterLead
+            .filter((lead) => lead.touchPoint[0]?.lane === TypeTouchPoint.PH)
+            .sort(
+                (first, second) =>
+                    parseInt(first.rank, 10) - parseInt(second.rank, 10),
+            );
+
         return result;
     }
 
