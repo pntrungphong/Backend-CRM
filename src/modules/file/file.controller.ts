@@ -81,8 +81,8 @@ export class FileController {
         @UploadedFiles() files: FileDto,
         @AuthUser() user: UserEntity,
     ): Promise<FileDto> {
-        const uploadedFile = await this._service.upload(files[0], user);
-        return uploadedFile.toDto() as FileDto;
+        return this._service.upload(files[0], user);
+        // return uploadedFile.toDto() as FileDto;
     }
 
     @Post('url')

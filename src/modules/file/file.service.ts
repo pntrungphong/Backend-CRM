@@ -23,7 +23,7 @@ export class FileService {
             createdBy: user.firstName,
             updatedBy: user.firstName,
         });
-        return this.repository.create(fileData);
+        return (await this.repository.create(fileData)).toDto();
     }
 
     async uploadUrl(urlDto: UrlDto, user: UserEntity): Promise<FileEntity> {
