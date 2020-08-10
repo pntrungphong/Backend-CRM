@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
-import * as _ from 'lodash';
 import { AbstractRepository } from 'typeorm';
 import { EntityRepository } from 'typeorm/decorator/EntityRepository';
 

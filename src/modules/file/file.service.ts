@@ -4,6 +4,7 @@ import { MimeTypeFile } from '../../common/constants/mimetype-file';
 import { TouchPointFileDto } from '../lead/dto/fileTouchPoint/TouchPointFileDto';
 import { TouchPointFileService } from '../lead/service/TouchPoint_file/fileTouchPoint.service';
 import { UserEntity } from '../user/user.entity';
+import { AttachmentDto } from './dto/attachmentDto';
 import { FileDto } from './dto/fileDto';
 import { UrlDto } from './dto/urlDto';
 import { FileEntity } from './file.entity';
@@ -23,7 +24,30 @@ export class FileService {
             createdBy: user.firstName,
             updatedBy: user.firstName,
         });
-        return (await this.repository.create(fileData)).toDto();
+        return (await this.repository.create(fileData)).toDto() as FileEntity;
+    }
+
+    async uploadAttachment(
+        attachmentDto: AttachmentDto,
+    ): Promise<FileEntity> {
+        const fileEntity = await this.repository.getById(attachmentDto.fileId);
+        const fileTouchPoint = new TouchPointFileDto(
+            parseInt(fileEntity.id, 10),
+            attachmentDto.touchPointId,
+            attachmentDto.leadId,
+            attachmentDto.type,
+            attachmentDto.note,
+        );
+
+        const fileTouchPoints = [];
+        fileTouchPoints.push(fileTouchPoint);
+        void this.touchPointFileService.createFileTouchPoint(
+            fileTouchPoints,
+            attachmentDto.touchPointId,
+            attachmentDto.leadId,
+        );
+
+        return fileEntity.toDto() as FileEntity;
     }
 
     async uploadUrl(urlDto: UrlDto, user: UserEntity): Promise<FileEntity> {
