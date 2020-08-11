@@ -21,8 +21,9 @@ export class FileService {
 
     async upload(file: FileDto, user: UserEntity): Promise<FileEntity> {
         const fileData = Object.assign(file, {
-            createdBy: user.avatar,
-            updatedBy: user.avatar,
+            createdBy: user.id,
+            updatedBy: user.id,
+            userId: user.id,
         });
         return (await this.repository.create(fileData)).toDto() as FileEntity;
     }
@@ -51,8 +52,8 @@ export class FileService {
     async uploadUrl(urlDto: UrlDto, user: UserEntity): Promise<FileEntity> {
         const fileEntity = new FileEntity();
         const file = Object.assign(fileEntity, {
-            createdBy: user.avatar,
-            updatedBy: user.avatar,
+            createdBy: user.id,
+            updatedBy: user.id,
             url: urlDto.url,
             originalname: urlDto.name,
             mimetype: MimeTypeFile.LINK,

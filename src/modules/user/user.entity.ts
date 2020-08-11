@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { RoleType } from '../../common/constants/role-type';
+import { FileEntity } from '../../modules/file/file.entity';
 import { TaskEntity } from '../lead/entity/Task/task.entity';
 import { UserDto } from './dto/UserDto';
 
@@ -33,6 +34,12 @@ export class UserEntity extends AbstractEntity<UserDto> {
         name: 'user_id',
     })
     task: TaskEntity[];
+
+    @OneToMany(() => FileEntity, (file) => file.user)
+    @JoinColumn({
+        name: 'user_id',
+    })
+    file: FileEntity[];
 
     dtoClass = UserDto;
 }

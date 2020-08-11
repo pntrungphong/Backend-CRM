@@ -181,10 +181,11 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                 'touchPoint.task',
                 'touchPoint.fileTouchPoint',
                 'touchPoint.fileTouchPoint.file',
+                'touchPoint.fileTouchPoint.file.user',
                 'touchPoint.task.user',
             ],
         });
-
+        this.logger.log(leadInfo);
         const result = new DetailLeadDto(leadInfo);
         result.company = new InfoLeadCompanyDto(leadInfo.company);
         result.contact = leadInfo.contact.map(
@@ -203,8 +204,16 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
                         it.file as FileEntity,
                     );
                     it.file = infoFileTouchPoint;
+                    const infoUser = new UserDto(
+                        infoFileTouchPoint.user as UserEntity,
+                    );
+                    it.file.user = infoUser;
                     return it;
                 },
+            );
+            infoTouchPoint.fileTouchPoint.sort(
+                (a, b) =>
+                    b.file.createdAt.getTime() - a.file.createdAt.getTime(),
             );
             infoTouchPoint.task.map((it) => {
                 const infoTask = new TaskDto(it as TaskEntity);
@@ -215,11 +224,7 @@ export class LeadRepository extends AbstractRepository<LeadEntity> {
             infoTouchPoint.task = listTask;
             listTouchPoint.push(infoTouchPoint);
         });
-        listTouchPoint.sort(
-            (a, b) =>
-                parseInt(a.order.toString(), 10) -
-                parseInt(b.order.toString(), 10),
-        );
+        listTouchPoint.sort((a, b) => b.order - a.order);
         result.touchPoint = listTouchPoint;
         return result;
     }

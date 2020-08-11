@@ -3,6 +3,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { AbstractDto } from '../../../common/dto/AbstractDto';
+import { UserDto } from '../../../modules/user/dto/UserDto';
 import { FileEntity } from '../file.entity';
 
 export class FileDto extends AbstractDto {
@@ -30,6 +31,9 @@ export class FileDto extends AbstractDto {
     @ApiPropertyOptional()
     updatedBy: string;
 
+    @ApiPropertyOptional({ type: [UserDto] })
+    user: UserDto;
+
     constructor(fileEntity: FileEntity) {
         super(fileEntity);
         this.originalname = fileEntity.originalname;
@@ -40,5 +44,6 @@ export class FileDto extends AbstractDto {
         this.url = fileEntity.url;
         this.createdBy = fileEntity.createdBy;
         this.updatedBy = fileEntity.updatedBy;
+        this.user = fileEntity.user;
     }
 }
