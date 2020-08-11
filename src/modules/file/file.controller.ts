@@ -91,7 +91,7 @@ export class FileController {
     async uploadUrl(
         @Body() urls: UrlDto,
         @AuthUser() user: UserEntity,
-    ): Promise<FileEntity> {
+    ): Promise<FileDto> {
         return this._service.uploadUrl(urls, user);
     }
 
