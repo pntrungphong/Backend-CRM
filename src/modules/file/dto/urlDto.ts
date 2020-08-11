@@ -1,7 +1,7 @@
 'use strict';
 
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UrlDto {
     @IsNotEmpty()
@@ -14,13 +14,13 @@ export class UrlDto {
     @ApiPropertyOptional()
     url: string;
 
-    @IsNotEmpty()
-    @IsString()
+    @IsOptional()
+    @IsNumber()
     @ApiPropertyOptional()
     touchPointId: number;
 
-    @IsNotEmpty()
-    @IsString()
+    @IsOptional()
+    @IsNumber()
     @ApiPropertyOptional()
     leadId: number;
 
