@@ -60,7 +60,7 @@ export class FileEntity extends AbstractEntity<FileDto> {
     @JoinColumn()
     fileTouchPoint: TouchPointFileEntity[];
 
-    @ManyToOne(() => UserEntity, (user) => user.file)
+    @ManyToOne(() => UserEntity)
     @JoinColumn({
         name: 'user_id',
     })
