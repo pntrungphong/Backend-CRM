@@ -21,15 +21,13 @@ export class FileService {
 
     async upload(file: FileDto, user: UserEntity): Promise<FileEntity> {
         const fileData = Object.assign(file, {
-            createdBy: user.firstName,
-            updatedBy: user.firstName,
+            createdBy: user.avatar,
+            updatedBy: user.avatar,
         });
         return (await this.repository.create(fileData)).toDto() as FileEntity;
     }
 
-    async uploadAttachment(
-        attachmentDto: AttachmentDto,
-    ): Promise<FileEntity> {
+    async uploadAttachment(attachmentDto: AttachmentDto): Promise<FileEntity> {
         const fileEntity = await this.repository.getById(attachmentDto.fileId);
         const fileTouchPoint = new TouchPointFileDto(
             parseInt(fileEntity.id, 10),
@@ -53,8 +51,8 @@ export class FileService {
     async uploadUrl(urlDto: UrlDto, user: UserEntity): Promise<FileEntity> {
         const fileEntity = new FileEntity();
         const file = Object.assign(fileEntity, {
-            createdBy: user.firstName,
-            updatedBy: user.firstName,
+            createdBy: user.avatar,
+            updatedBy: user.avatar,
             url: urlDto.url,
             originalname: urlDto.name,
             mimetype: MimeTypeFile.LINK,
