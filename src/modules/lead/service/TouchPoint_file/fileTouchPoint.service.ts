@@ -10,6 +10,8 @@ import { NoteFileTouchPointDto } from '../../../lead/dto/fileTouchPoint/NoteFile
 import { TouchPointFileDto } from '../../dto/fileTouchPoint/TouchPointFileDto';
 import { InfoFileTouchPointDto } from '../../dto/touchpoint/InfoFileTouchPointDto';
 import { TouchPointFileRepository } from '../../repository/TouchpointFile/fileTouchPoint.repository';
+import { UserDto } from '../../../../modules/user/dto/UserDto';
+import { UserEntity } from '../../../../modules/user/user.entity';
 
 @Injectable()
 export class TouchPointFileService {
@@ -73,16 +75,20 @@ export class TouchPointFileService {
     async getList(leadId: string): Promise<InfoFileTouchPointDto[]> {
         const file = await this.relationRepository.find({
             where: { leadId },
-            relations: ['file', 'touchPoint'],
+            relations: ['file', 'touchPoint', 'file.user'],
         });
-        this.logger.log('Get List');
+        this.logger.log(file);
         const listFile = [];
-        file.map((it) => {
+        file.forEach((it) => {
             const fileTouchPoint = new InfoFileTouchPointDto(it);
             const detailFile = new FileDto(fileTouchPoint.file as FileEntity);
+            const detailUser = new UserDto(
+                fileTouchPoint.file.user as UserEntity,
+            );
             const touchPoint = new OrderTouchPointDto(
                 fileTouchPoint.touchPoint as TouchPointEntity,
             );
+            detailFile.user = detailUser;
             fileTouchPoint.file = detailFile;
             fileTouchPoint.touchPoint = touchPoint;
             listFile.push(fileTouchPoint);
