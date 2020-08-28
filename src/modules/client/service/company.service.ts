@@ -11,14 +11,15 @@ import { CompanyEntity } from '../entity/company.entity';
 import { CompanyRepository } from '../repository/company.repository';
 import { ContactRepository } from '../repository/contact.repository';
 import { BasicInfoLeadDto } from '../../lead/dto/lead/BasicInfoLeadDto';
-import { LeadRepository } from '../../lead/repository/Lead/lead.repository';
+import { LogRepository } from '../../log/repository/log.repository';
+import { detailedDiff } from 'deep-object-diff';
 @Injectable()
 export class CompanyService {
     public logger = new Logger(CompanyService.name);
     constructor(
         public readonly companyRepository: CompanyRepository,
         private readonly _contactRepository: ContactRepository,
-        private readonly _leadRepository: LeadRepository,
+        private _logRepository: LogRepository,
     ) {}
 
     async create(
@@ -31,6 +32,15 @@ export class CompanyService {
         });
 
         const company = this.companyRepository.create({ ...companyObj });
+        await this._logRepository.create(
+            user,
+            'create',
+            'company',
+            parseInt(company.id, 10),
+            createDto,
+            createDto,
+            createDto,
+        );
         return this.companyRepository.save(company);
     }
 
@@ -99,6 +109,7 @@ export class CompanyService {
         const company = await this.companyRepository.findOne({
             where: { id },
         });
+        const oldCompany = Object.assign({}, company);
         if (!company) {
             throw new HttpException('Not found', HttpStatus.NOT_FOUND);
         }
@@ -106,6 +117,17 @@ export class CompanyService {
             ...updateDto,
             updated_by: user.id,
         });
+        const diffs = detailedDiff(oldCompany, updatedCompany);
+        console.log(diffs);
+        await this._logRepository.create(
+            user,
+            'update',
+            'company',
+            parseInt(updatedCompany.id, 10),
+            oldCompany,
+            updatedCompany,
+            diffs,
+        );
 
         return this.companyRepository.save(updatedCompany);
     }

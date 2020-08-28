@@ -27,6 +27,7 @@ import { NoteService } from '../lead/service/Note/note.service';
 import { TouchPointService } from '../lead/service/TouchPoint/touchpoint.service';
 import { TouchPointFileService } from '../lead/service/TouchPoint_file/fileTouchPoint.service';
 import { TaskService } from '../lead/service/Task/task.service';
+import { LogRepository } from '../log/repository/log.repository';
 
 @Module({
     imports: [
@@ -42,10 +43,11 @@ import { TaskService } from '../lead/service/Task/task.service';
             TouchPointRepository,
             TouchPointFileRepository,
             TaskRepository,
+            LogRepository,
         ]),
     ],
     controllers: [
-        ContactController, 
+        ContactController,
         CompanyController,
         LeadController,
         TouchPointController,
