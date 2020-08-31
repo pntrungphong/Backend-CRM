@@ -13,18 +13,22 @@ import { ContactEntity } from '../entity/contact.entity';
 import { CompanyRepository } from '../repository/company.repository';
 import { ContactRepository } from '../repository/contact.repository';
 import { BasicInfoLeadDto } from '../../lead/dto/lead/BasicInfoLeadDto';
+import { LogRepository } from '../../log/repository/log.repository';
+import { detailedDiff } from 'deep-object-diff';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class ContactService {
     constructor(
         public readonly contactRepository: ContactRepository,
         private _companyRepository: CompanyRepository,
+        private _logRepository: LogRepository,
     ) {}
 
     findOne(findData: FindConditions<ContactEntity>): Promise<ContactEntity> {
         return this.contactRepository.findOne(findData);
     }
-
+    @Transactional()
     async create(
         createDto: ContactUpdateDto,
         user: UserEntity,
@@ -34,15 +38,26 @@ export class ContactService {
             updatedBy: user.id,
         });
         const contact = this.contactRepository.create({ ...contactObj });
+        await this._logRepository.create(
+            user,
+            'create',
+            'contact',
+            parseInt(contact.id, 10),
+            createDto,
+            createDto,
+            createDto,
+        );
         return this.contactRepository.save(contact);
     }
 
+    @Transactional()
     async update(
         id: string,
         updateDto: ContactUpdateDto,
         user: UserEntity,
     ): Promise<ContactEntity> {
         const contact = await this.contactRepository.findOne({ id });
+        const oldContact = Object.assign({}, contact);
         const updatedContact = Object.assign(contact, {
             ...updateDto,
             updatedBy: user.id,
@@ -50,6 +65,17 @@ export class ContactService {
         if (!contact) {
             throw new HttpException('Update failed', HttpStatus.NOT_ACCEPTABLE);
         }
+        const diffs = detailedDiff(oldContact, updatedContact);
+        await this._logRepository.create(
+            user,
+            'update',
+            'company',
+            parseInt(updatedContact.id, 10),
+            oldContact,
+            updatedContact,
+            diffs,
+        );
+
         return this.contactRepository.save(updatedContact);
     }
 

@@ -13,6 +13,7 @@ import { ContactRepository } from '../repository/contact.repository';
 import { BasicInfoLeadDto } from '../../lead/dto/lead/BasicInfoLeadDto';
 import { LogRepository } from '../../log/repository/log.repository';
 import { detailedDiff } from 'deep-object-diff';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 @Injectable()
 export class CompanyService {
     public logger = new Logger(CompanyService.name);
@@ -22,6 +23,7 @@ export class CompanyService {
         private _logRepository: LogRepository,
     ) {}
 
+    @Transactional()
     async create(
         user: UserEntity,
         createDto: UpdateCompanyDto,
@@ -100,7 +102,7 @@ export class CompanyService {
 
         return result;
     }
-
+    @Transactional()
     async update(
         id: string,
         updateDto: UpdateCompanyDto,
@@ -118,7 +120,6 @@ export class CompanyService {
             updated_by: user.id,
         });
         const diffs = detailedDiff(oldCompany, updatedCompany);
-        console.log(diffs);
         await this._logRepository.create(
             user,
             'update',

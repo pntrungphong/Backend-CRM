@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { ContactReferralDto } from '../dto/contact-referral/ContactReferralDto';
 import { ContactReferralRepository } from '../repository/referral.repository';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 @Injectable()
 export class ContactReferralService {
     constructor(
         public readonly contactReferralRepository: ContactReferralRepository,
     ) {}
+    @Transactional()
     async create(
         createContactReferralDto: ContactReferralDto[],
         idSource: string,
@@ -22,7 +24,7 @@ export class ContactReferralService {
             await this.contactReferralRepository.save(contactReferralCompany);
         }
     }
-
+    @Transactional()
     async update(
         updateDto: ContactReferralDto[],
         idContact: string,
