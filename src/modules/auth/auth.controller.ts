@@ -7,6 +7,7 @@ import {
     Post,
     UseGuards,
     UseInterceptors,
+    Logger,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
@@ -19,6 +20,7 @@ import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/LoginPayloadDto';
 import { UserLoginDto } from './dto/UserLoginDto';
+import { UserRegisterDto } from './dto/UserRegisterDto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -40,6 +42,15 @@ export class AuthController {
         const userEntity = await this.authService.validateUser(userLoginDto);
         const token = await this.authService.createToken(userEntity);
         return new LoginPayloadDto(userEntity.toDto(), token);
+    }
+
+    @Post('register')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({ type: UserDto, description: 'Successfully Created' })
+    async userRegister(@Body() data: UserRegisterDto): Promise<UserDto> {
+        const userRegister = await this.authService.create(data);
+        Logger.log(userRegister);
+        return userRegister.toDto();
     }
 
     @Get('me')

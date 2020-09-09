@@ -1,6 +1,6 @@
 'use strict';
 
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
     IsEmail,
     IsNotEmpty,
@@ -33,9 +33,7 @@ export class UserRegisterDto {
     @ApiProperty({ minLength: 6 })
     readonly password: string;
 
-    @Column()
-    @IsPhoneNumber('ZZ')
     @IsOptional()
-    @ApiProperty()
+    @ApiPropertyOptional()
     phone: string;
 }

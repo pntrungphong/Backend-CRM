@@ -10,6 +10,8 @@ import { UserEntity } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { TokenPayloadDto } from './dto/TokenPayloadDto';
 import { UserLoginDto } from './dto/UserLoginDto';
+import { UserRegisterDto } from './dto/UserRegisterDto';
+import { UserRepository } from '../../modules/user/user.repository';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
         public readonly jwtService: JwtService,
         public readonly configService: ConfigService,
         public readonly userService: UserService,
+        public readonly userRepository: UserRepository,
     ) {}
 
     async createToken(user: UserEntity | UserDto): Promise<TokenPayloadDto> {
@@ -40,6 +43,10 @@ export class AuthService {
             throw new UserNotFoundException();
         }
         return user;
+    }
+    async create(createDto: UserRegisterDto): Promise<UserEntity> {
+        const userRegister = this.userRepository.create({ ...createDto });
+        return this.userRepository.save(userRegister);
     }
 
     static setAuthUser(user: UserEntity) {
